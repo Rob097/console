@@ -1,0 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package database.daos;
+
+import database.entities.Prodotto;
+import database.exceptions.DAOException;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author Roberto97
+ */
+public interface ProductDAO{ 
+    public ArrayList<Prodotto> getAllProducts() throws DAOException;
+    public ArrayList<Prodotto> getFreshProducts() throws DAOException;
+    public ArrayList<Prodotto> getConfProducts() throws DAOException;
+    public ArrayList<Prodotto> getAllProductsOfCategory(String categoryName) throws DAOException;
+    public Prodotto getProduct(int id) throws DAOException;
+    public int getNumberRate(int id) throws DAOException;
+    public double getRate(int id) throws DAOException;
+}
