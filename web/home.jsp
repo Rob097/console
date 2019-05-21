@@ -4,9 +4,11 @@
     Author     : Roberto97
 --%>
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,6 +34,7 @@
     </head>
 
     <body>
+
         <div class="wrapper">
             <!-- Sidebar  -->
             <nav id="sidebar">
@@ -97,50 +100,56 @@
                             Contact
                         </a>
                     </li>
-                </ul>
-
-                <ul class="list-unstyled CTAs">
+                    <hr>
                     <li>
-                        <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
-                    </li>
-                    <li>
-                        <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                        <a href="#accountSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <i class="fas fa-user"></i>
+                            Account
+                        </a>
+                        <ul class="collapse list-unstyled" id="accountSubmenu">
+                            <li>
+                                <a href="https://www.macelleriadellantonio.it" target="_blanck">Sito</a>                                
+                            </li>
+                            <li>
+                                <a href="#">Info</a>
+                            </li>                            
+                            <li>
+                                <a href="logout" style="font-weight: bold;">LogOut</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </nav>
 
             <!-- Page Content  -->
             <div id="content">
+                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
+                </button>
 
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <div class="container-fluid">
+                <div class="card mb-4 wow fadeIn">
 
-                        <button type="button" id="sidebarCollapse" class="btn btn-info">
-                            <i class="fas fa-align-left"></i>
-                        </button>
-                        <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <i class="fas fa-align-justify"></i>
-                        </button>
+                    <!--Card content-->
+                    <div class="card-body d-sm-flex justify-content-between">
+                        <h4 class="mb-2 mb-sm-0 pt-1">
+                            <a style="cursor: default;x">${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}</a>
+                        </h4>
 
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="nav navbar-nav ml-auto">
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="#">Page</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <form class="d-flex justify-content-center">
+                            <!-- Default input -->
+                            <input type="search" placeholder="Type your query" aria-label="Search" class="form-control">
+                            <button class="btn btn-primary btn-sm my-0 p" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+
+                        </form>
+
                     </div>
-                </nav>
 
+                </div>
+                <div class="card mb-4 wow fadeIn">
+                    <div class="card-body d-sm-flex justify-content-between"></div>
+                </div>
 
             </div>
         </div>

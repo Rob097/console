@@ -23,4 +23,7 @@ public class costanti {
     public static double MED_W_PRICE = 5.40+1.80;
     public static double MAX_W_PRICE = 6.40+2.50;
     
+    public static final String USER = "info@macelleriadellantonio.it";
+    public static final String PASS = "Bortoleto1";
+    
 }

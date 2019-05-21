@@ -7,6 +7,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="request" value="<%=request%>"/> <!-- Request lo chiamo con una scriplets e lo salvo in una variabile perchè serve per diversi metodi java -->
+<c:set var="response" value="<%=response%>"/> <!-- Response lo chiamo con una scriplets e lo salvo in una variabile perchè serve per diversi metodi java -->
+<%System.out.println("CIAOOO"); %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -53,6 +56,11 @@
                 padding-top: 40px;
                 padding-bottom: 40px;
                 background-color: #f5f5f5;
+                background-image: url(https://lh3.googleusercontent.com/ZGUA2SSJE0oy5KOF5i72_NdgsgDPryUD_xbTQF8Rui3zp1dHmfMq0kd9rKFGABIa6SaYwDyvrgeu1LuHZIlvSBwuuKAFc97ofXY4yo5GtmkEJ-nbKuXdiAZUN2vI0d-R7_5RXpf1bw=w2400);
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center center;
             }
 
             .form-signin {
@@ -91,34 +99,37 @@
     </head>
     <body class="text-center">
         <div id="containerLogin">
-            <form class="form-signin needs-validation" novalidate>
+            <form class="form-signin needs-validation" novalidate method="POST" action="login">
                 <img class="mb-4" src="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400" alt="" style='width: 50%;'>
                 <h1 class="h3 mb-3 font-weight-normal">Accedi</h1>
 
                 <div class="mb-3">
-                    <input type="email" class="form-control" id="inputEmail" placeholder="Email" required autofocus>
+                    <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Email" required autofocus>
                     <div class="invalid-feedback">
                         Il campo relativo all'email non è complilato in modo corretto
                     </div>
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" required>
+                    <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password" required>
                     <div class="invalid-feedback">
                         Il campo relativo alla password non è complilato in modo corretto
                     </div>
                 </div>
                 <div class="checkbox mb-3">
                     <label>
-                        <input type="checkbox" value="remember-me"> Ricordami
+                        <input type="checkbox" name="ricordami"> Ricordami
                     </label>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Accedi</button>
-                <p class="mt-5 mb-3 text-muted">© 2019</p>
+                <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Accedi</button>                          
             </form>
+
+            <c:if test="${LOGGED eq false}">
+                <div class="besideemailbox">Attenzione, l'email o la password sono sbagliate</div>
+                ${LOGGED = null}
+            </c:if>
         </div>
 
         <script>
-            var check = false;
             (function () {
                 'use strict';
 
@@ -132,13 +143,9 @@
                             if (form.checkValidity() === false) {
                                 event.preventDefault();
                                 event.stopPropagation();
-                                check = false;
                             } else {
-                                event.preventDefault();
-                                check = true;
                             }
                             form.classList.add('was-validated');
-                            sendEmail(event);
                         }, false);
                     });
                 }, false);
