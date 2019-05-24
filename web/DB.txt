@@ -1,0 +1,33 @@
+FILE DI SPIEGAZIONE DI ALCUNI CODICI PRESENTI NEL DB
+
+
+################################################################################
+
+EVENTO PER INSERIRE ALL'INTERNO DI 'views_week' UN NUOVO RECORD CON DATA LA DATA
+DEL LUNEDì E COME VALORE LA SOMMA DI TUTTE LE VIEWS DELLE VARIE PAGINE FATTE IN
+QUELLA SETTIMANA PRESE DA 'week_views_page'. DOPODICHé TUTTE I VALORI DI VIEWS
+IN 'week_views_page' VENGONO SETTATI A 0 PER RICOMINCIARE LA SETTIMANA
+
+
+DELIMITER $$    
+CREATE EVENT copy_week_views
+ON SCHEDULE
+  EVERY 1 WEEK
+STARTS CURRENT_DATE + INTERVAL 3 DAY do
+BEGIN
+
+  INSERT INTO `views_week`(week, views) VALUES (CURRENT_DATE - INTERVAL 7 DAY, (
+SELECT 
+    FORMAT(SUM(views),0) total
+FROM
+    week_views_page));
+    
+UPDATE 
+    week_views_page
+SET 
+    views = 0;
+    
+END $$
+DELIMITER ;
+
+################################################################################

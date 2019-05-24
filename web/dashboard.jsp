@@ -8,6 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="request" value="<%=request%>"/> <!-- Request lo chiamo con una scriplets e lo salvo in una variabile perchè serve per diversi metodi java -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -178,12 +179,12 @@
                                             <i class="material-icons">remove_red_eye</i>
                                         </div>
                                         <p class="card-category">Visualizzazioni</p>
-                                        <h3 class="card-title">49/50
+                                        <h3 class="card-title">${consoledao.getWeekViews()}
                                         </h3>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">date_range</i> Oggi
+                                            <i class="material-icons">date_range</i> Ultima settimana
                                         </div>
                                     </div>
                                 </div>
@@ -244,13 +245,27 @@
                                         <div class="ct-chart" id="dailySalesChart"></div>
                                     </div>
                                     <div class="card-body">
-                                        <h4 class="card-title">Daily Sales</h4>
+                                        <h4 class="card-title">Visualizzazioni ultimo mese</h4>
                                         <p class="card-category">
-                                            <span class="text-success"><i class="fa fa-long-arrow-up"></i> 55% </span> increase in today sales.</p>
+
+                                            <c:choose>
+                                                <c:when test="${consoledao.getViewsChanges() >= 0}">
+                                                    <span class="text-success">
+                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getViewsChanges()}% 
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-danger">
+                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getViewsChanges()}% 
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            </span> 
+                                            rispetto al mese scorso.</p>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">access_time</i> updated 4 minutes ago
+                                            <i class="material-icons">access_time</i> appena aggiornato
                                         </div>
                                     </div>
                                 </div>
