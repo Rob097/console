@@ -6,7 +6,6 @@
 package database.daos;
 
 import database.exceptions.DAOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,4 +17,8 @@ public interface ConsoleDAO {
     public Map<String, Integer> getMonthViews() throws DAOException;
     public Map<String, Integer> getLastMonthViews() throws DAOException;
     public int getViewsChanges() throws DAOException;
+    public Map<String, Integer> getMonthEmailSub() throws DAOException;
+    public String getTotalEmailSub() throws DAOException;
+    public Map<String, Double> getMonthRevenue() throws DAOException;
+    public String getTotalRevenue() throws DAOException;
 }

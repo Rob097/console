@@ -173,7 +173,7 @@
                         <div class="row">
                             <div class="col-lg-3 col-md-6 col-sm-6">
                                 <div class="card card-stats">
-                                    <div class="card-header card-header-warning card-header-icon">
+                                    <div class="card-header card-header-info card-header-icon">
                                         <div class="card-icon">
                                             <!--<i style="font-size: 36px; width: 56px; height: 56px;" class="far fa-eye material-icons"></i>-->
                                             <i class="material-icons">remove_red_eye</i>
@@ -189,18 +189,34 @@
                                     </div>
                                 </div>
                             </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card card-stats">
+                                    <div class="card-header card-header-warning card-header-icon">
+                                        <div class="card-icon">
+                                            <i class="material-icons">email</i>
+                                        </div>
+                                        <p class="card-category">Email Sub</p>
+                                        <h3 class="card-title">${consoledao.getTotalEmailSub()}</h3>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="material-icons">date_range</i> In totale
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-lg-3 col-md-6 col-sm-6">
                                 <div class="card card-stats">
                                     <div class="card-header card-header-success card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">store</i>
                                         </div>
-                                        <p class="card-category">Revenue</p>
-                                        <h3 class="card-title">$34,245</h3>
+                                        <p class="card-category">Entrate</p>
+                                        <h3 class="card-title">€ ${consoledao.getTotalRevenue()}</h3>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">date_range</i> Last 24 Hours
+                                            <i class="material-icons">date_range</i> In totale
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +227,7 @@
                                         <div class="card-icon">
                                             <i class="material-icons">info_outline</i>
                                         </div>
-                                        <p class="card-category">Fixed Issues</p>
+                                        <p class="card-category">Uscite</p>
                                         <h3 class="card-title">75</h3>
                                     </div>
                                     <div class="card-footer">
@@ -221,27 +237,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6 col-sm-6">
-                                <div class="card card-stats">
-                                    <div class="card-header card-header-info card-header-icon">
-                                        <div class="card-icon">
-                                            <i class="fa fa-twitter"></i>
-                                        </div>
-                                        <p class="card-category">Followers</p>
-                                        <h3 class="card-title">+245</h3>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="material-icons">update</i> Just Updated
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card card-chart">
-                                    <div class="card-header card-header-success">
+                                    <div class="card-header card-header-info">
                                         <div class="ct-chart" id="dailySalesChart"></div>
                                     </div>
                                     <div class="card-body">
@@ -276,28 +276,28 @@
                                         <div class="ct-chart" id="websiteViewsChart"></div>
                                     </div>
                                     <div class="card-body">
-                                        <h4 class="card-title">Email Subscriptions</h4>
-                                        <p class="card-category">Last Campaign Performance</p>
+                                        <h4 class="card-title">Iscrizioni email</h4>
+                                        <p class="card-category">Iscrizioni ultimo mese</p>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">access_time</i> campaign sent 2 days ago
+                                            <i class="material-icons">access_time</i> appena aggiornato
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="card card-chart">
-                                    <div class="card-header card-header-danger">
+                                    <div class="card-header card-header-success">
                                         <div class="ct-chart" id="completedTasksChart"></div>
                                     </div>
                                     <div class="card-body">
-                                        <h4 class="card-title">Completed Tasks</h4>
-                                        <p class="card-category">Last Campaign Performance</p>
+                                        <h4 class="card-title">Entrate</h4>
+                                        <p class="card-category">Entrate ultimo mese</p>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">access_time</i> campaign sent 2 days ago
+                                            <i class="material-icons">access_time</i> appena aggiornato
                                         </div>
                                     </div>
                                 </div>

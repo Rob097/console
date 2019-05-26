@@ -16,30 +16,51 @@
  */
 
 /*########################################################################*/
-    /*VARIABILI GLOBALI*/
-    
-var keyArray; /* Valore chiavi hashmap visualizzazioni ultime 4 settimane */
-var valueArray; /* Valore valori hashmap visualizzazioni ultime 4 settimane */
-var highest = 0;
+/*VARIABILI GLOBALI*/
 
-    /*########################################################################*/
+var keyMonthViews; /* Valore chiavi hashmap visualizzazioni ultime 4 settimane */
+var valueMonthViews; /* Valore valori hashmap visualizzazioni ultime 4 settimane */
+var highestMonthViews = 15; /* Valore per settare la dimensione del grafico */
+var copyMonthViews;
+
+var keyMonthEmailSub; /* Valore chiavi hashmap iscrizioni email ultime 4 settimane */
+var valueMonthEmailSub; /* Valore valori hashmap iscrizioni email ultime 4 settimane */
+var highestMonthEmailSub = 15; /* Valore per settare la dimensione del grafico */
+var copyMonthEmailSub;
+
+var keyMonthRevenue; /* Valore chiavi hashmap guadagni ultime 4 settimane */
+var valueMonthRevenue; /* Valore valori hashmap guadagni ultime 4 settimane */
+var highestMonthRevenue = 15; /* Valore per settare la dimensione del grafico */
+var totalRevenue; /* totale guadagni */
+var copyMonthRevenue;
+function printArrayValue(array){
+    var print = "";
+    for(var i = 0; i < array.length; i++){
+        print += "" + array[i] + " | ";
+    }
+    return print;
+}
+
+/*########################################################################*/
 
 
 /*########################################################################*/
-    /*METODI CHE DEVONO ESSERE ESEGUITI SUBITO*/
+/*METODI CHE DEVONO ESSERE ESEGUITI SUBITO*/
 
 
-    /*Setta i valori per l'hashmap delle visualizzazioni delle ultime 4 settimane*/
-    /*Funzione ajax con JSON*/
-    getMonthViewsJava();
+/*Setta i valori per l'hashmap delle visualizzazioni delle ultime 4 settimane*/
+/*Funzione ajax con JSON*/
+getMonthViewsJava();
+getMonthEmailSub();
+getMonthRevenue();
 
-
-    /*########################################################################*/
+/*########################################################################*/
 
 /*Setta i valori per l'hashmap delle visualizzazioni delle ultime 4 settimane*/
 function getMonthViewsJava() {
-    keyArray = [];
-    valueArray = [];
+    keyMonthViews = [];
+    valueMonthViews = [];
+    var i = 0;
     $.ajax({
         type: "GET",
         url: "/console/getMonthViews",
@@ -48,15 +69,78 @@ function getMonthViewsJava() {
             var graphData = jQuery.parseJSON(JSON.stringify(response));
             var c = 0;
             for (var key in graphData) {
-                keyArray.push("" + key);
-                valueArray.push(graphData[key]);
-                if(graphData[key] > highest){
-                    highest = graphData[key];
+                keyMonthViews.push("" + key);
+                valueMonthViews.push(graphData[key]);
+                if (graphData[key] > i) {
+                    i = graphData[key];
                 }
             }
+            copyMonthViews = valueMonthViews;
+            highestMonthViews = i;
+            md.initDashboardPageCharts();
         },
         error: function () {
-            alert("Errore get monthViews");
+            alert("Errore getMonthViewsJava");
+        }
+    });
+
+}
+
+/*Setta i valori per l'hashmap delle iscrizioni email delle ultime 4 settimane*/
+function getMonthEmailSub() {
+    keyMonthEmailSub = [];
+    valueMonthEmailSub = [];
+    var i = 0;
+    $.ajax({
+        type: "GET",
+        url: "/console/getMonthEmailSub",
+        dataType: "json",
+        success: function (response) {
+            var graphData = jQuery.parseJSON(JSON.stringify(response));
+            var c = 0;
+            for (var key in graphData) {
+                keyMonthEmailSub.push("" + key);
+                valueMonthEmailSub.push(graphData[key]);
+                if (graphData[key] > i) {
+                    i = graphData[key];
+                }
+            }
+            copyMonthEmailSub = valueMonthEmailSub;
+            highestMonthEmailSub = i;
+            md.initDashboardPageCharts();
+        },
+        error: function () {
+            alert("Errore getMonthEmailSub");
+        }
+    });
+
+}
+
+/*Setta i valori per l'hashmap dei guadagni delle ultime 4 settimane*/
+function getMonthRevenue() {
+    keyMonthRevenue = [];
+    valueMonthRevenue = [];
+    var i = 0;
+    $.ajax({
+        type: "GET",
+        url: "/console/getMonthRevenue",
+        dataType: "json",
+        success: function (response) {
+            var graphData = jQuery.parseJSON(JSON.stringify(response));
+            var c = 0;
+            for (var key in graphData) {
+                keyMonthRevenue.push("" + key);
+                valueMonthRevenue.push(graphData[key]);
+                if (graphData[key] > i) {
+                    i = graphData[key];
+                }
+            }
+            copyMonthRevenue = valueMonthRevenue;
+            highestMonthRevenue = i;
+            md.initDashboardPageCharts();
+        },
+        error: function () {
+            alert("Errore getMonthRevenue");
         }
     });
 
@@ -235,9 +319,9 @@ md = {
 
             /*Init del grafico visualizzazioni delle ultime 4 settimane (Copia in initDashboardPageCharts)*/
             dataDailySalesChart = {
-                labels: keyArray,
+                labels: keyMonthViews,
                 series: [
-                    valueArray
+                    valueMonthViews
                 ]
             };
 
@@ -359,25 +443,32 @@ md = {
 
             /*Init del grafico visualizzazioni delle ultime 4 settimane (Copia in initDocumentationCharts)*/
             dataDailySalesChart = {
-                labels: keyArray,
+                labels: keyMonthViews,
                 series: [
-                    valueArray
+                    valueMonthViews
                 ]
             };
-            
+            if (copyMonthViews !== undefined) {
+                optionsMonthViews = {
+                    title: printArrayValue(copyMonthViews)
+                };
+                $('#dailySalesChart').tooltip(optionsMonthViews);
+            }
             optionsDailySalesChart = {
                 lineSmooth: Chartist.Interpolation.cardinal({
                     tension: 0
                 }),
                 low: 0,
-                high: highest + 2, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                tooltip: "12",
+                high: highestMonthViews + 2, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
                 chartPadding: {
                     top: 0,
                     right: 0,
                     bottom: 0,
                     left: 0
-                },
-            }
+                }
+            };
+
 
             var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
 
@@ -388,18 +479,23 @@ md = {
             /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
 
             dataCompletedTasksChart = {
-                labels: ['12p', '3p', '6p', '9p', '12p', '3a', '6a', '9a'],
+                labels: keyMonthRevenue,
                 series: [
-                    [230, 750, 450, 300, 280, 240, 200, 190]
+                    valueMonthRevenue
                 ]
             };
-
+            if (copyMonthRevenue !== undefined) {
+                optionsMonthRevenue = {
+                    title: printArrayValue(copyMonthRevenue)
+                };
+                $('#completedTasksChart').tooltip(optionsMonthRevenue);
+            }
             optionsCompletedTasksChart = {
                 lineSmooth: Chartist.Interpolation.cardinal({
                     tension: 0
                 }),
                 low: 0,
-                high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                high: highestMonthRevenue + 2, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
                 chartPadding: {
                     top: 0,
                     right: 0,
@@ -417,18 +513,23 @@ md = {
             /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
 
             var dataWebsiteViewsChart = {
-                labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
+                labels: keyMonthEmailSub,
                 series: [
-                    [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
+                    valueMonthEmailSub
                 ]
             };
+            if (copyMonthEmailSub !== undefined) {
+                optionsMonthEmailSub = {
+                    title: printArrayValue(copyMonthEmailSub)
+                };
+                $('#websiteViewsChart').tooltip(optionsMonthEmailSub);
+            }
             var optionsWebsiteViewsChart = {
                 axisX: {
                     showGrid: false
                 },
                 low: 0,
-                high: 1000,
+                high: highestMonthEmailSub + 2,
                 chartPadding: {
                     top: 0,
                     right: 5,
