@@ -117,17 +117,22 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         for (int i : last.values()) {
             lastSum += i;
         }
-        System.out.println("1: " + currentSum);
-        System.out.println("2: " + lastSum);
-        double diff = (((currentSum - lastSum) / lastSum) * 100);
+        double diff;
+        if(lastSum == 0)
+            diff = 100;
+        else
+            diff = (((currentSum - lastSum) / lastSum) * 100);
         int diffI = (int) Math.round(diff);
         return diffI;
     }
 
     @Override
-    public Map<String, Integer> getMonthEmailSub() throws DAOException {
+    public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
+        if(isLast){
+            today = today.withMonth(today.getMonthValue()-1);
+        }
         LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         LocalDate secondMonday = previousMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         LocalDate thirdMonday = secondMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
@@ -170,6 +175,32 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         map.put(fourthMonday.format(formatter), fourth);
 
         return map;
+    }
+    
+    @Override
+    public int getEmailChanges() throws DAOException {
+        Map<String, Integer> current = getMonthEmailSub(false);
+        Map<String, Integer> last = getMonthEmailSub(true);
+        if (last == null) {
+            return 0;
+        }
+        double currentSum = 0;
+        double lastSum = 0;
+        for (int i : current.values()) {
+            currentSum += i;
+        }
+        for (int i : last.values()) {
+            lastSum += i;
+        }
+        System.out.println("1: " + currentSum);
+        System.out.println("2: " + lastSum);
+        double diff;
+        if(lastSum == 0)
+            diff = 100;
+        else
+            diff = (((currentSum - lastSum) / lastSum) * 100);
+        int diffI = (int) Math.round(diff);
+        return diffI;
     }
     
     @Override

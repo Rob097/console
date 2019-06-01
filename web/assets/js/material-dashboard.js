@@ -36,7 +36,10 @@ var copyMonthRevenue;
 function printArrayValue(array){
     var print = "";
     for(var i = 0; i < array.length; i++){
-        print += "" + array[i] + " | ";
+        print += "" + array[i].toFixed(2);
+        if(i+1 !== array.length){
+            print += " | ";
+        }
     }
     return print;
 }
@@ -880,3 +883,7 @@ function debounce(func, wait, immediate) {
     };
 }
 ;
+//Tooltip js
+$(document).ready(function () {
+    $("body").tooltip({selector: '[data-toggle=tooltip]'});
+});

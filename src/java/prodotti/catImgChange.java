@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dati;
+package prodotti;
 
-import com.google.gson.Gson;
-import database.daos.ConsoleDAO;
+import database.daos.CategoryDAO;
 import database.exceptions.DAOException;
 import database.factories.DAOFactory;
-import database.jdbc.JDBCConsoleDAO;
+import database.jdbc.JDBCCategoryDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -23,9 +21,9 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Roberto97
  */
-public class getMonthEmailSub extends HttpServlet {
+public class catImgChange extends HttpServlet {
 
-    ConsoleDAO consoledao = null;
+    CategoryDAO categorydao = null;
 
     @Override
     public void init() throws ServletException {
@@ -34,9 +32,9 @@ public class getMonthEmailSub extends HttpServlet {
         if (daoFactory == null) {
             throw new ServletException("Impossible to get dao factory for user storage system");
         }
-        consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
+        categorydao = new JDBCCategoryDAO(daoFactory.getConnection());
     }
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -49,16 +47,16 @@ public class getMonthEmailSub extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String data = new Gson().toJson(consoledao.getMonthEmailSub(false));
-            PrintWriter out = response.getWriter();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            out.print(data);
-            out.flush();
-            System.out.println("JSON: " + data);
+            String id = "", url = "";
+            if(request.getParameter("id") != null){
+                id = request.getParameter("id");
+            }   if(request.getParameter("url") != null){
+                url = request.getParameter("url");
+            }   categorydao.alterImg(id, url);
         } catch (DAOException ex) {
-            Logger.getLogger(getMonthViews.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
         }
+        response.sendRedirect("/console/prodotti.jsp");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

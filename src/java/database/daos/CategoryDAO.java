@@ -18,4 +18,6 @@ public interface CategoryDAO {
     public ArrayList<Categoria> getFreshCategories() throws DAOException;
     public ArrayList<Categoria> getConfCategories() throws DAOException;
     public Categoria getByName(String name) throws DAOException;
+    public Categoria getById(String id) throws DAOException;
+    public void alterImg(String id, String url) throws DAOException;
 }

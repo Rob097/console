@@ -19,7 +19,8 @@
         <title>
             Dashboard
         </title>
-        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!--     Fonts and icons     -->
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
@@ -27,79 +28,22 @@
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
         <!-- CSS Just for demo purpose, don't include it in your project -->
         <link href="assets/demo/demo.css" rel="stylesheet" />
+
+        <style>
+            @media(max-width: 1420px) and (min-width: 992px){
+                .card-icon{
+                    width: 100%;
+                    text-align: center;
+                    margin-bottom: 10px;
+                }
+            }
+        </style>
     </head>
 
     <body class="">
         <div class="wrapper ">
             <div class="sidebar" data-color="purple" data-background-color="white" data-image="assets/img/sidebar-1.jpg">
-                <!--
-                  Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-          
-                  Tip 2: you can also add an image using data-image tag
-                -->
-                <div class="logo">
-                    <a href="https://www.macelleriadellantonio.it" target="_blank" class="simple-text logo-normal">
-                        'L Bortoleto
-                    </a>
-                </div>
-                <div class="sidebar-wrapper">
-                    <ul class="nav">
-                        <li class="nav-item active  ">
-                            <a class="nav-link" href="./dashboard.html">
-                                <i class="material-icons">dashboard</i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./user.html">
-                                <i class="material-icons">person</i>
-                                <p>Profilo</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./tables.html">
-                                <i class="material-icons">content_paste</i>
-                                <p>Table List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./typography.html">
-                                <i class="material-icons">library_books</i>
-                                <p>Typography</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./icons.html">
-                                <i class="material-icons">bubble_chart</i>
-                                <p>Icons</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./map.html">
-                                <i class="material-icons">location_ons</i>
-                                <p>Maps</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./notifications.html">
-                                <i class="material-icons">notifications</i>
-                                <p>Notifications</p>
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="./rtl.html">
-                                <i class="material-icons">language</i>
-                                <p>RTL Support</p>
-                            </a>
-                        </li>
-                        <li class="nav-item active-pro ">
-                            <a class="nav-link" href="./upgrade.html">
-                                <i class="material-icons">unarchive</i>
-                                <p>Upgrade to PRO</p>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <!-- Load with javascript from /ajax -->
             </div>
             <div class="main-panel">
                 <!-- Navbar -->
@@ -179,7 +123,7 @@
                                             <i class="material-icons">remove_red_eye</i>
                                         </div>
                                         <p class="card-category">Visualizzazioni</p>
-                                        <h3 class="card-title">${consoledao.getWeekViews()}
+                                        <h3 class="card-title">n° ${consoledao.getWeekViews()}
                                         </h3>
                                     </div>
                                     <div class="card-footer">
@@ -189,14 +133,14 @@
                                     </div>
                                 </div>
                             </div>
-                                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="col-lg-3 col-md-6 col-sm-6">
                                 <div class="card card-stats">
                                     <div class="card-header card-header-warning card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">email</i>
                                         </div>
                                         <p class="card-category">Email Sub</p>
-                                        <h3 class="card-title">${consoledao.getTotalEmailSub()}</h3>
+                                        <h3 class="card-title">n° ${consoledao.getTotalEmailSub()}</h3>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
@@ -228,11 +172,11 @@
                                             <i class="material-icons">info_outline</i>
                                         </div>
                                         <p class="card-category">Uscite</p>
-                                        <h3 class="card-title">75</h3>
+                                        <h3 class="card-title" id="valoreUscite">€ </h3>
                                     </div>
                                     <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="material-icons">local_offer</i> Tracked from Github
+                                        <div class="stats" id="usciteDate">
+                                            <i class="material-icons">date_range</i>
                                         </div>
                                     </div>
                                 </div>
@@ -277,7 +221,21 @@
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">Iscrizioni email</h4>
-                                        <p class="card-category">Iscrizioni ultimo mese</p>
+                                        <p class="card-category">
+                                            <c:choose>
+                                                <c:when test="${consoledao.getEmailChanges() >= 0}">
+                                                    <span class="text-success">
+                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getEmailChanges()}% 
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-danger">
+                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getEmailChanges()}% 
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            </span> 
+                                            rispetto al mese scorso.</p></p>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
@@ -761,6 +719,30 @@
 
                     });
                 });
+            });
+        </script>
+        <script>
+            var initialDate = new Date(2018, 9, 31);
+            var today = new Date();
+            var payTimes = today.getUTCFullYear() - initialDate.getUTCFullYear();
+            if (today.getMonth() > initialDate.getMonth()) {
+                payTimes += 1;
+            }
+            var dominioCost = 38.50;
+            var hostCost = 79.51;
+            var tot = dominioCost + 0.22 * dominioCost + hostCost;
+            tot = tot.toFixed(2);
+
+            let formatted_initialDate = initialDate.getDate() + "-" + (initialDate.getMonth() + 1) + "-" + initialDate.getFullYear();
+
+            $('#valoreUscite').html($('#valoreUscite').html() + tot);
+            $('#usciteDate').html($('#usciteDate').html() + " Dal " + formatted_initialDate);
+
+        </script>
+        <script>
+            /* Preferiti modal */
+            $(function () {
+                $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
             });
         </script>
         <script>

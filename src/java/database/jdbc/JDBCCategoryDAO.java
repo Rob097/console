@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *JDBCDAO Per i metodi relativi alle categorie di Prodotti dell'ecommerce
@@ -142,5 +144,52 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO{
             return null;
         }
     }    
+
+    @Override
+    public Categoria getById(String id) throws DAOException {
+        int id1;
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie where id = ?")) {
+            id1 = Integer.parseInt(id);
+            stm.setInt(1, id1);
+            Categoria c = null;
+            
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    c = new Categoria();
+                    c.setId(rs.getInt("id"));
+                    c.setNome(rs.getString("nome"));
+                    c.setDescrizione(rs.getString("descrizione"));
+                    c.setImmagine(rs.getString("immagine"));
+                    c.setFreschi(rs.getBoolean("freschi"));
+                }
+                return c;
+            }
+        } catch (SQLException ex) {            
+            //throw new DAOException("Impossibile restituire il prodotto. (JDBCProductDAO, getProduct)", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public void alterImg(String id, String url) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement(
+                    "UPDATE categorie SET immagine = ? where id = ?"
+            )) {
+                try {
+                    stm.setString(1, url);
+                    stm.setString(2, id);
+
+                    if (stm.executeUpdate() == 1) {
+                    } else {
+                        throw new DAOException("Impossible to update image of category");
+                    }
+
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
     
 }
