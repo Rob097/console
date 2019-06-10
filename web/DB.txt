@@ -1,31 +1,27 @@
 FILE DI SPIEGAZIONE DI ALCUNI CODICI PRESENTI NEL DB
 
+SET GLOBAL event_scheduler = ON;
 
 ################################################################################
 
-EVENTO PER INSERIRE ALL'INTERNO DI 'views_week' UN NUOVO RECORD CON DATA LA DATA
+EVENTO PER INSERIRE ALL'INTERNO DI 'weeks_views' UN NUOVO RECORD CON DATA LA DATA
 DEL LUNEDì E COME VALORE LA SOMMA DI TUTTE LE VIEWS DELLE VARIE PAGINE FATTE IN
-QUELLA SETTIMANA PRESE DA 'week_views_page'. DOPODICHé TUTTE I VALORI DI VIEWS
-IN 'week_views_page' VENGONO SETTATI A 0 PER RICOMINCIARE LA SETTIMANA
+QUELLA SETTIMANA PRESE DA 'curr_week_views'. DOPODICHé TUTTE I VALORI IN 
+'curr_week_views' VENGONO eliminati PER RICOMINCIARE LA SETTIMANA
 
 
 DELIMITER $$    
 CREATE EVENT copy_week_views
 ON SCHEDULE
   EVERY 1 WEEK
-STARTS CURRENT_DATE + INTERVAL 3 DAY do
+STARTS CURRENT_DATE + INTERVAL 2 DAY do
 BEGIN
 
-  INSERT INTO `views_week`(week, views) VALUES (CURRENT_DATE - INTERVAL 7 DAY, (
-SELECT 
-    FORMAT(SUM(views),0) total
-FROM
-    week_views_page));
-    
-UPDATE 
-    week_views_page
-SET 
-    views = 0;
+    INSERT INTO `weeks_views`(pagina, week, views) 
+
+    SELECT pagina, CURRENT_DATE - INTERVAL 7 DAY AS date, SUM(`views`) AS views FROM curr_week_views group by pagina;
+
+    DELETE FROM `curr_week_views`;
     
 END $$
 DELIMITER ;

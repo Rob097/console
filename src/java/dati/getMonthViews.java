@@ -58,7 +58,7 @@ public class getMonthViews extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             out.print(data);
             out.flush();
-            System.out.println("JSON: " + data);
+            //System.out.println("JSON: " + data);
         } catch (DAOException ex) {
             Logger.getLogger(getMonthViews.class.getName()).log(Level.SEVERE, null, ex);
         }

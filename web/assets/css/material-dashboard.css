@@ -21,6 +21,9 @@
     background-color: rgba(0, 0, 0, 0.2);
     font-weight: bold;
 }
+.invisible{
+    display: none;
+}
 
 /* FINE Modififiche mie */
 /*     brand Colors              */
@@ -12907,11 +12910,11 @@ label {
     background-size: 100% 100%, 100% 100%, 0.9375rem 0.9375rem;
 }
 
-select,
+/*select,
 select.form-control {
     -moz-appearance: none;
     -webkit-appearance: none;
-}
+}*/
 
 @media (min-width: 576px) {
     .form-inline .input-group {

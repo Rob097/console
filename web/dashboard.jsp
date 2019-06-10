@@ -4,6 +4,10 @@
     Author     : Roberto97
 --%>
 
+<%@page import="java.time.DayOfWeek"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="java.time.temporal.TemporalAdjusters"%>
+<%@page import="java.time.LocalDate"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -19,7 +23,7 @@
         <title>
             Dashboard
         </title>
-        
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!--     Fonts and icons     -->
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
@@ -28,6 +32,8 @@
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
         <!-- CSS Just for demo purpose, don't include it in your project -->
         <link href="assets/demo/demo.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+
 
         <style>
             @media(max-width: 1420px) and (min-width: 992px){
@@ -128,7 +134,15 @@
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">date_range</i> Ultima settimana
+                                            <i class="material-icons">date_range</i> 
+                                            <c:choose>
+                                                <c:when test="${LocalDate.now().getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())}">
+                                                    Da oggi
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Dal ${LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -190,26 +204,37 @@
                                     </div>
                                     <div class="card-body">
                                         <h4 class="card-title">Visualizzazioni ultimo mese</h4>
-                                        <p class="card-category">
-
+                                        <p class="card-category" data-toggle="tooltip" title="Mese scorso: ${consoledao.getViewsChanges(true)}">
                                             <c:choose>
-                                                <c:when test="${consoledao.getViewsChanges() >= 0}">
+                                                <c:when test="${consoledao.getViewsChanges(false).equals('Dati insufficienti per un confronto')}">
+                                                    <span class="text-right">
+                                                        ${consoledao.getViewsChanges(false)}
+                                                    </span>
+                                                </c:when>
+                                                <c:when test="${!consoledao.getViewsChanges(false).equals('Dati insufficienti per un confronto') && consoledao.getViewsChanges(false) >= 0}">
                                                     <span class="text-success">
-                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getViewsChanges()}% 
+                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getViewsChanges(false)}% 
                                                     </span>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span class="text-danger">
-                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getViewsChanges()}% 
+                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getViewsChanges(false)}% 
                                                     </span>
                                                 </c:otherwise>
                                             </c:choose>
-                                            </span> 
                                             rispetto al mese scorso.</p>
                                     </div>
                                     <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="material-icons">access_time</i> appena aggiornato
+                                        <div class="stats" data-toggle="tooltip" title="Prossimo aggiornamento: ${LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}">
+                                            <i class="material-icons">access_time</i> Ultimo aggiornamento:  
+                                            <c:choose>
+                                                <c:when test="${LocalDate.now().getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())}">
+                                                    oggi
+                                                </c:when>
+                                                <c:otherwise>
+                                                    il ${LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -220,17 +245,17 @@
                                         <div class="ct-chart" id="websiteViewsChart"></div>
                                     </div>
                                     <div class="card-body">
-                                        <h4 class="card-title">Iscrizioni email</h4>
-                                        <p class="card-category">
+                                        <h4 class="card-title">Iscrizioni email ultimo mese</h4>
+                                        <p class="card-category" data-toggle="tooltip" title="Mese scorso: ${consoledao.getEmailChanges(true)}">
                                             <c:choose>
-                                                <c:when test="${consoledao.getEmailChanges() >= 0}">
+                                                <c:when test="${consoledao.getEmailChanges(false) >= 0}">
                                                     <span class="text-success">
-                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getEmailChanges()}% 
+                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getEmailChanges(false)}% 
                                                     </span>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span class="text-danger">
-                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getEmailChanges()}% 
+                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getEmailChanges(false)}% 
                                                     </span>
                                                 </c:otherwise>
                                             </c:choose>
@@ -239,7 +264,7 @@
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">access_time</i> appena aggiornato
+                                            <i class="material-icons">access_time</i> Ultimo aggiornamento: ${consoledao.getLastEmailSub()}
                                         </div>
                                     </div>
                                 </div>
@@ -250,12 +275,31 @@
                                         <div class="ct-chart" id="completedTasksChart"></div>
                                     </div>
                                     <div class="card-body">
-                                        <h4 class="card-title">Entrate</h4>
-                                        <p class="card-category">Entrate ultimo mese</p>
+                                        <h4 class="card-title">Entrate ultimo mese</h4>
+                                        <p class="card-category" data-toggle="tooltip" title="Mese scorso: € ${consoledao.getRevenueChanges(true)}">
+                                            <c:choose>
+                                                <c:when test="${consoledao.getRevenueChanges(false).equals('Dati insufficienti per un confronto')}">
+                                                    <span class="text-right">
+                                                        ${consoledao.getRevenueChanges(false)}
+                                                    </span>
+                                                </c:when>
+                                                <c:when test="${!consoledao.getRevenueChanges(false).equals('Dati insufficienti per un confronto') && consoledao.getRevenueChanges(false) >= 0}">
+                                                    <span class="text-success">
+                                                        <i class="fa fa-long-arrow-up"></i> ${consoledao.getRevenueChanges(false)}% 
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-danger">
+                                                        <i class="fa fa-long-arrow-down"></i> ${consoledao.getRevenueChanges(false)}% 
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose> 
+                                            rispetto al mese scorso.</p></p>
+                                        </p>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
-                                            <i class="material-icons">access_time</i> appena aggiornato
+                                            <i class="material-icons">access_time</i> Ultimo aggiornamento: ${consoledao.getLastRevenue()}
                                         </div>
                                     </div>
                                 </div>
@@ -265,292 +309,41 @@
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="card-header card-header-tabs card-header-primary">
-                                        <div class="nav-tabs-navigation">
-                                            <div class="nav-tabs-wrapper">
-                                                <span class="nav-tabs-title">Tasks:</span>
-                                                <ul class="nav nav-tabs" data-tabs="tabs">
-                                                    <li class="nav-item">
-                                                        <a class="nav-link active" href="#profile" data-toggle="tab">
-                                                            <i class="material-icons">bug_report</i> Bugs
-                                                            <div class="ripple-container"></div>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a class="nav-link" href="#messages" data-toggle="tab">
-                                                            <i class="material-icons">code</i> Website
-                                                            <div class="ripple-container"></div>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a class="nav-link" href="#settings" data-toggle="tab">
-                                                            <i class="material-icons">cloud</i> Server
-                                                            <div class="ripple-container"></div>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        <h3>Visualizzazioni per pagina</h3>
                                     </div>
                                     <div class="card-body">
-                                        <div class="tab-content">
-                                            <div class="tab-pane active" id="profile">
-                                                <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="" checked>
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="">
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="">
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                                            </td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="" checked>
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Create 4 Invisible User Experiences you Never Knew About</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="tab-pane" id="messages">
-                                                <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="" checked>
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                                            </td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="">
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="tab-pane" id="settings">
-                                                <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="">
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="" checked>
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                                            </td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-check">
-                                                                    <label class="form-check-label">
-                                                                        <input class="form-check-input" type="checkbox" value="" checked>
-                                                                        <span class="form-check-sign">
-                                                                            <span class="check"></span>
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            </td>
-                                                            <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                                            <td class="td-actions text-right">
-                                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                                                    <i class="material-icons">edit</i>
-                                                                </button>
-                                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                                                    <i class="material-icons">close</i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        <div class="chart" id="columnChart"></div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="material-icons">date_range</i> Fino  
+                                            <c:choose>
+                                                <c:when test="${LocalDate.now().getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())}">
+                                                    ad oggi
+                                                </c:when>
+                                                <c:otherwise>
+                                                    al ${LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="card-header card-header-warning">
-                                        <h4 class="card-title">Employees Stats</h4>
-                                        <p class="card-category">New employees on 15th September, 2016</p>
+                                    <div class="card-header card-header-tabs card-header-primary">
+                                        <h3>Vendita prodotti</h3>
                                     </div>
-                                    <div class="card-body table-responsive">
-                                        <table class="table table-hover">
-                                            <thead class="text-warning">
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Salary</th>
-                                            <th>Country</th>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Dakota Rice</td>
-                                                    <td>$36,738</td>
-                                                    <td>Niger</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Minerva Hooper</td>
-                                                    <td>$23,789</td>
-                                                    <td>Curaçao</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Sage Rodriguez</td>
-                                                    <td>$56,142</td>
-                                                    <td>Netherlands</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>4</td>
-                                                    <td>Philip Chaney</td>
-                                                    <td>$38,735</td>
-                                                    <td>Korea, South</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="card-body">
+                                        <div class="chart" id="pieProduct"></div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="material-icons">access_time</i> Ultimo aggiornamento: ${consoledao.getLastRevenue()}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -635,29 +428,33 @@
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <!-- Material Dashboard DEMO methods, don't include it in your project! -->
         <script src="assets/demo/demo.js"></script>
+        <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/prop-types@15.6.2/prop-types.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+        <script src="https://unpkg.com/react-apexcharts@1.1.0/dist/react-apexcharts.iife.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="js/apexChart.js"  type="text/javascript"></script>
         <script>
 
+        </script>
+        <script>
+            initColumnChart();
+            initPieChart();
         </script>
         <script>
             $(document).ready(function () {
                 $().ready(function () {
                     $sidebar = $('.sidebar');
-
                     $sidebar_img_container = $sidebar.find('.sidebar-background');
-
                     $full_page = $('.full-page');
-
                     $sidebar_responsive = $('body > .navbar-collapse');
-
                     window_width = $(window).width();
-
                     fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
-
                     $('.switch-sidebar-image input').change(function () {
                         $full_page_background = $('.full-page-background');
-
                         $input = $(this);
-
                         if ($input.is(':checked')) {
                             if ($sidebar_img_container.length != 0) {
                                 $sidebar_img_container.fadeIn('fast');
@@ -687,22 +484,15 @@
 
                     $('.switch-sidebar-mini input').change(function () {
                         $body = $('body');
-
                         $input = $(this);
-
                         if (md.misc.sidebar_mini_active == true) {
                             $('body').removeClass('sidebar-mini');
                             md.misc.sidebar_mini_active = false;
-
                             $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-
                         } else {
-
                             $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
-
                             setTimeout(function () {
                                 $('body').addClass('sidebar-mini');
-
                                 md.misc.sidebar_mini_active = true;
                             }, 300);
                         }
@@ -716,7 +506,6 @@
                         setTimeout(function () {
                             clearInterval(simulateWindowResize);
                         }, 1000);
-
                     });
                 });
             });
@@ -732,7 +521,6 @@
             var hostCost = 79.51;
             var tot = dominioCost + 0.22 * dominioCost + hostCost;
             tot = tot.toFixed(2);
-
             let formatted_initialDate = initialDate.getDate() + "-" + (initialDate.getMonth() + 1) + "-" + initialDate.getFullYear();
 
             $('#valoreUscite').html($('#valoreUscite').html() + tot);
@@ -749,7 +537,6 @@
             $(document).ready(function () {
                 // Javascript method's body can be found in assets/js/demos.js
                 md.initDashboardPageCharts();
-
             });
         </script>
     </body>

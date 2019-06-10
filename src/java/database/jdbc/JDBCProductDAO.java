@@ -12,15 +12,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *JDBCDAO Per i metodi relativi ai Prodotti dell'ecommerce
- * 
+ * JDBCDAO Per i metodi relativi ai Prodotti dell'ecommerce
+ *
  * @author Roberto97
  */
 public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     /**
-     * Questa è il costruttore e serve fondamentalmente per collegarsi alla connessione aperta con il DB
-     * 
+     * Questa è il costruttore e serve fondamentalmente per collegarsi alla
+     * connessione aperta con il DB
+     *
      * @param con E' la connessione al DB
      */
     public JDBCProductDAO(Connection con) {
@@ -29,8 +30,9 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     /**
      * Metodo che ritorna un arrayList di tutti i prodotti del DB<br>
-     * Lo uso in casi come per il ciclo per stampare tutti i prodotti,
-     * ma anche per salvare i prodotti in attributi di sessione (?)
+     * Lo uso in casi come per il ciclo per stampare tutti i prodotti, ma anche
+     * per salvare i prodotti in attributi di sessione (?)
+     *
      * @return Ritorna un arrayList di tutti i prodotti del DB
      * @throws DAOException
      */
@@ -50,7 +52,6 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
-                    p.setPeso(rs.getFloat("peso"));
                     prodotti.add(p);
                 }
 
@@ -62,8 +63,11 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     }
 
     /**
-     * Metodo che ritorna tutti i prodotti che sono classificati come prodotti freschi.<br>
-     * Quindi qguarda l'attributo boolean fresco dei prodotti nel DB e prende i true
+     * Metodo che ritorna tutti i prodotti che sono classificati come prodotti
+     * freschi.<br>
+     * Quindi qguarda l'attributo boolean fresco dei prodotti nel DB e prende i
+     * true
+     *
      * @return Ritorna un arrayList di tutti i prodotti FRESCHI del DB
      * @throws DAOException
      */
@@ -83,7 +87,6 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
-                    p.setPeso(rs.getFloat("peso"));
                     prodotti.add(p);
                 }
 
@@ -95,8 +98,11 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     }
 
     /**
-     * Metodo che ritorna tutti i prodotti che sono classificati come prodotti NON freschi.<br>
-     * Quindi qguarda l'attributo boolean fresco dei prodotti nel DB e prende i false
+     * Metodo che ritorna tutti i prodotti che sono classificati come prodotti
+     * NON freschi.<br>
+     * Quindi qguarda l'attributo boolean fresco dei prodotti nel DB e prende i
+     * false
+     *
      * @return Ritorna un arrayList di tutti i prodotti NON freschi del DB
      * @throws DAOException
      */
@@ -116,7 +122,6 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
-                    p.setPeso(rs.getFloat("peso"));
                     prodotti.add(p);
                 }
 
@@ -128,10 +133,15 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     }
 
     /**
-     * Metodo che serve a trovare tutti i prodotti di una determinata cattegoria di prodotti.<br>
-     * Guarda l'attributo categoria nel DB che è una foreign key alla tabella categoria.
-     * @param categoryName E' una Stringa con il nome della categoria da cercare i prodotti
-     * @return Ritorna un ArrayList di prodotti con attributo categoria uguale al parametro CategoryName
+     * Metodo che serve a trovare tutti i prodotti di una determinata cattegoria
+     * di prodotti.<br>
+     * Guarda l'attributo categoria nel DB che è una foreign key alla tabella
+     * categoria.
+     *
+     * @param categoryName E' una Stringa con il nome della categoria da cercare
+     * i prodotti
+     * @return Ritorna un ArrayList di prodotti con attributo categoria uguale
+     * al parametro CategoryName
      * @throws DAOException
      */
     @Override
@@ -158,7 +168,6 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
-                    p.setPeso(rs.getFloat("peso"));
                     prodotti.add(p);
                 }
 
@@ -171,6 +180,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     /**
      * Metodo per ritrovare un prodotto in base all'id
+     *
      * @param id
      * @return Ritorna un prodotto
      * @throws DAOException
@@ -193,7 +203,6 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
-                    p.setPeso(rs.getFloat("peso"));
                 }
                 return p;
             }
@@ -205,6 +214,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     /**
      * Metodo che ritorna la valutazione media di un prodotto.
+     *
      * @param id E' l'id del prodotto che si vuole conoscere la valutazione
      * @return Ritorna il valore della valutazione per esempio 4.5
      * @throws DAOException
@@ -227,8 +237,11 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     }
 
     /**
-     * Metodo che restituisce il numero di valutazioni per un determinato prodotto.
-     * @param id Indica l'id per cui si vuole conoscere il numero di valutazioni esistenti
+     * Metodo che restituisce il numero di valutazioni per un determinato
+     * prodotto.
+     *
+     * @param id Indica l'id per cui si vuole conoscere il numero di valutazioni
+     * esistenti
      * @return Ritorna il valore intero del numero di valutazioni.
      * @throws DAOException
      */
@@ -256,6 +269,57 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
             Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return val;
+    }
+
+    @Override
+    public void deleteProd(int id) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement(
+                "delete from prodotto where id = ?"
+        )) {
+            try {
+                stm.setInt(1, id);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error deleting prod " + id);
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException {
+        if (nome == null || descrizione == null || categoria == null || immagine == null) {
+        } else {
+            try (PreparedStatement stm = CON.prepareStatement(
+                    "UPDATE prodotto SET nome = ?, categoria = ?, immagine = ?, descrizione = ?, costo = ?, disponibile = ? WHERE id = ?;"
+            )) {
+                try {
+                    stm.setString(1, nome);
+                    stm.setString(2, categoria);
+                    stm.setString(3, immagine);
+                    stm.setString(4, descrizione);
+                    stm.setDouble(5, costo);
+                    stm.setBoolean(6, disponibile);
+                    stm.setInt(7, id);
+
+                    if (stm.executeUpdate() == 1) {
+                    } else {
+                        System.out.println("Error updating prod " + id);
+                    }
+
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
 }

@@ -15,13 +15,6 @@ public class costanti {
     
     public static int NUM_MOST_VIEWED_POSTS = 4;
     
-    public static float MIN_COSTO = 100;
-    public static float MAX_COSTO = 250;
-    
-    /* Costo box keatchen più la scatola protettiva obbligatoria */
-    public static double MIN_W_PRICE = 4.30+1.80;
-    public static double MED_W_PRICE = 5.40+1.80;
-    public static double MAX_W_PRICE = 6.40+2.50;
     
     public static final String USER = "info@macelleriadellantonio.it";
     public static final String PASS = "Bortoleto1";

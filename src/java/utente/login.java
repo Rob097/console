@@ -12,6 +12,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static utente.EncryptDecryptString.ATT_NAME;
+import static utente.EncryptDecryptString.encrypt;
 import static varie.costanti.CART_COOKIE_MAX_AGE;
 import static varie.costanti.PASS;
 import static varie.costanti.USER;
@@ -49,10 +51,11 @@ public class login extends HttpServlet {
         
         if (email.equals(USER) && password.equals(PASS)) {
 
-            request.getSession().setAttribute("LOGGED", true);
+            request.getSession().setAttribute(encrypt(ATT_NAME), encrypt(PASS));
 
             if (ricordami == true) {
-                Cookie logged = new Cookie("LOGGED", "true");
+                
+                Cookie logged = new Cookie(encrypt(ATT_NAME), encrypt(PASS));
                 logged.setPath(request.getContextPath());
                 logged.setMaxAge(CART_COOKIE_MAX_AGE);
                 response.addCookie(logged);
@@ -60,7 +63,7 @@ public class login extends HttpServlet {
             response.sendRedirect("dashboard.jsp");
 
         }else{   
-            request.getSession().setAttribute("LOGGED", false);
+            request.getSession().setAttribute(ATT_NAME, false);
             response.sendRedirect("login.jsp");            
         }
     }

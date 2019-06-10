@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import static utente.EncryptDecryptString.ATT_NAME;
+import static utente.EncryptDecryptString.encrypt;
 
 /**
  *
@@ -33,17 +35,17 @@ public class logout extends HttpServlet {
             throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
         HttpSession s = request.getSession();
-        System.out.println("in logout");
+        //System.out.println("in logout");
 
         for (Cookie cc : cookies) {
-            if (cc.getName().equals("LOGGED")) {
+            if (cc.getName().equals(encrypt(ATT_NAME))) {
                 cc.setValue("false");
                 cc.setMaxAge(0);
                 cc.setPath(request.getContextPath());
                 response.addCookie(cc);
             }
         }
-        s.setAttribute("LOGGED", null);
+        s.removeAttribute(encrypt(ATT_NAME));
         response.sendRedirect("/console/dashboard.jsp");
     }
 

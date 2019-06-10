@@ -19,12 +19,11 @@ public class Prodotto {
     private boolean disponibile;
     private int quantita;
     private boolean fresco;
-    private float peso;
 
     public Prodotto() {
     }
 
-    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco, float peso) {
+    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
@@ -34,7 +33,6 @@ public class Prodotto {
         this.disponibile = disponibile;
         this.quantita = quantita;
         this.fresco = fresco;
-        this.peso = peso;
     }    
 
     public int getId() {
@@ -107,14 +105,6 @@ public class Prodotto {
 
     public void setFresco(boolean fresco) {
         this.fresco = fresco;
-    }
-
-    public float getPeso() {
-        return peso;
-    }
-
-    public void setPeso(float peso) {
-        this.peso = peso;
     }
 
     @Override

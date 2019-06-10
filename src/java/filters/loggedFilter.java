@@ -19,6 +19,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import static utente.EncryptDecryptString.decrypt;
+import static utente.EncryptDecryptString.encrypt;
+import static varie.costanti.PASS;
 
 /**
  *
@@ -46,9 +49,9 @@ public class loggedFilter implements Filter {
             Cookie[] cookies = ((HttpServletRequest) request).getCookies();
             if (cookies != null) {
                 for (Cookie c : cookies) {
-                    if (c.getName().equals("LOGGED")) {
-                        if (c.getValue().equals("true")) {
-                            System.out.println("truedkf");
+                    if (c.getName().equals(encrypt("LOGGED"))) {
+                        if (c.getValue().equals(encrypt(PASS))) {
+                            //System.out.println("truedkf");
                             check = true;
                         }
                     }
@@ -57,9 +60,9 @@ public class loggedFilter implements Filter {
 
             HttpSession session = ((HttpServletRequest) request).getSession();
             if (session != null) {
-                if (session.getAttribute("LOGGED") != null && session.getAttribute("LOGGED").equals(true)) {
+                if (session.getAttribute(encrypt("LOGGED")) != null && session.getAttribute(encrypt("LOGGED")).equals(encrypt(PASS))) {
                     check = true;
-                    System.out.println("session trueòlsdm");
+                    //System.out.println("session trueòlsdm");                    
                 }
             }
         }
@@ -78,7 +81,7 @@ public class loggedFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        System.out.println("log filter");
+        //System.out.println("log filter");
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
@@ -88,7 +91,7 @@ public class loggedFilter implements Filter {
         String where = req.getRequestURI().replace(req.getContextPath(), "");
 
         doBeforeProcessing(request, response);
-        
+
         if (where.equals(login) || where.equals("/")) {
             if (check) {
                 res.sendRedirect(homeURI);
@@ -97,12 +100,10 @@ public class loggedFilter implements Filter {
             }
         } else {
 
-            
-
             Throwable problem = null;
 
             if (check) {
-                System.out.println("second if");
+                //System.out.println("second if");
                 try {
                     chain.doFilter(request, response);
                 } catch (IOException | ServletException t) {
@@ -124,7 +125,7 @@ public class loggedFilter implements Filter {
                     sendProcessingError(problem, response);
                 }
             } else {
-                System.out.println("else");
+                //System.out.println("else");
                 res.sendRedirect(loginURI);
             }
         }

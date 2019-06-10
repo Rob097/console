@@ -171,13 +171,14 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO{
     }
 
     @Override
-    public void alterImg(String id, String url) throws DAOException {
+    public void alterImg(String id, String nome, String url) throws DAOException {
         try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE categorie SET immagine = ? where id = ?"
+                    "UPDATE categorie SET immagine = ?, nome = ? where id = ?"
             )) {
                 try {
                     stm.setString(1, url);
-                    stm.setString(2, id);
+                    stm.setString(2, nome);
+                    stm.setString(3, id);
 
                     if (stm.executeUpdate() == 1) {
                     } else {

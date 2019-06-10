@@ -16,10 +16,15 @@ public interface ConsoleDAO {
     public int getWeekViews() throws DAOException;
     public Map<String, Integer> getMonthViews() throws DAOException;
     public Map<String, Integer> getLastMonthViews() throws DAOException;
-    public int getViewsChanges() throws DAOException;
+    public Object getViewsChanges(boolean lastValue) throws DAOException;
+    public Map<String, Integer> getPagesViews() throws DAOException;
     public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException;
-    public int getEmailChanges() throws DAOException;
+    public int getEmailChanges(boolean lastValue) throws DAOException;
     public String getTotalEmailSub() throws DAOException;
-    public Map<String, Double> getMonthRevenue() throws DAOException;
+    public Map<String, Double> getMonthRevenue(boolean isLast) throws DAOException;
+    public Object getRevenueChanges(boolean lastValue) throws DAOException;
     public String getTotalRevenue() throws DAOException;
+    public String getLastEmailSub() throws DAOException;
+    public String getLastRevenue() throws DAOException;
+    public Map<String, Integer> getProductBuy() throws DAOException;
 }

@@ -49,13 +49,13 @@ public class getMonthRevenue extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String data = new Gson().toJson(consoledao.getMonthRevenue());
+            String data = new Gson().toJson(consoledao.getMonthRevenue(false));
             PrintWriter out = response.getWriter();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             out.print(data);
             out.flush();
-            System.out.println("JSON: " + data);
+            //System.out.println("JSON: " + data);
         } catch (DAOException ex) {
             Logger.getLogger(getMonthViews.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -21,4 +21,6 @@ public interface ProductDAO{
     public Prodotto getProduct(int id) throws DAOException;
     public int getNumberRate(int id) throws DAOException;
     public double getRate(int id) throws DAOException;
+    public void deleteProd(int id) throws DAOException;
+    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException;
 }

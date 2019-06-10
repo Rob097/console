@@ -42,9 +42,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import static varie.costanti.MAX_W_PRICE;
-import static varie.costanti.MED_W_PRICE;
-import static varie.costanti.MIN_W_PRICE;
 
 /**
  * E' il filtro che analizza i cookie e salva in sessione
@@ -109,36 +106,24 @@ public class cookieFilter implements Filter {
                 try {
                     //Categorie
                     ArrayList<Categoria> categorie = categorydao.getAllCategories();
-                    session.setAttribute("allCategories", categorie);
                     session.setAttribute("categorydao", categorydao);
 
                     //Prodotti
                     ArrayList<Prodotto> prodotti = productdao.getAllProducts();
-                    session.setAttribute("allProducts", prodotti);
                     session.setAttribute("productdao", productdao);
 
                     //Ricette
                     ArrayList<Ricetta> ricette = ricettedao.getAllRecipes();
                     ArrayList<Commento> commenti = ricettedao.getAllComments();
-                    session.setAttribute("allRecipes", ricette);
-                    session.setAttribute("commenti", commenti);
                     session.setAttribute("ricettedao", ricettedao);
 
                     //Blog
                     ArrayList<CatBlog> CatBlog = catblogdao.getAllCatBlog();
                     ArrayList<Blog> Blog = blogdao.getAllBlogs();
                     ArrayList<CommBlog> CommBlog = commblogdao.getAllCommBlog();
-                    session.setAttribute("CatBlog", CatBlog);
-                    session.setAttribute("CommBlog", CommBlog);
-                    session.setAttribute("Blog", Blog);
                     session.setAttribute("catblogdao", catblogdao);
                     session.setAttribute("blogdao", blogdao);
                     session.setAttribute("commblogdao", commblogdao);
-                    
-                    //Costanti
-                    session.setAttribute("MIN_W_PRICE", MIN_W_PRICE);
-                    session.setAttribute("MED_W_PRICE", MED_W_PRICE);
-                    session.setAttribute("MAX_W_PRICE", MAX_W_PRICE);
 
                     //Console                    
                     session.setAttribute("consoledao", consoledao);
@@ -372,36 +357,24 @@ public class cookieFilter implements Filter {
                 try {
                     //Categorie
                     ArrayList<Categoria> categorie = categorydao.getAllCategories();
-                    session.setAttribute("allCategories", categorie);
                     session.setAttribute("categorydao", categorydao);
 
                     //Prodotti
                     ArrayList<Prodotto> prodotti = productdao.getAllProducts();
-                    session.setAttribute("allProducts", prodotti);
                     session.setAttribute("productdao", productdao);
 
                     //Ricette
                     ArrayList<Ricetta> ricette = ricettedao.getAllRecipes();
                     ArrayList<Commento> commenti = ricettedao.getAllComments();
-                    session.setAttribute("allRecipes", ricette);
-                    session.setAttribute("commenti", commenti);
                     session.setAttribute("ricettedao", ricettedao);
 
                     //Blog
                     ArrayList<CatBlog> CatBlog = catblogdao.getAllCatBlog();
                     ArrayList<Blog> Blog = blogdao.getAllBlogs();
                     ArrayList<CommBlog> CommBlog = commblogdao.getAllCommBlog();
-                    session.setAttribute("CatBlog", CatBlog);
-                    session.setAttribute("CommBlog", CommBlog);
-                    session.setAttribute("Blog", Blog);
                     session.setAttribute("catblogdao", catblogdao);
                     session.setAttribute("blogdao", blogdao);
                     session.setAttribute("commblogdao", commblogdao);
-                    
-                    //Costanti
-                    session.setAttribute("MIN_W_PRICE", MIN_W_PRICE);
-                    session.setAttribute("MED_W_PRICE", MED_W_PRICE);
-                    session.setAttribute("MAX_W_PRICE", MAX_W_PRICE);
 
                     //Console                    
                     session.setAttribute("consoledao", consoledao);

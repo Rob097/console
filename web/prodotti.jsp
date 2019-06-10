@@ -45,6 +45,9 @@
                 transform: scale(2.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
                 z-index: 1;
             }
+            .inputImg{
+                max-width: 180px;
+            }
         </style>
     </head>
 
@@ -145,13 +148,10 @@
                                                 <th>
                                                     N° Prodotti
                                                 </th>
-                                                <th>
-                                                    Azioni
-                                                </th>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="5" class="subDivisionTable"> Prodotti confezionati</td>
+                                                        <td colspan="4" class="subDivisionTable"> Prodotti confezionati</td>
                                                     </tr>
                                                     <c:forEach var="categoria" items="${categorydao.getConfCategories()}">
                                                         <tr>
@@ -159,23 +159,18 @@
                                                                 ${categoria.id}
                                                             </td>
                                                             <td>
-                                                                <div data-toggle="tooltip" title="Modifica l'immagine della categoria '${categoria.nome}'" onclick="catImgChange(${categoria.id});" class="image-liquid image-holder--original col-3 zoom" style="background-image: url('${categoria.immagine}');"></div>
+                                                                <div data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'" onclick="catImgChange(${categoria.id});" class="image-liquid image-holder--original col-3 zoom" style="background-image: url('${categoria.immagine}');"></div>
                                                             </td>
                                                             <td>
-                                                                ${categoria.nome}
+                                                                <a style="color:#333333;" href="#${categoria.nome}">${categoria.nome}</a>
                                                             </td>
                                                             <td>
                                                                 ${productdao.getAllProductsOfCategory(categoria.nome).size()}
                                                             </td>
-                                                            <td>
-                                                                <a href="#" data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'">
-                                                                    <i class="material-icons">refresh</i>
-                                                                </a>
-                                                            </td>
                                                         </tr>
                                                     </c:forEach>
                                                     <tr>
-                                                        <td colspan="5" class="subDivisionTable"> Prodotti freschi</td>
+                                                        <td colspan="4" class="subDivisionTable"> Prodotti freschi</td>
                                                     </tr>
                                                     <c:forEach var="categoria" items="${categorydao.getFreshCategories()}">
                                                         <tr>
@@ -183,7 +178,7 @@
                                                                 ${categoria.id}
                                                             </td>
                                                             <td>
-                                                                <div data-toggle="tooltip" title="Modifica l'immagine della categoria '${categoria.nome}'" onclick="catImgChange(${categoria.id});" class="image-liquid image-holder--original col-3 zoom" style="background-image: url('${categoria.immagine}');"></div>
+                                                                <div onclick="catImgChange(${categoria.id});" data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'" class="image-liquid image-holder--original col-3 zoom" style="background-image: url('${categoria.immagine}');"></div>
                                                             </td>
                                                             <td>
                                                                 ${categoria.nome}
@@ -191,11 +186,11 @@
                                                             <td>
                                                                 ${productdao.getAllProductsOfCategory(categoria.nome).size()}
                                                             </td>
-                                                            <td>
+                                                            <!--<td>
                                                                 <a href="#" data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'">
                                                                     <i class="material-icons">refresh</i>
                                                                 </a>
-                                                            </td>
+                                                            </td>-->
                                                         </tr>
                                                     </c:forEach>
                                                 </tbody>
@@ -207,8 +202,8 @@
                             <div class="col-md-12">
                                 <div class="card card-plain">
                                     <div class="card-header card-header-primary">
-                                        <h4 class="card-title mt-0"> Table on Plain Background</h4>
-                                        <p class="card-category"> Here is a subtitle for this table</p>
+                                        <h4 class="card-title mt-0"> Prodotti</h4>
+                                        <p class="card-category">Prodotti Confezionati</p>
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
@@ -218,121 +213,124 @@
                                                     ID
                                                 </th>
                                                 <th>
-                                                    Name
+                                                    Immagine
                                                 </th>
                                                 <th>
-                                                    Country
+                                                    Nome
                                                 </th>
                                                 <th>
-                                                    City
+                                                    Descrizione
                                                 </th>
                                                 <th>
-                                                    Salary
+                                                    Categoria
+                                                </th>
+                                                <th>
+                                                    Disponibilità
+                                                </th>
+                                                <th>
+                                                    Prezzo
                                                 </th>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            1
-                                                        </td>
-                                                        <td>
-                                                            Dakota Rice
-                                                        </td>
-                                                        <td>
-                                                            Niger
-                                                        </td>
-                                                        <td>
-                                                            Oud-Turnhout
-                                                        </td>
-                                                        <td>
-                                                            $36,738
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            2
-                                                        </td>
-                                                        <td>
-                                                            Minerva Hooper
-                                                        </td>
-                                                        <td>
-                                                            Curaçao
-                                                        </td>
-                                                        <td>
-                                                            Sinaai-Waas
-                                                        </td>
-                                                        <td>
-                                                            $23,789
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            3
-                                                        </td>
-                                                        <td>
-                                                            Sage Rodriguez
-                                                        </td>
-                                                        <td>
-                                                            Netherlands
-                                                        </td>
-                                                        <td>
-                                                            Baileux
-                                                        </td>
-                                                        <td>
-                                                            $56,142
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            4
-                                                        </td>
-                                                        <td>
-                                                            Philip Chaney
-                                                        </td>
-                                                        <td>
-                                                            Korea, South
-                                                        </td>
-                                                        <td>
-                                                            Overland Park
-                                                        </td>
-                                                        <td>
-                                                            $38,735
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            5
-                                                        </td>
-                                                        <td>
-                                                            Doris Greene
-                                                        </td>
-                                                        <td>
-                                                            Malawi
-                                                        </td>
-                                                        <td>
-                                                            Feldkirchen in Kärnten
-                                                        </td>
-                                                        <td>
-                                                            $63,542
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            6
-                                                        </td>
-                                                        <td>
-                                                            Mason Porter
-                                                        </td>
-                                                        <td>
-                                                            Chile
-                                                        </td>
-                                                        <td>
-                                                            Gloucester
-                                                        </td>
-                                                        <td>
-                                                            $78,615
-                                                        </td>
-                                                    </tr>
+                                                    <c:forEach var="categoria" items="${categorydao.getConfCategories()}">
+                                                        <tr>
+                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable"> ${categoria.nome}</td>
+                                                        </tr>
+                                                        <c:forEach var="prodotto" items="${productdao.getAllProductsOfCategory(categoria.nome)}">
+                                                            <tr style="cursor: pointer;" onclick="updateProd(${prodotto.id});">
+                                                                <td>
+                                                                    ${prodotto.id}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.nome}
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.descrizione}
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.categoria}
+                                                                </td>
+                                                                <td>
+                                                                    <c:if test="${prodotto.disponibile eq false}">Non </c:if>Disponibile
+                                                                    </td>
+                                                                    <td>
+                                                                        € ${prodotto.costo}
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="card card-plain">
+                                    <div class="card-header card-header-primary">
+                                        <h4 class="card-title mt-0"> Prodotti</h4>
+                                        <p class="card-category">Prodotti Freschi</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead class="">
+                                                <th>
+                                                    ID
+                                                </th>
+                                                <th>
+                                                    Immagine
+                                                </th>
+                                                <th>
+                                                    Nome
+                                                </th>
+                                                <th>
+                                                    Descrizione
+                                                </th>
+                                                <th>
+                                                    Categoria
+                                                </th>
+                                                <th>
+                                                    Disponibilità
+                                                </th>
+                                                <th>
+                                                    Prezzo
+                                                </th>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach var="categoria" items="${categorydao.getFreshCategories()}">
+                                                        <tr>
+                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable"> ${categoria.nome}</td>
+                                                        </tr>
+                                                        <c:forEach var="prodotto" items="${productdao.getAllProductsOfCategory(categoria.nome)}">
+                                                            <tr style="cursor: pointer;" onclick="updateProd(${prodotto.id});">
+                                                                <td>
+                                                                    ${prodotto.id}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.nome}
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.descrizione}
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.categoria}
+                                                                </td>
+                                                                <td>
+                                                                    <c:if test="${prodotto.disponibile eq false}">Non </c:if>Disponibile
+                                                                    </td>
+                                                                    <td>
+                                                                        € ${prodotto.costo}
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:forEach>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -382,8 +380,13 @@
 
         <!-- ###########################    MODALI   ###########################-->
 
-        <!-- Modal -->
-        <div class="modal fade" id="catImgChangeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        <!-- Cambio immagine categoria -->
+        <div class="modal fade" id="catImgChangeModal" tabindex="-1" role="dialog" aria-labelledby="catImgChangeModal"
+             aria-hidden="true">
+        </div>
+
+        <!-- Modifica prodotto -->
+        <div class="modal fade" id="updateProd" tabindex="-1" role="dialog" aria-labelledby="updateProd"
              aria-hidden="true">
         </div>
 
@@ -519,13 +522,15 @@
             });
         </script>
         <script>
-            /* Preferiti modal */
+            /* Sidebar */
             $(function () {
                 $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
             });
         </script>
         <script>
+            /* Cambio immagine categoria */
             function catImgChange(id) {
+                $('[role="tooltip"]').remove();
                 $.ajax({
                     type: "POST",
                     url: "ajax/catImgChangeModal.jsp",
@@ -533,12 +538,53 @@
                     cache: false,
                     success: function (response) {
                         $("#catImgChangeModal").html(response);
-                        $("#catImgChangeModal").modal();
+                        openModal('catImgChangeModal');
                     },
                     error: function () {
                         alert("Errore catImgChange");
                     }
-                });   
+                });
+            }
+
+            /* Update of Product */
+            function updateProd(id) {
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/updateProd.jsp",
+                    data: {id: id},
+                    cache: false,
+                    success: function (response) {
+                        $("#updateProd").html(response);
+                        openModal('updateProd');
+                    },
+                    error: function () {
+                        alert("Errore updateProd");
+                    }
+                });
+            }
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#InputIMG')
+                                .attr('src', e.target.result);
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            function openModal(id) {
+                $('body').addClass('modal-open');
+                $("#" + id).addClass('show');
+                $("#" + id).css({display: 'block'});
+                $('body').append('<div class="modal-backdrop fade show"></div>');
+            }
+            function closeModal() {
+                $('body').removeClass('modal-open');
+                $('.modal').removeClass('show');
+                $('.modal').css({display: 'none'});
+                $('.modal-backdrop').remove();
             }
         </script>
     </body>
