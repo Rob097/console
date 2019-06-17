@@ -13,17 +13,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *JDBCDAO Per i metodi relativi alle categorie del blog
- * 
+ * JDBCDAO Per i metodi relativi alle categorie del blog
+ *
  * @author Roberto97
  */
 public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
 
     /**
-     * Questa è il costruttore e serve fondamentalmente per collegarsi alla connessione aperta con il DB
-     * 
+     * Questa è il costruttore e serve fondamentalmente per collegarsi alla
+     * connessione aperta con il DB
+     *
      * @param con E' la connessione al DB
      */
     public JDBCCatBlogDAO(Connection con) {
@@ -32,6 +35,7 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
 
     /**
      * Metodo che restituisce tutte le categorie del blog.
+     *
      * @return Restituisce in un arraylist tutte le categorie del blog.
      * @throws DAOException
      */
@@ -39,16 +43,19 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
     public ArrayList<CatBlog> getAllCatBlog() throws DAOException {
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_cat")) {
             ArrayList<CatBlog> categorie = new ArrayList<>();
-
+            boolean check = false;
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
+                    check = true;
                     CatBlog c = new CatBlog();
                     c.setId_cat(rs.getInt("id_cat"));
                     c.setNome(rs.getString("nome"));
                     categorie.add(c);
                 }
-
-                return categorie;
+                if(check)
+                    return categorie;
+                else
+                    return null;
             }
         } catch (SQLException ex) {
             throw new DAOException("Impossibile restituire tutte le categorie del blog. (JDBCCatBlogDAO, getAllCatBlog)", ex);
@@ -56,14 +63,17 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
     }
 
     /**
-     * MEtodo che ritorna un intero che indica il numero di articoli di una particolare categoria.
+     * MEtodo che ritorna un intero che indica il numero di articoli di una
+     * particolare categoria.
+     *
      * @param cat Indica la categoria.
-     * @return Ritorna un intero che indica il numero di articoli di una particolare categoria
+     * @return Ritorna un intero che indica il numero di articoli di una
+     * particolare categoria
      * @throws DAOException
      */
     @Override
     public int getNumberOfBlog(String cat) throws DAOException {
-        if (cat.contains("'") || cat.contains("\"")) {
+        if (cat == null || cat.contains("'") || cat.contains("\"")) {
             return 0;
         } else {
             try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog where categoria = ?")) {
@@ -85,6 +95,7 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
 
     /**
      * Metodo che ritorna una categoria di articoli in base all'id.
+     *
      * @param id Indical'id della categoria di articoli che si sta cercando.
      * @return Ritorna un oggetto categoria di articoli.
      * @throws DAOException
@@ -95,7 +106,7 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
             stm.setInt(1, id);
             CatBlog c = new CatBlog();
             Boolean check = false;
-            
+
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     c.setId_cat(rs.getInt("id_cat"));
@@ -103,10 +114,11 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
                     check = true;
                 }
 
-                if(check)
+                if (check) {
                     return c;
-                else
+                } else {
                     return null;
+                }
             }
         } catch (SQLException ex) {
             throw new DAOException("Impossibile restituire la categoria dall'id. (JDBCCatBlogDAO, getCatById)", ex);
@@ -114,8 +126,10 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
     }
 
     /**
-     *Metodo che ritorna una categoria di articoli in base al nome.
-     * @param nome Indica il nome della categoria di articoli che si sta cercando.
+     * Metodo che ritorna una categoria di articoli in base al nome.
+     *
+     * @param nome Indica il nome della categoria di articoli che si sta
+     * cercando.
      * @return Ritorna un oggetto categoria di articoli.
      * @throws DAOException
      */
@@ -125,7 +139,7 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
             stm.setString(1, nome);
             CatBlog c = new CatBlog();
             Boolean check = false;
-            
+
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     c.setId_cat(rs.getInt("id_cat"));
@@ -133,13 +147,54 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
                     check = true;
                 }
 
-                if(check)
+                if (check) {
                     return c;
-                else
+                } else {
                     return null;
+                }
             }
         } catch (SQLException ex) {
             throw new DAOException("Impossibile restituire la categoria dal nome. (JDBCCatBlogDAO, getCatByName)", ex);
+        }
+    }
+
+    @Override
+    public void deleteCat(String nome) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement(
+                "delete from blog_cat where nome = ?"
+        )) {
+            try {
+                stm.setString(1, (nome));
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error deleting blog cat " + nome);
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void addCat(String nome) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement("insert into blog_cat (nome) VALUES (?)")) {
+            try {
+                stm.setString(1, nome);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    throw new DAOException("Impossible to add new blog cat");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

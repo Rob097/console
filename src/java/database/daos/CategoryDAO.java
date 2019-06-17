@@ -20,4 +20,6 @@ public interface CategoryDAO {
     public Categoria getByName(String name) throws DAOException;
     public Categoria getById(String id) throws DAOException;
     public void alterImg(String id, String nome, String url) throws DAOException;
+    public int addCategory(String nome, String descrizione, boolean fresco) throws DAOException;
+    public void deleteCat(int id) throws DAOException;
 }

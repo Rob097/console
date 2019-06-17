@@ -32,10 +32,16 @@
                 <p>Prodotti</p>
             </a>
         </li>
-        <li class="nav-item <c:if test='${param.page.equals("")}'> active </c:if>">
-            <a class="nav-link" href="./typography.html">
+        <li class="nav-item <c:if test='${param.page.equals("articoli") || param.page.equals("articolo")}'> active </c:if>">
+            <a class="nav-link" href="./articoli.jsp">
                 <i class="material-icons">library_books</i>
-                <p>Typography</p>
+                <p>Articoli Blog</p>
+            </a>
+        </li>
+        <li class="nav-item <c:if test='${param.page.equals("idee") || param.page.equals("idea")}'> active </c:if>">
+            <a class="nav-link" href="./idee.jsp">
+                <i class="material-icons">library_books</i>
+                <p>Idee in cucina</p>
             </a>
         </li>
         <li class="nav-item <c:if test='${param.page.equals("")}'> active </c:if>">

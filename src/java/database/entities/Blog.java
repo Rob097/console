@@ -6,6 +6,7 @@
 package database.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -17,25 +18,27 @@ public class Blog {
     private String categoria;
     private String nome;
     private String testo;
+    private String descrizione;
     private String immagine;
     private String creatore;
-    private Date data;
+    private Timestamp data;
     private int views;
 
     public Blog() {
     }
 
-    public Blog(int id, String categoria, String nome, String testo, String immagine, String creatore, Date data, int views) {
+    public Blog(int id, String categoria, String nome, String testo, String descrizione, String immagine, String creatore, Timestamp data, int views) {
         this.id = id;
         this.categoria = categoria;
         this.nome = nome;
         this.testo = testo;
+        this.descrizione = descrizione;
         this.immagine = immagine;
         this.creatore = creatore;
         this.data = data;
         this.views = views;
     }
-
+    
     public int getId() {
         return id;
     }
@@ -68,6 +71,14 @@ public class Blog {
         this.testo = testo;
     }
 
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
     public String getImmagine() {
         return immagine;
     }
@@ -84,11 +95,11 @@ public class Blog {
         this.creatore = creatore;
     }
 
-    public Date getData() {
+    public Timestamp getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(Timestamp data) {
         this.data = data;
     }
 

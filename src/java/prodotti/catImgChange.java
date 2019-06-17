@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.PASS;
+import static varie.utili.unaccent;
 
 /**
  *
@@ -52,61 +54,93 @@ public class catImgChange extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+        request.setCharacterEncoding("UTF-8");
+
+        if (request.getParameter("DELETE") != null && request.getParameter("DELETE").equals("true")) {
+            if (request.getParameter("password") != null && request.getParameter("password").equals(PASS)) {
+                String image = "", id = "";
+                if (request.getParameter("immagine") != null) {
+                    //Il replace viene fatto perchè altrimenti non trova l'immagine. 
+                    //E' da controllare che funzioni anche in cloud
+                    image = unaccent(request.getParameter("immagine").replace("../console", ""));
+                }
+                if (request.getParameter("id") != null) {
+                    id = request.getParameter("id");
+                }
+                try {
+
+                    categorydao.deleteCat(Integer.parseInt(id));
+                    String listsFolder;
+                    listsFolder = getServletContext().getRealPath(image);
+                    listsFolder = listsFolder.replace("\\build", "");
+                    //System.out.println("Image: " + image + "\nReal Path: " + getServletContext().getRealPath(image) + "\nlistFolder: " + listsFolder);
+                    try {
+                        ImageDispatcher.deleteImgFromDirectory(listsFolder);
+                    } catch (Exception e) {
+                        System.out.println("L'immagine non esiste");
+                    }
+
+                } catch (DAOException ex) {
+                    Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        } else {
             String id = "", url = "", nome = "";
             String immagine = request.getParameter("oldImg");
             Part filePart1 = null;
             boolean fresco = false;
-            
+
             if (request.getParameter("id") != null) {
                 id = request.getParameter("id");
             }
             if (request.getParameter("nome") != null) {
-                nome = request.getParameter("nome");
+                nome = unaccent(request.getParameter("nome"));
             }
             if (request.getPart("immagine") != null) {
                 filePart1 = request.getPart("immagine");
             }
             if (request.getParameter("fresco") != null) {
-                fresco = true;
+                fresco = request.getParameter("fresco").equals("true");
             }
-
-            //Load dell'immagine
-            if (filePart1 != null) {
-                if (filePart1.getContentType().contains("image/")) {
-                    String upload_directory = "";
-                    if (fresco) {
-                        upload_directory = UPLOAD_DIRECTORY + "freschi/";
-                    } else {
-                        upload_directory = UPLOAD_DIRECTORY + "confezionati/";
-                    }
-                    try {
-                        String listsFolder = obtainRootFolderPath(upload_directory);
-                        String extension = getImageExtension(filePart1);
-                        String imagineName = id + "." + extension;
-                        try {
-                            ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                        } catch (Exception e) {
-                            System.out.println("Nessuna immagine da cancellare");
+            try {
+                //Load dell'immagine
+                if (filePart1 != null) {
+                    if (filePart1.getContentType().contains("image/")) {
+                        String upload_directory = "";
+                        if (fresco) {
+                            upload_directory = UPLOAD_DIRECTORY + "freschi/";
+                        } else {
+                            upload_directory = UPLOAD_DIRECTORY + "confezionati/";
                         }
-                        ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
-                    } catch (RuntimeException e) {
-                        System.out.println("RuntimeException:");
-                        throw e;
-                    } catch (Exception e) {
-                        System.out.println("Exception:");
+                        try {
+                            String listsFolder = obtainRootFolderPath(upload_directory);
+                            String extension = getImageExtension(filePart1);
+                            String imagineName = id + "." + extension;
+                            try {
+                                ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
+                            } catch (Exception e) {
+                                System.out.println("Nessuna immagine da cancellare");
+                            }
+                            ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                        } catch (RuntimeException e) {
+                            System.out.println("RuntimeException:");
+                            throw e;
+                        } catch (Exception e) {
+                            System.out.println("Exception:");
+                        }
+                    } else {
+                        System.out.println("FilePart not in image/");
                     }
                 } else {
-                    System.out.println("FilePart not in image/");
+                    System.out.println("filePart = null");
                 }
-            } else {
-                System.out.println("filePart = null");
-            }
 
-            categorydao.alterImg(id, nome, immagine);
-        } catch (DAOException ex) {
-            Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
+                categorydao.alterImg(id, nome, immagine);
+            } catch (DAOException ex) {
+                Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         response.sendRedirect("/console/prodotti.jsp");
     }
@@ -123,6 +157,7 @@ public class catImgChange extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 
@@ -137,6 +172,7 @@ public class catImgChange extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 

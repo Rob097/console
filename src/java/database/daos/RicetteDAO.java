@@ -21,6 +21,10 @@ public interface RicetteDAO {
     public ArrayList<Ricetta> getMostViewedRecipes() throws DAOException;;
     public ArrayList<Ricetta> getByType(String type) throws DAOException;
     public int getTypeSize(String type) throws DAOException;
+    public ArrayList<String> getOurCreators() throws DAOException;
+    public ArrayList<String> getAllCreators() throws DAOException;
+    public void removeIng(int id, String ing) throws DAOException;
+    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria) throws DAOException;
     
     //Valutazione
     public int getNumberRate(int id) throws DAOException;

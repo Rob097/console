@@ -23,8 +23,10 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <img id="InputIMG" src="${prodotto.immagine}" alt="${prodotto.nome}_Modal_IMG" class="inputImg mb-3"/>
-                        <input type='file' name="immagine" onchange="readURL(this);"/> 
+                        <div style="height: 100%;">
+                            <img id="InputIMGUpdateProd" src="${prodotto.immagine}" alt="${prodotto.nome}_Modal_IMG" class="inputImg mb-3"/>
+                        </div>
+                        <input type='file' name="immagine" onchange="readURL(this, 'InputIMGUpdateProd');"/> 
                         <input type="hidden" name="oldImg" value="${prodotto.immagine}" required/>
                     </div>
                     <div class="col-md-6">
@@ -42,7 +44,17 @@
                                     </c:forEach>
                                 </c:otherwise>
                             </c:choose>
-                        </select>                       
+                        </select>
+                        <p class="text-muted">Prodotto 
+                            <c:choose>
+                                <c:when test="${prodotto.isFresco()}">
+                                    Fresco
+                                </c:when>
+                                <c:otherwise>
+                                    Confezionato
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
                     </div>
                 </div>  
                 <label class="mt-3" for="costo">Costo</label>
@@ -61,9 +73,17 @@
             <button onclick="$('#sureToDelete').removeClass('invisible')" id="delete_${prodotto.id}" type="button" class="btn btn-danger">Elimina</button>
         </div>
         <div class="text-center invisible" id="sureToDelete">
-            <p>Sicuro di eliminare '${prodotto.nome}' della categoria '${prodotto.categoria}' ?</p>
+            <c:choose>
+                <c:when test="${prodotto.categoria ne null}">
+                    <p>Sicuro di eliminare '${prodotto.nome}' della categoria '${prodotto.categoria}' ?</p>
+                </c:when>
+                <c:otherwise>
+                    <p>Sicuro di eliminare '${prodotto.nome}' ?</p>
+                </c:otherwise>
+            </c:choose>            
             <form method="POST" action="updateProd">
                 <input type="hidden" name="idProd" value="${prodotto.id}" required/>
+                <input type="hidden" name="immagine" value="${prodotto.immagine}" required/>
                 <input type="hidden" name="DELETE" value="true"/>
                 <button id="confirm_delete_${prodotto.id}" type="submit" class="btn btn-danger">Si</button>
                 <button onclick="$('#sureToDelete').addClass('invisible')" id="confirm_delete_${prodotto.id}" type="button" class="btn btn-secondary">Annulla</button>

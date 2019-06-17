@@ -18,4 +18,6 @@ public interface CatBlogDAO {
     public int getNumberOfBlog(String cat) throws DAOException;
     public CatBlog getCatById(int id) throws DAOException;
     public CatBlog getCatByName(String nome) throws DAOException;
+    public void addCat(String nome) throws DAOException;
+    public void deleteCat(String nome) throws DAOException;
 }

@@ -23,35 +23,19 @@
         <!--     Fonts and icons     -->
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- CSS Files -->
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
         <!-- CSS Just for demo purpose, don't include it in your project -->
-        <link href="assets/demo/demo.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
 
         <style>
-            .zoom {
-                padding: 50px;
-                background-color: transparent;
-                transition: transform .2s;
-                margin: 0 auto;
-                width: 50px;
-                height: 50px;
-                background-position: center center;
-                background-size: contain;
-                background-repeat: no-repeat;
-                cursor: pointer;
-            }
-            .zoom:hover {
-                transform: scale(2.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
-                z-index: 1;
-            }
-            .inputImg{
-                max-width: 180px;
-            }
+            
         </style>
     </head>
 
     <body class="">
+        <a class="rightGold" href="#topPage" id="myBtn45" title="Torna in cima"><i class="fas fa-arrow-up"></i></a>
         <div class="wrapper ">
             <div class="sidebar" data-color="purple" data-background-color="white" data-image="assets/img/sidebar-1.jpg">
                 <!-- Load with javascript from /ajax -->
@@ -61,7 +45,7 @@
                 <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
                     <div class="container-fluid">
                         <div class="navbar-wrapper">
-                            <a class="navbar-brand" href="#pablo">${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}</a>
+                            <a id="topPage" class="navbar-brand" href="#pablo">${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}</a>
                         </div>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="sr-only">Toggle navigation</span>
@@ -130,7 +114,8 @@
                                 <div class="card">
                                     <div class="card-header card-header-primary">
                                         <h4 class="card-title ">Categorie</h4>
-                                        <p class="card-category"> Categorie di prodotti</p>
+                                        <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addCategory"><i class="fas fa-plus"></i> Aggiungi categoria</a>                                       
+                                        <p class="card-category"> Categorie di prodotti</p>                                        
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
@@ -181,16 +166,11 @@
                                                                 <div onclick="catImgChange(${categoria.id});" data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'" class="image-liquid image-holder--original col-3 zoom" style="background-image: url('${categoria.immagine}');"></div>
                                                             </td>
                                                             <td>
-                                                                ${categoria.nome}
+                                                                <a style="color:#333333;" href="#${categoria.nome}">${categoria.nome}</a>
                                                             </td>
                                                             <td>
                                                                 ${productdao.getAllProductsOfCategory(categoria.nome).size()}
                                                             </td>
-                                                            <!--<td>
-                                                                <a href="#" data-toggle="tooltip" title="Aggiorna i dati della categoria '${categoria.nome}'">
-                                                                    <i class="material-icons">refresh</i>
-                                                                </a>
-                                                            </td>-->
                                                         </tr>
                                                     </c:forEach>
                                                 </tbody>
@@ -203,6 +183,7 @@
                                 <div class="card card-plain">
                                     <div class="card-header card-header-primary">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
+                                        <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addConfezionato"><i class="fas fa-plus"></i> Aggiungi prodotto confezionato</a>                                       
                                         <p class="card-category">Prodotti Confezionati</p>
                                     </div>
                                     <div class="card-body">
@@ -272,6 +253,7 @@
                                 <div class="card card-plain">
                                     <div class="card-header card-header-primary">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
+                                        <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addFresco"><i class="fas fa-plus"></i> Aggiungi prodotto fresco</a>                                       
                                         <p class="card-category">Prodotti Freschi</p>
                                     </div>
                                     <div class="card-body">
@@ -337,6 +319,69 @@
                                     </div>
                                 </div>
                             </div>
+                            <c:if test="${productdao.getNullCategoryProducts() ne null}">
+                                <div class="col-md-12">
+                                    <div class="card card-plain">
+                                        <div class="card-header card-header-primary">
+                                            <h4 class="card-title mt-0"> Prodotti</h4>                                      
+                                            <p class="card-category">Prodotti senza categoria</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead class="">
+                                                    <th>
+                                                        ID
+                                                    </th>
+                                                    <th>
+                                                        Immagine
+                                                    </th>
+                                                    <th>
+                                                        Nome
+                                                    </th>
+                                                    <th>
+                                                        Descrizione
+                                                    </th>
+                                                    <th>
+                                                        Disponibilità
+                                                    </th>
+                                                    <th>
+                                                        Prezzo
+                                                    </th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach var="prodotto" items="${productdao.getNullCategoryProducts()}">
+                                                            <tr style="cursor: pointer;" onclick="updateProd(${prodotto.id});">
+                                                                <td>
+                                                                    ${prodotto.id}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.nome}
+                                                                </td>
+                                                                <td>
+                                                                    ${prodotto.descrizione}
+                                                                </td>
+                                                                <td>
+                                                                    <c:if test="${prodotto.disponibile eq false}">
+                                                                        Non 
+                                                                    </c:if>
+                                                                    Disponibile
+                                                                </td>
+                                                                <td>
+                                                                    € ${prodotto.costo}
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -390,6 +435,114 @@
              aria-hidden="true">
         </div>
 
+        <!-- Add new Category -->
+        <div class="modal fade" id="addCategory" tabindex="-1" role="dialog" aria-labelledby="updateProd" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content container">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="catImgChangeTitle">Nuova categoria</h5>
+                        <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="addCategory" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="text-center mb-4">
+                                <img id="InputIMGCat" src="" alt="Modal_IMG_Cat" class="inputImg mb-3 invisible"/>
+                                <input type='file' name="immagine" onchange="readURL(this, 'InputIMGCat'); $('#InputIMGCat').removeClass('invisible');"/>
+                            </div>
+                            <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                            <textarea name="descrizione" class="form-control mb-4" placeholder="Descrizione" required></textarea>
+                            <input type="checkbox" name="fresco"/> Fresco
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
+                        <button id="catImgChangeSubmit" type="submit" class="btn btn-primary">Salva</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Confezionato -->
+        <div class="modal fade" id="addConfezionato" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content container">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="catImgChangeTitle">Nuovo prodotto confezionato</h5>
+                        <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="addProduct" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <div style="height: 100%;" id="toDeleteConf"></div>
+                                    <img id="InputIMGConf" src="" alt="Modal_IMG_Conf" class="inputImg mb-3 invisible"/>
+                                    <input type='file' name="immagine" onchange="readURL(this, 'InputIMGConf'); $('#InputIMGConf').removeClass('invisible'); $('#toDeleteConf').addClass('invisible');" required/>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                                    <select class="form-control mb-4" id="categoria" name="categoria" required>
+                                        <c:forEach var="cat" items="${categorydao.getConfCategories()}">
+                                            <option>${cat.nome}</option>
+                                        </c:forEach>
+                                    </select>                       
+                                </div>
+                            </div>
+                            <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
+                            <textarea name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                            <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
+                            <input type="hidden" name="fresco" value="false" required />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
+                            <button id="catImgChangeSubmit" type="submit" class="btn btn-primary">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Fresco -->
+        <div class="modal fade" id="addFresco" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content container">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="catImgChangeTitle">Nuovo prodotto fresco</h5>
+                        <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" action="addProduct" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <div style="height: 100%;" id="toDeleteFresc"></div>
+                                    <img id="InputIMGFresc" src="" alt="Modal_IMG_Fresc" class="inputImg mb-3 invisible"/>
+                                    <input type='file' name="immagine" onchange="readURL(this, 'InputIMGFresc'); $('#InputIMGFresc').removeClass('invisible'); $('#toDeleteFresc').addClass('invisible');" required/>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                                    <select class="form-control mb-4" id="categoria" name="categoria" required>
+                                        <c:forEach var="cat" items="${categorydao.getFreshCategories()}">
+                                            <option>${cat.nome}</option>
+                                        </c:forEach>
+                                    </select>                       
+                                </div>
+                            </div>
+                            <input pattern="[0-9]+(.|,)+[0-9]{1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
+                            <textarea name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                            <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
+                            <input type="hidden" name="fresco" value="true" required />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
+                            <button id="catImgChangeSubmit" type="submit" class="btn btn-primary">Salva</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <!-- ###########################    FINE MODALI   ###########################-->
 
         <!--   Core JS Files   -->
@@ -397,44 +550,45 @@
         <script src="assets/js/core/popper.min.js"></script>
         <script src="assets/js/core/bootstrap-material-design.min.js"></script>
         <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-        <!-- Plugin for the momentJs  -->
+        <!-- Plugin for the momentJs 
         <script src="assets/js/plugins/moment.min.js"></script>
-        <!--  Plugin for Sweet Alert -->
+        <!--  Plugin for Sweet Alert 
         <script src="assets/js/plugins/sweetalert2.js"></script>
-        <!-- Forms Validations Plugin -->
+        <!-- Forms Validations Plugin 
         <script src="assets/js/plugins/jquery.validate.min.js"></script>
-        <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+        <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard 
         <script src="assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-        <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+        <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select 
         <script src="assets/js/plugins/bootstrap-selectpicker.js"></script>
-        <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+        <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ 
         <script src="assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
-        <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
+        <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  
         <script src="assets/js/plugins/jquery.dataTables.min.js"></script>
-        <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+        <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs 
         <script src="assets/js/plugins/bootstrap-tagsinput.js"></script>
-        <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+        <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput
         <script src="assets/js/plugins/jasny-bootstrap.min.js"></script>
-        <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+        <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar 
         <script src="assets/js/plugins/fullcalendar.min.js"></script>
-        <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+        <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/
         <script src="assets/js/plugins/jquery-jvectormap.js"></script>
-        <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+        <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ 
         <script src="assets/js/plugins/nouislider.min.js"></script>
-        <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+        <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert
         <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-        <!-- Library for adding dinamically elements -->
+        <!-- Library for adding dinamically elements 
         <script src="assets/js/plugins/arrive.min.js"></script>
-        <!--  Google Maps Plugin    -->
+        <!--  Google Maps Plugin 
         <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
         <!-- Chartist JS -->
         <script src="assets/js/plugins/chartist.min.js"></script>
-        <!--  Notifications Plugin    -->
+        <!--  Notifications Plugin   
         <script src="assets/js/plugins/bootstrap-notify.js"></script>
         <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-        <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-        <script src="assets/demo/demo.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
+        <!-- Material Dashboard DEMO methods, don't include it in your project!
+        <script src="assets/demo/demo.js"></script>-->
         <script>
 
         </script>
@@ -562,18 +716,7 @@
                     }
                 });
             }
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        $('#InputIMG')
-                                .attr('src', e.target.result);
-                    };
-
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
+            
             function openModal(id) {
                 $('body').addClass('modal-open');
                 $("#" + id).addClass('show');

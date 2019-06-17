@@ -18,4 +18,8 @@ public interface BlogDAO {
     public Blog getBlogById(int id) throws DAOException;
     public ArrayList<Blog> getBlogByCat(String cat) throws DAOException;
     public ArrayList<Blog> getMostViewedBlog() throws DAOException;
+    public ArrayList<String> getAllCreators() throws DAOException;
+    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione) throws DAOException;
+    public void deleteBlog(String id)  throws DAOException;
+    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione) throws DAOException;
 }

@@ -418,7 +418,6 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getProductBuy() throws DAOException {
-        
         HashMap<String, Integer> dati = new HashMap<>();
         boolean check = false;
         try (PreparedStatement stm = CON.prepareStatement("select nome, num_acquisti from prodotto")) {

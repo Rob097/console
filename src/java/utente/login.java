@@ -35,6 +35,7 @@ public class login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
 
         String email = "", password = "";
         Boolean ricordami = false;
@@ -80,6 +81,7 @@ public class login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 
@@ -94,6 +96,7 @@ public class login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 

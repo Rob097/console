@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import static varie.utili.obtainRootFolderPath;
+import static varie.utili.unaccent;
 
 /**
  *
@@ -52,39 +54,61 @@ public class updateProd extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
         int idProd = 0;
-        String nome = null, descrizione = null, categoria = null;
-        String immagine = request.getParameter("oldImg");
-        Part filePart1 = null;
-        double costo = 0;
-        boolean fresco = false, disponibile = false;
+        if (request.getParameter("idProd") != null) {
+            idProd = Integer.parseInt(request.getParameter("idProd"));
+        }
 
         if (request.getParameter("DELETE") != null && request.getParameter("DELETE").equals("true")) {
             if (request.getParameter("idProd") != null) {
+                String image = "";
+                if (request.getParameter("immagine") != null) {
+                    //Il replace viene fatto perchè altrimenti non trova l'immagine. 
+                    //E' da controllare che funzioni anche in cloud
+                    image = unaccent(request.getParameter("immagine").replace("../console", ""));
+                }
                 try {
-                    idProd = Integer.parseInt(request.getParameter("idProd"));
+
+                    String listsFolder;
+                    listsFolder = getServletContext().getRealPath(image);
+                    if (listsFolder != null) {
+                        listsFolder = listsFolder.replace("\\build", "");
+                    }
+                    //System.out.println("Image: " + image + "\nReal Path: " + getServletContext().getRealPath(image) + "\nlistFolder: " + listsFolder);
+                    try {
+                        ImageDispatcher.deleteImgFromDirectory(listsFolder);
+                    } catch (Exception e) {
+                        System.out.println("L'immagine non esiste");
+                    }
                     productdao.deleteProd(idProd);
                 } catch (DAOException ex) {
-                    Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         } else {
+
+            String nome = null, descrizione = null, categoria = null;
+            String immagine = null;
+            Part filePart1 = null;
+            double costo = 0;
+            boolean fresco = false, disponibile = false;
             try {
-                if (request.getParameter("idProd") != null) {
-                    idProd = Integer.parseInt(request.getParameter("idProd"));
-                }
+
                 if (request.getParameter("nome") != null) {
-                    nome = request.getParameter("nome");
+                    nome = unaccent(request.getParameter("nome"));
                 }
                 if (request.getParameter("descrizione") != null) {
-                    descrizione = request.getParameter("descrizione");
+                    descrizione = unaccent(request.getParameter("descrizione"));
                 }
                 if (request.getPart("immagine") != null) {
                     filePart1 = request.getPart("immagine");
                 }
+                if (request.getParameter("oldImg") != null) {
+                    immagine = request.getParameter("oldImg");
+                }
                 if (request.getParameter("categoria") != null) {
-                    categoria = request.getParameter("categoria");
+                    categoria = unaccent(request.getParameter("categoria"));
                 }
                 if (request.getParameter("costo") != null) {
                     costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
@@ -100,10 +124,10 @@ public class updateProd extends HttpServlet {
                         if (fresco) {
                             upload_directory = UPLOAD_DIRECTORY + "freschi/";
                         } else {
-                            upload_directory = UPLOAD_DIRECTORY +  "confezionati/";
+                            upload_directory = UPLOAD_DIRECTORY + "confezionati/";
                         }
                         try {
-                            String listsFolder = obtainRootFolderPath(upload_directory);
+                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext());
                             String extension = getImageExtension(filePart1);
                             String imagineName = idProd + "." + extension;
                             try {
@@ -125,7 +149,7 @@ public class updateProd extends HttpServlet {
                 } else {
                     System.out.println("filePart = null");
                 }
-                
+
                 productdao.alterProd(idProd, nome, descrizione, categoria, immagine, disponibile, costo);
 
             } catch (Exception ex) {
@@ -134,7 +158,7 @@ public class updateProd extends HttpServlet {
 
         }
 
-        response.sendRedirect("/console/prodotti.jsp#"+categoria);
+        response.sendRedirect("/console/prodotti.jsp");
 
     }
 
@@ -147,22 +171,5 @@ public class updateProd extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    /**
-     * Questo metodo restituisce il percorso il percorso alla directory
-     *
-     * @param relativePath se questa stringa è vuota allora il metodo
-     * restituisce il percorso a "...Web/" altrimenti restituisce il percroso
-     * alla cartella "...Web/[relativePath]" Esempio: relativePath =
-     * "Image/AvatarImg"
-     * @return web/Image/AvatarImg
-     */
-    public String obtainRootFolderPath(String relativePath) {
-        String folder;
-        folder = relativePath;
-        folder = getServletContext().getRealPath(folder);
-        folder = folder.replace("\\build", "");
-        return folder;
-    }
 
 }

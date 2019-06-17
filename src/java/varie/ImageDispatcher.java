@@ -102,7 +102,8 @@ public class ImageDispatcher {
      * @return [reative path] + imgName.jpg
      */
     public static String savePathImgInDatabsae(String relativePath, String imgName){
-        String immagine = "http://www.macelleriadellantonio.it/console";
+        String immagine = "../console";
+        //String immagine = "http://www.macelleriadellantonio.it/console";
         immagine += relativePath + imgName;
         immagine = immagine.replaceAll("\\s+", "");
         return immagine;

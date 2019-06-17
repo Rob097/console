@@ -33,6 +33,7 @@ public class logout extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
         Cookie[] cookies = request.getCookies();
         HttpSession s = request.getSession();
         //System.out.println("in logout");
@@ -61,6 +62,7 @@ public class logout extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 
@@ -75,6 +77,7 @@ public class logout extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 

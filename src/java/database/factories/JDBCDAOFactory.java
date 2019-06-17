@@ -38,9 +38,9 @@ public class JDBCDAOFactory implements DAOFactory{
         } else {
             throw new DAOFactoryException("DAOFactory already configured");
         }
-         if (instance == null) {
+         /*if (instance == null) {
             throw new DAOFactoryException("DAOFactory not yet configured. Call DAOFactory.getInstnce() before use the class");
-        }
+        }*/
         return instance;
     }
     //Costruttore

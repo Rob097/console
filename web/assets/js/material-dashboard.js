@@ -15,6 +15,19 @@
  
  */
 
+
+function readURL(input, id) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#' + id).attr('src', e.target.result);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 /*########################################################################*/
 /*VARIABILI GLOBALI*/
 
@@ -33,11 +46,11 @@ var valueMonthRevenue; /* Valore valori hashmap guadagni ultime 4 settimane */
 var highestMonthRevenue = 15; /* Valore per settare la dimensione del grafico */
 var totalRevenue; /* totale guadagni */
 var copyMonthRevenue;
-function printArrayValue(array){
+function printArrayValue(array) {
     var print = "";
-    for(var i = 0; i < array.length; i++){
+    for (var i = 0; i < array.length; i++) {
         print += "" + array[i].toFixed(2);
-        if(i+1 !== array.length){
+        if (i + 1 !== array.length) {
             print += " | ";
         }
     }

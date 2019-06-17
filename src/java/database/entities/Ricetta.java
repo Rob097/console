@@ -5,7 +5,7 @@
  */
 package database.entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -18,23 +18,25 @@ public class Ricetta {
     private String nome;
     private ArrayList<String> ingredienti;
     private String procedimento;
+    private String descrizione;
     private String immagine;
     private int tempo;
     private String difficolta;
     private String creatore;
-    private Date data;
+    private Timestamp data;
     private int views;
     private boolean category;
 
     public Ricetta() {
     }
 
-    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String immagine, int tempo, String difficolta, String creatore, Date data, int views, boolean category) {
+    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category) {
         this.id = id;
         this.id_prod = id_prod;
         this.nome = nome;
         this.ingredienti = ingredienti;
         this.procedimento = procedimento;
+        this.descrizione = descrizione;
         this.immagine = immagine;
         this.tempo = tempo;
         this.difficolta = difficolta;
@@ -43,7 +45,7 @@ public class Ricetta {
         this.views = views;
         this.category = category;
     }
-
+    
     public int getId() {
         return id;
     }
@@ -84,6 +86,14 @@ public class Ricetta {
         this.procedimento = procedimento;
     }
 
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
     public String getImmagine() {
         return immagine;
     }
@@ -116,11 +126,11 @@ public class Ricetta {
         this.creatore = creatore;
     }
 
-    public Date getData() {
+    public Timestamp getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(Timestamp data) {
         this.data = data;
     }
 

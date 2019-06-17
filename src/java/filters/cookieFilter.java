@@ -7,14 +7,6 @@ import database.daos.CommBlogDAO;
 import database.daos.ConsoleDAO;
 import database.daos.ProductDAO;
 import database.daos.RicetteDAO;
-import database.entities.Blog;
-import database.entities.CatBlog;
-import database.entities.Categoria;
-import database.entities.CommBlog;
-import database.entities.Commento;
-import database.entities.Prodotto;
-import database.entities.Ricetta;
-import database.exceptions.DAOException;
 import database.exceptions.DAOFactoryException;
 import database.factories.DAOFactory;
 import database.factories.JDBCDAOFactory;
@@ -30,7 +22,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
@@ -95,58 +86,42 @@ public class cookieFilter implements Filter {
      */
     private void doBeforeProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException, DAOFactoryException {
-        if (DEBUG) {
+        /*if (DEBUG) {
             log("cookieFilter:DoBeforeProcessing");
-        }
+        }*/
 
         if (request instanceof HttpServletRequest) {
 
             HttpSession session = ((HttpServletRequest) request).getSession();
             if (session != null) {
-                try {
-                    //Categorie
-                    ArrayList<Categoria> categorie = categorydao.getAllCategories();
-                    session.setAttribute("categorydao", categorydao);
-
-                    //Prodotti
-                    ArrayList<Prodotto> prodotti = productdao.getAllProducts();
-                    session.setAttribute("productdao", productdao);
-
-                    //Ricette
-                    ArrayList<Ricetta> ricette = ricettedao.getAllRecipes();
-                    ArrayList<Commento> commenti = ricettedao.getAllComments();
-                    session.setAttribute("ricettedao", ricettedao);
-
-                    //Blog
-                    ArrayList<CatBlog> CatBlog = catblogdao.getAllCatBlog();
-                    ArrayList<Blog> Blog = blogdao.getAllBlogs();
-                    ArrayList<CommBlog> CommBlog = commblogdao.getAllCommBlog();
-                    session.setAttribute("catblogdao", catblogdao);
-                    session.setAttribute("blogdao", blogdao);
-                    session.setAttribute("commblogdao", commblogdao);
-
-                    //Console                    
-                    session.setAttribute("consoledao", consoledao);
-                    
-                    //Cookies
-                    Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-                    String ids;
-                    if (cookies != null) {
-                        for (Cookie c : cookies) {
-                            switch (c.getName()) {
-                                case ("preferiti"):
-                                    ids = c.getValue();
-                                    session.setAttribute("preferiti", ids);
-                                    break;
-                                case ("carrello"):
-                                    ids = c.getValue();
-                                    session.setAttribute("carrello", ids);
-                                    break;
-                            }
+                //Categorie
+                session.setAttribute("categorydao", categorydao);
+                //Prodotti
+                session.setAttribute("productdao", productdao);
+                //Ricette
+                session.setAttribute("ricettedao", ricettedao);
+                //Blog
+                session.setAttribute("catblogdao", catblogdao);
+                session.setAttribute("blogdao", blogdao);
+                session.setAttribute("commblogdao", commblogdao);
+                //Console
+                session.setAttribute("consoledao", consoledao);
+                //Cookies
+                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+                String ids;
+                if (cookies != null) {
+                    for (Cookie c : cookies) {
+                        switch (c.getName()) {
+                            case ("preferiti"):
+                                ids = c.getValue();
+                                session.setAttribute("preferiti", ids);
+                                break;
+                            case ("carrello"):
+                                ids = c.getValue();
+                                session.setAttribute("carrello", ids);
+                                break;
                         }
                     }
-                } catch (DAOException ex) {
-                    ifBadCon(request, response);
                 }
             }
         }
@@ -157,9 +132,9 @@ public class cookieFilter implements Filter {
      */
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
             throws IOException, ServletException, DAOFactoryException {
-        if (DEBUG) {
+        /*if (DEBUG) {
             log("cookieFilter:DoAfterProcessing");
-        }
+        }*/
         doBeforeProcessing(request, response);
     }
 
@@ -177,9 +152,9 @@ public class cookieFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        if (DEBUG) {
+        /*if (DEBUG) {
             log("cookieFilter:doFilter()");
-        }
+        }*/
 
         try {
             doBeforeProcessing(request, response);
@@ -197,22 +172,26 @@ public class cookieFilter implements Filter {
             problem = t;
         }
 
-        try {
+        /*try {
             doAfterProcessing(request, response);
         } catch (DAOFactoryException ex) {
             Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
 
         // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
         if (problem != null) {
-            if (problem instanceof ServletException) {
-                throw (ServletException) problem;
+            try {
+                if (problem instanceof ServletException) {
+                    throw (ServletException) problem;
+                }
+                if (problem instanceof IOException) {
+                    throw (IOException) problem;
+                }
+                sendProcessingError(problem, request, response);
+            } catch (DAOFactoryException ex) {
+                Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (problem instanceof IOException) {
-                throw (IOException) problem;
-            }
-            sendProcessingError(problem, response);
         }
     }
 
@@ -251,9 +230,9 @@ public class cookieFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            if (DEBUG) {
+            /*if (DEBUG) {
                 log("CookieFilter:Initializing filter");
-            }
+            }*/
             conInit(filterConfig);
         }
     }
@@ -274,7 +253,7 @@ public class cookieFilter implements Filter {
         return (sb.toString());
     }
 
-    private void sendProcessingError(Throwable t, ServletResponse response) {
+    private void sendProcessingError(Throwable t, ServletRequest request, ServletResponse response) throws DAOFactoryException {
         String stackTrace = getStackTrace(t);
 
         if (stackTrace != null && !stackTrace.equals("")) {
@@ -300,6 +279,7 @@ public class cookieFilter implements Filter {
             } catch (IOException ex) {
             }
         }
+        ifBadCon(request, response);
     }
 
     /**
@@ -347,57 +327,41 @@ public class cookieFilter implements Filter {
         blogdao = new JDBCBlogDAO(daoFactory.getConnection());
         commblogdao = new JDBCCommBlogDAO(daoFactory.getConnection());
         consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
-        if (DEBUG) {
+        /*if (DEBUG) {
             log("cookieFilter:DoBeforeProcessing");
-        }
+        }*/
         if (request instanceof HttpServletRequest) {
 
             HttpSession session = ((HttpServletRequest) request).getSession();
             if (session != null) {
-                try {
-                    //Categorie
-                    ArrayList<Categoria> categorie = categorydao.getAllCategories();
-                    session.setAttribute("categorydao", categorydao);
-
-                    //Prodotti
-                    ArrayList<Prodotto> prodotti = productdao.getAllProducts();
-                    session.setAttribute("productdao", productdao);
-
-                    //Ricette
-                    ArrayList<Ricetta> ricette = ricettedao.getAllRecipes();
-                    ArrayList<Commento> commenti = ricettedao.getAllComments();
-                    session.setAttribute("ricettedao", ricettedao);
-
-                    //Blog
-                    ArrayList<CatBlog> CatBlog = catblogdao.getAllCatBlog();
-                    ArrayList<Blog> Blog = blogdao.getAllBlogs();
-                    ArrayList<CommBlog> CommBlog = commblogdao.getAllCommBlog();
-                    session.setAttribute("catblogdao", catblogdao);
-                    session.setAttribute("blogdao", blogdao);
-                    session.setAttribute("commblogdao", commblogdao);
-
-                    //Console                    
-                    session.setAttribute("consoledao", consoledao);
-
-                    //Cookies
-                    Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-                    String ids;
-                    if (cookies != null) {
-                        for (Cookie c : cookies) {
-                            switch (c.getName()) {
-                                case ("preferiti"):
-                                    ids = c.getValue();
-                                    session.setAttribute("preferiti", ids);
-                                    break;
-                                case ("carrello"):
-                                    ids = c.getValue();
-                                    session.setAttribute("carrello", ids);
-                                    break;
-                            }
+                //Categorie
+                session.setAttribute("categorydao", categorydao);
+                //Prodotti
+                session.setAttribute("productdao", productdao);
+                //Ricette
+                session.setAttribute("ricettedao", ricettedao);
+                //Blog
+                session.setAttribute("catblogdao", catblogdao);
+                session.setAttribute("blogdao", blogdao);
+                session.setAttribute("commblogdao", commblogdao);
+                //Console
+                session.setAttribute("consoledao", consoledao);
+                //Cookies
+                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+                String ids;
+                if (cookies != null) {
+                    for (Cookie c : cookies) {
+                        switch (c.getName()) {
+                            case ("preferiti"):
+                                ids = c.getValue();
+                                session.setAttribute("preferiti", ids);
+                                break;
+                            case ("carrello"):
+                                ids = c.getValue();
+                                session.setAttribute("carrello", ids);
+                                break;
                         }
                     }
-                } catch (DAOException ex1) {
-                    Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
         }

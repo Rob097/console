@@ -18,20 +18,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import static varie.costanti.NUM_MOST_VIEWED_POSTS;
 
 /**
- *JDBCDAO Per i metodi relativi alle ricette
- * 
+ * JDBCDAO Per i metodi relativi alle ricette
+ *
  * @author Roberto97
  */
 public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
-     * Questa è il costruttore e serve fondamentalmente per collegarsi alla connessione aperta con il DB
-     * 
+     * Questa è il costruttore e serve fondamentalmente per collegarsi alla
+     * connessione aperta con il DB
+     *
      * @param con E' la connessione al DB
      */
     public JDBCRicetteDAO(Connection con) {
@@ -39,7 +38,9 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     }
 
     /**
-     * Metodo che restituisce tutte le ricette esistenti ordinandole dalla più recente.
+     * Metodo che restituisce tutte le ricette esistenti ordinandole dalla più
+     * recente.
+     *
      * @return Ritorna un arraylist di tutte le ricette salvate nel DB.
      * @throws DAOException
      */
@@ -63,7 +64,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
                     r.setDifficolta(s);
                     r.setCreatore(rs.getString("creatore"));
-                    r.setData(rs.getDate("data"));
+                    r.setData(rs.getTimestamp("data"));
+                    r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));
                     ricette.add(r);
@@ -92,6 +94,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo per trovare una particolare ricetta.
+     *
      * @param id E' l'id della ricetta che si vuole ottenere.
      * @return Ritorna un'oggetto di tipo ricetta.
      * @throws DAOException
@@ -118,7 +121,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
                     r.setDifficolta(s);
                     r.setCreatore(rs.getString("creatore"));
-                    r.setData(rs.getDate("data"));
+                    r.setData(rs.getTimestamp("data"));
+                    r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));
                 }
@@ -131,9 +135,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     }
 
     /**
-     * Metodo che restituisce tutte le ricette che sono legate ad un determinato prodotto.<br>
-     * Guarda tutte le ricette che hanno l'attributo id_prod richiesto. Infatti un prodotto
-     * dell'ecommerce può essere associato a una o più ricette.
+     * Metodo che restituisce tutte le ricette che sono legate ad un determinato
+     * prodotto.<br>
+     * Guarda tutte le ricette che hanno l'attributo id_prod richiesto. Infatti
+     * un prodotto dell'ecommerce può essere associato a una o più ricette.
+     *
      * @param id_prod Indica l'id del prodotto.
      * @return Ritorna un arrayList di ricette
      * @throws DAOException
@@ -161,7 +167,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
                     r.setDifficolta(s);
                     r.setCreatore(rs.getString("creatore"));
-                    r.setData(rs.getDate("data"));
+                    r.setData(rs.getTimestamp("data"));
+                    r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));
                     ricette.add(r);
@@ -176,6 +183,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo per raccogliere tutti i commenti di tutte le ricette.
+     *
      * @return Ritorna un arrayList di commenti.
      * @throws DAOException
      */
@@ -203,6 +211,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo per ricavare tutti i commenti di una particolare ricetta
+     *
      * @param id_ricetta Indica l'id della ricetta
      * @return Ritorna un arrayList di commenti
      * @throws DAOException
@@ -242,8 +251,9 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo che restituisce le 4 ricette più viste.<br>
-     * Se esistono meno di 4 ricette le restituisce tutte ordinandole in base alla più letta altrimenti
-     * restituisce le 4 più lette.
+     * Se esistono meno di 4 ricette le restituisce tutte ordinandole in base
+     * alla più letta altrimenti restituisce le 4 più lette.
+     *
      * @return Ritorna un arraylist di ricette
      * @throws DAOException
      */
@@ -269,7 +279,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     String s = Character.toUpperCase(c.getDifficolta().charAt(0)) + c.getDifficolta().substring(1);
                     c.setDifficolta(s);
                     c.setCreatore(rs.getString("creatore"));
-                    c.setData(rs.getDate("data"));
+                    c.setData(rs.getTimestamp("data"));
+                    c.setDescrizione(rs.getString("descrizione"));
                     c.setViews(rs.getInt("views"));
                     c.setCategory(rs.getBoolean("categoria"));
                     ricette.add(c);
@@ -302,8 +313,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo che restituisce tutte le ricette di un determinato tipo
+     *
      * @param type Indica il tipo di ricette che si cercano
-     * @return Restituisce un arraylist di tutte le ricette di un determinato tipo
+     * @return Restituisce un arraylist di tutte le ricette di un determinato
+     * tipo
      * @throws DAOException
      */
     @Override
@@ -335,8 +348,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo che restituisce il numero di ricette di un determinato tipo.
+     *
      * @param type Indica il tipo di ricette
-     * @return Restituisce un intero uguale al numero di ricette di un determinato tipo 
+     * @return Restituisce un intero uguale al numero di ricette di un
+     * determinato tipo
      * @throws DAOException
      */
     @Override
@@ -346,8 +361,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     }
 
     /**
-     * Metodo che restituisce il numero di valutazioni per una determinata ricetta.
-     * @param id Indica l'id della ricetta per cui si vuole conoscere il numero di valutazioni esistenti
+     * Metodo che restituisce il numero di valutazioni per una determinata
+     * ricetta.
+     *
+     * @param id Indica l'id della ricetta per cui si vuole conoscere il numero
+     * di valutazioni esistenti
      * @return Ritorna il valore intero del numero di valutazioni.
      * @throws DAOException
      */
@@ -379,6 +397,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     /**
      * Metodo che ritorna la valutazione media di una ricetta.
+     *
      * @param id E' l'id della ricetta che si vuole conoscere la valutazione
      * @return Ritorna il valore della valutazione per esempio 4.5
      * @throws DAOException
@@ -398,5 +417,113 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
             Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return val;
+    }
+
+    @Override
+    public ArrayList<String> getOurCreators() throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement("SELECT creatore FROM ricette where categoria = 1 group by creatore")) {
+            ArrayList<String> creators = null;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                creators = new ArrayList<>();
+                while (rs.next()) {
+                    creators.add(rs.getString("creatore"));
+                }
+
+                return creators;
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("Impossibile restituire tutti i creatori. (JDBCRicetteDAO, getAllCreators)", ex);
+        }
+    }
+    
+    @Override
+    public ArrayList<String> getAllCreators() throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement("SELECT creatore FROM ricette group by creatore")) {
+            ArrayList<String> creators = null;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                creators = new ArrayList<>();
+                while (rs.next()) {
+                    creators.add(rs.getString("creatore"));
+                }
+
+                return creators;
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("Impossibile restituire tutti i creatori. (JDBCRicetteDAO, getAllCreators)", ex);
+        }
+    }
+
+    @Override
+    public void removeIng(int id, String ing) throws DAOException {
+        System.out.println("HOLA RECIPE");
+        Ricetta idea = getRecipe(id);
+        ArrayList<String> ingredienti = idea.getIngredienti();
+        String ingS = "";
+        for (String i : ingredienti) {
+            if (i.equals(ing)) {
+            } else {
+                if (ingS.equals("")) {
+                    ingS = i;
+                } else {
+                    ingS += "_" + i;
+                }
+            }
+        }
+        
+        try (PreparedStatement stm = CON.prepareStatement(
+                "UPDATE ricette SET ingredienti = ? WHERE id = ?;"
+        )) {
+            try {
+                stm.setString(1, ingS);
+                stm.setInt(2, id);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error adding ingredients to recipe  " + id);
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria) throws DAOException {
+        if (nome == null || procedimento == null || descrizione == null || immagine == null || difficolta == null || ingredienti == null || creatore == null) {
+        } else {
+            
+            try (PreparedStatement stm = CON.prepareStatement(
+                    "UPDATE ricette SET id_prod = ?, nome = ?, ingredienti = ?, procedimento = ?, descrizione = ?, immagine = ?, tempo = ?, difficolta = ?, creatore = ?, categoria = ? WHERE id = ?;"
+            )) {
+                try {
+                    stm.setInt(1, id_prod);
+                    stm.setString(2, nome);
+                    stm.setString(3, ingredienti);
+                    stm.setString(4, procedimento);
+                    stm.setString(5, descrizione);
+                    stm.setString(6, immagine);
+                    stm.setInt(7, tempo);
+                    stm.setString(8, difficolta);
+                    stm.setString(9, creatore);
+                    stm.setBoolean(10, categoria);
+                    stm.setInt(11, id);
+
+                    if (stm.executeUpdate() == 1) {
+                    } else {
+                        System.out.println("Error updating recipe " + id);
+                    }
+
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

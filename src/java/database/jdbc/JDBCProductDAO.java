@@ -322,4 +322,69 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    @Override
+    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException {
+        int id = 0;
+        try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco) VALUES (?,?,?,?,?,?,?)")) {
+            try {
+                stm.setString(1, nome);
+                stm.setString(2, categoria);
+                stm.setString(3, "");
+                stm.setString(4, descrizione);
+                stm.setDouble(5, costo);
+                stm.setBoolean(6, disponibile);
+                stm.setBoolean(7, fresco);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    throw new DAOException("Impossible to add new product");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try (PreparedStatement stm = CON.prepareStatement("select MAX(id) as id from prodotto")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException ex) { 
+        }
+        return id;
+    }
+
+    @Override
+    public ArrayList<Prodotto> getNullCategoryProducts() throws DAOException {
+        boolean check = false;
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where categoria IS NULL")) {
+            ArrayList<Prodotto> prodotti = new ArrayList<>();
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    check = true;
+                    Prodotto p = new Prodotto();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setDescrizione(rs.getString("descrizione"));
+                    p.setImmagine(rs.getString("immagine"));
+                    p.setCategoria(rs.getString("categoria"));
+                    p.setCosto(rs.getFloat("costo"));
+                    p.setDisponibile(rs.getBoolean("disponibile"));
+                    p.setFresco(rs.getBoolean("fresco"));
+                    prodotti.add(p);
+                }
+
+                if(check)
+                return prodotti;
+            }
+        } catch (SQLException ex) {
+            throw new DAOException("Impossibile restituire tutti i prodotti della categoria NULL. (JDBCProductDAO, getNullCategoryProducts())", ex);
+        }
+        return null;
+    }
+
 }
