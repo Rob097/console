@@ -33,6 +33,16 @@
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css">
 
         <style>
+            .btn{
+                cursor: pointer;
+                display: initial;
+                padding: 0.46875rem 1rem !important;
+            }
+            .btn-group, .btn-group-vertical {
+                position: relative;
+                display: inline-block;
+                vertical-align: middle;
+            }
             .comments-area {
                 background: #fafaff;
                 border: 1px solid #eee;
@@ -53,7 +63,7 @@
             }
             .comments-area .comment {
                 color: #777777;
-            }
+            }  
         </style>
 
     </head>
@@ -226,8 +236,8 @@
                                             <button class="btn btn-outline-info mt-4">Aggiorna</button>
                                             <input type="hidden" name="id" value="${articolo.id}" />
                                             <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${articolo.nome}" required/>
+                                           
                                             <textarea id="editor" name="testo" required>${articolo.testo}</textarea>
-
                                             <div class="row">
                                                 <div class="col-md-6 mt-5">
                                                     <div class="row">
@@ -353,11 +363,20 @@
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
 
-
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <script src="https://unpkg.com/gijgo@1.9.13/js/messages/messages.it-it.js" type="text/javascript"></script>
         <script>
 
         </script>
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $("#editor").editor({
+                height: 500,
+                locale: 'it-it'
+            });
+        });
+    </script>
+
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#editor").editor({
@@ -365,7 +384,6 @@
                 });
                 $('[role="body"]').css("background-color", "white");
             });
-
             $("#categoria").change(function () {
                 var selected = $(this).children("option:selected").val();
                 if (selected === 'New') {
@@ -376,7 +394,6 @@
                     $('#newCategory').prop("type", "hidden");
                 }
             });
-
             $("#autore").change(function () {
                 var selected = $(this).children("option:selected").val();
                 if (selected === 'New') {
@@ -387,7 +404,6 @@
                     $('#newCreator').prop("type", "hidden");
                 }
             });
-
             function toggleComments(id) {
                 var type;
                 if ($('#viewComments').html() === 'Visualizza') {
@@ -417,22 +433,14 @@
             $(document).ready(function () {
                 $().ready(function () {
                     $sidebar = $('.sidebar');
-
                     $sidebar_img_container = $sidebar.find('.sidebar-background');
-
                     $full_page = $('.full-page');
-
                     $sidebar_responsive = $('body > .navbar-collapse');
-
                     window_width = $(window).width();
-
                     fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
-
                     $('.switch-sidebar-image input').change(function () {
                         $full_page_background = $('.full-page-background');
-
                         $input = $(this);
-
                         if ($input.is(':checked')) {
                             if ($sidebar_img_container.length != 0) {
                                 $sidebar_img_container.fadeIn('fast');
@@ -459,25 +467,18 @@
                             background_image = false;
                         }
                     });
-
                     $('.switch-sidebar-mini input').change(function () {
                         $body = $('body');
-
                         $input = $(this);
-
                         if (md.misc.sidebar_mini_active == true) {
                             $('body').removeClass('sidebar-mini');
                             md.misc.sidebar_mini_active = false;
-
                             $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-
                         } else {
 
                             $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
-
                             setTimeout(function () {
                                 $('body').addClass('sidebar-mini');
-
                                 md.misc.sidebar_mini_active = true;
                             }, 300);
                         }
@@ -486,12 +487,10 @@
                         var simulateWindowResize = setInterval(function () {
                             window.dispatchEvent(new Event('resize'));
                         }, 180);
-
                         // we stop the simulation of Window Resize after the animations are completed
                         setTimeout(function () {
                             clearInterval(simulateWindowResize);
                         }, 1000);
-
                     });
                 });
             });

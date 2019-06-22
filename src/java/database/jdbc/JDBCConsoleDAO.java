@@ -6,11 +6,13 @@
 package database.jdbc;
 
 import database.daos.ConsoleDAO;
+import database.entities.Ordine;
 import database.exceptions.DAOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -423,9 +427,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         try (PreparedStatement stm = CON.prepareStatement("select nome, num_acquisti from prodotto")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    if(rs.getInt("num_acquisti") != 0){
+                    if (rs.getInt("num_acquisti") != 0) {
                         dati.put(rs.getString("nome"), rs.getInt("num_acquisti"));
-                    }else{
+                    } else {
                         check = true;
                     }
                 }
@@ -433,11 +437,431 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         } catch (SQLException ex) {
             Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(dati.isEmpty())
+        if (dati.isEmpty()) {
             dati.put("Tutti (0%)", 1);
-        else if(check)
+        } else if (check) {
             dati.put("Altri (0%)", 0);
+        }
         Map<String, Integer> map = new TreeMap<>(dati);
         return map;
     }
+
+    @Override
+    public Map<String, Integer> getBlogCatViews() throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("SELECT categoria, sum(views) as views from blog group by categoria")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("categoria"), rs.getInt("views"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getRecipeCatViews() throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        String categoria = "";
+        try (PreparedStatement stm = CON.prepareStatement("select categoria, sum(views) as views from ricette group by categoria")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getBoolean("categoria")) {
+                        categoria = "Nostre";
+                    } else {
+                        categoria = "Utenti";
+                    }
+                    dati.put(categoria, rs.getInt("views"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getBlogArtViews(String categoria) throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select nome, views from blog where categoria = ?")) {
+            stm.setString(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("nome"), rs.getInt("views"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getRecipeArtViews(boolean categoria) throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select nome, views from ricette where categoria = ?")) {
+            stm.setBoolean(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("nome"), rs.getInt("views"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getBlogCatComments() throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("SELECT blog.categoria, COUNT(blog.id) as commenti FROM blog_commenti INNER JOIN blog ON blog.id = blog_commenti.id_blog group by categoria;")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("categoria"), rs.getInt("commenti"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getRecipeCatComments() throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        String categoria = "";
+        try (PreparedStatement stm = CON.prepareStatement("SELECT ricette.categoria, COUNT(ricette.id) as commenti FROM commenti INNER JOIN ricette ON ricette.id = commenti.id_ricetta group by categoria;")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getBoolean("categoria")) {
+                        categoria = "Nostre";
+                    } else {
+                        categoria = "Utenti";
+                    }
+                    dati.put(categoria, rs.getInt("commenti"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getBlogArtComments(String categoria) throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("SELECT blog.nome, COUNT(blog.id) as commenti FROM blog_commenti INNER JOIN blog ON blog.id = blog_commenti.id_blog where categoria = ? group by blog.id;")) {
+            stm.setString(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("nome"), rs.getInt("commenti"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Integer> getRecipeArtComments(boolean categoria) throws DAOException {
+        HashMap<String, Integer> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("SELECT ricette.nome, COUNT(ricette.id) as commenti FROM commenti INNER JOIN ricette ON ricette.id = commenti.id_ricetta where categoria = ? group by ricette.id")) {
+            stm.setBoolean(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    dati.put(rs.getString("nome"), rs.getInt("commenti"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getBlogCatRate() throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select blog.categoria, AVG(valutazione_blog.value) as rate from blog INNER JOIN valutazione_blog on blog.id = valutazione_blog.id_blog group by categoria;")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(rs.getString("categoria"), rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getRecipeCatRate() throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        String categoria = "";
+        try (PreparedStatement stm = CON.prepareStatement("select ricette.categoria, AVG(valutazione_ricetta.value) as rate from ricette INNER JOIN valutazione_ricetta on ricette.id = valutazione_ricetta.id_ricetta group by categoria;")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getBoolean("categoria")) {
+                        categoria = "Nostre";
+                    } else {
+                        categoria = "Utenti";
+                    }
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(categoria, rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getProductCatRate() throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        String categoria = "";
+        try (PreparedStatement stm = CON.prepareStatement("select prodotto.categoria, AVG(valutazione_prod.value) as rate from prodotto INNER JOIN valutazione_prod on prodotto.id = valutazione_prod.id_prod group by categoria;")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(rs.getString("categoria"), rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getBlogArtRate(String categoria) throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select blog.nome, valutazione_blog.value as rate from blog INNER JOIN valutazione_blog on blog.id = valutazione_blog.id_blog where categoria = ?;")) {
+            stm.setString(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(rs.getString("nome"), rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getRecipeArtRate(boolean categoria) throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select ricette.nome, valutazione_ricetta.value as rate from ricette INNER JOIN valutazione_ricetta on ricette.id = valutazione_ricetta.id_ricetta where categoria = ?;")) {
+            stm.setBoolean(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(rs.getString("nome"), rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public Map<String, Double> getProductArtRate(String categoria) throws DAOException {
+        HashMap<String, Double> dati = new HashMap<>();
+        try (PreparedStatement stm = CON.prepareStatement("select prodotto.nome, valutazione_prod.value as rate from prodotto INNER JOIN valutazione_prod on prodotto.id = valutazione_prod.id_prod where categoria = ?;")) {
+            stm.setString(1, categoria);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double rate = rs.getDouble("rate");
+                    String rateS = String.format("%.2f", rate);
+                    rate = Double.parseDouble(rateS);
+                    dati.put(rs.getString("nome"), rate);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dati;
+    }
+
+    @Override
+    public ArrayList<String> getTypeDelivery() throws DAOException {
+        ArrayList<String> tipi = new ArrayList<>();
+
+        try (PreparedStatement stm = CON.prepareStatement("select delivery from orderSum group by delivery order by max(date) desc")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    tipi.add(rs.getString("delivery"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return tipi;
+    }
+
+    @Override
+    public int getNumberOfType(String type) throws DAOException {
+
+        int number = 0;
+
+        try (PreparedStatement stm = CON.prepareStatement("select count(id) as number from orderSum where delivery = ?")) {
+            stm.setString(1, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    number = Integer.parseInt(rs.getString("number"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return number;
+    }
+
+    @Override
+    public double getTotOfType(String type) throws DAOException {
+
+        double number = 0.00;
+
+        try (PreparedStatement stm = CON.prepareStatement("select sum(totale) as tot from orderSum where delivery = ?")) {
+            stm.setString(1, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Double tot = rs.getDouble("tot");
+                    String totS = String.format("%.2f", tot);
+                    number = Double.parseDouble(totS);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return number;
+
+    }
+
+    @Override
+    public Ordine getLastOfType(String type) throws DAOException {
+        Ordine ordine = null;
+        try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where delivery = ? order by date desc limit 1")) {
+            stm.setString(1, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    ordine = new Ordine();
+                    ordine.setId(rs.getString("id"));
+                    ordine.setData(rs.getTimestamp("date").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    ordine.setNome(rs.getString("nome"));
+                    ordine.setEmail(rs.getString("email"));
+                    ordine.setCitta(rs.getString("citta"));
+                    ordine.setIndirizzo(rs.getString("indirizzo"));
+                    ordine.setZip(rs.getString("zip"));
+                    ordine.setTipo(rs.getString("delivery"));
+                    ordine.setProdotti(new ArrayList<>());
+                    String[] prodotti = rs.getString("items").split(":");
+                    ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setTot(rs.getDouble("totale"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ordine;
+    }
+    
+    @Override
+    public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException {
+        ArrayList<Ordine> ordini = new ArrayList<>();
+        Ordine ordine = null;
+
+        try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where delivery = ?")) {
+            stm.setString(1, type);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    ordine = new Ordine();
+                    ordine.setId(rs.getString("id"));
+                    ordine.setData(rs.getTimestamp("date").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    ordine.setNome(rs.getString("nome"));
+                    ordine.setEmail(rs.getString("email"));
+                    ordine.setCitta(rs.getString("citta"));
+                    ordine.setIndirizzo(rs.getString("indirizzo"));
+                    ordine.setZip(rs.getString("zip"));
+                    ordine.setTipo(rs.getString("delivery"));
+                    ordine.setProdotti(new ArrayList<>());
+                    String[] prodotti = rs.getString("items").split(":");
+                    ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setTot(rs.getDouble("totale"));
+                    ordini.add(ordine);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (ordini != null && !ordini.isEmpty()) {
+            try {
+                Collections.sort(ordini, (Ordine z1, Ordine z2) -> {
+                    Timestamp t1 = Timestamp.valueOf(z1.getData());
+                    Timestamp t2 = Timestamp.valueOf(z2.getData());
+                    if (t1.after(t2)) {
+                        return -1;
+                    }
+                    if (t1.before(t2)) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            } catch (Exception e) {
+                System.out.println("Errore ordinamento Ordini");
+            }
+        }
+
+        return ordini;
+    }
+
 }

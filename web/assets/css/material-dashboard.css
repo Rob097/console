@@ -17358,8 +17358,10 @@ label {
 }
 
 .card-profile .card-avatar img {
-    width: 100%;
-    height: auto;
+    /*width: 100%;
+    height: auto;*/
+    max-height: 180px;
+    max-width: 180px;
 }
 
 .card-profile .card-body+.card-footer {

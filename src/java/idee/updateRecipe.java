@@ -23,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.PASS;
 import static varie.utili.obtainRootFolderPath;
+import static varie.utili.unaccent;
 
 /**
  *
@@ -64,145 +66,177 @@ public class updateRecipe extends HttpServlet {
         String catS = "";
         String ingS = "";
         Part filePart1 = null;
-        try {
-            if (request.getParameter("id") != null) {
-                id = Integer.parseInt(request.getParameter("id"));
-            }
-            if (request.getParameter("titolo") != null) {
-                nome = request.getParameter("titolo");
-            }
-            if (request.getParameter("product") != null) {
-                id_prod = Integer.parseInt(request.getParameter("product"));
-            }
 
-            if (request.getParameter("autore") != null) {
-                creatore = request.getParameter("autore");
-            }
-            if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
-                creatore = request.getParameter("newCreator");
-            }
-            System.out.println("Creatore: " + creatore);
+        if (request.getParameter("id") != null) {
+            id = Integer.parseInt(request.getParameter("id"));
+        }
 
-            if (request.getParameter("timeInput") != null) {
-                tempo = Integer.parseInt(request.getParameter("timeInput"));
-            }
-            if (request.getParameter("difficultInput") != null) {
-                difficolta = request.getParameter("difficultInput");
-            }
-            if (request.getParameter("procedimento") != null) {
-                procedimento = request.getParameter("procedimento");
-                descrizione = procedimento.replaceAll("[<](/)?[^>]*[>]", "");
-            }
-            if (request.getPart("immagine") != null) {
-                filePart1 = request.getPart("immagine");
-            } 
-            if (request.getParameter("oldIMG") != null) {
-                immagine = request.getParameter("oldIMG");
-            }
-            
-            if (request.getParameter("categoria") != null) {
-                if (request.getParameter("categoria").equals("nostre")) {
-                    categoria = true;
-                }
-                if (request.getParameter("categoria").equals("utenti")) {
-                    categoria = false;
-                }
-                catS = request.getParameter("categoria");
-            }
-
-            ArrayList<String> ingredientiNomi = new ArrayList<>();
-            ArrayList<String> quantitaNomi = new ArrayList<>();
-
-            ArrayList<String> ingredienti = new ArrayList<>();
-            ArrayList<String> quantita = new ArrayList<>();
-
-            Enumeration keys = request.getParameterNames();
-            try {
-                while (keys.hasMoreElements()) {
-                    String key = (String) keys.nextElement();
-                    if (key.contains("[ingrediente]")) {
-                        ingredientiNomi.add(key);
+        if (request.getParameter("DELETE") != null && request.getParameter("DELETE").equals("true")) {
+            if (request.getParameter("password") != null && request.getParameter("password").equals(PASS)) {
+                try {
+                    String image = "";
+                    if (request.getParameter("immagine") != null) {
+                        //Il replace viene fatto perchè altrimenti non trova l'immagine.
+                        //E' da controllare che funzioni anche in cloud
+                        image = unaccent(request.getParameter("immagine").replace("../console", ""));
                     }
-                    if (key.contains("[quantity]")) {
-                        quantitaNomi.add(key);
+                    String listsFolder;
+                    listsFolder = getServletContext().getRealPath(image);
+                    if (listsFolder != null) {
+                        listsFolder = listsFolder.replace("\\build", "");
                     }
-                }
-
-                for (int k = 0; k < ingredientiNomi.size(); k++) {
-                    if (!request.getParameter(ingredientiNomi.get(k)).equals("")) {
-                        ingredienti.add(request.getParameter(ingredientiNomi.get(k)));
-                    }
-                    if (!request.getParameter(quantitaNomi.get(k)).equals("")) {
-                        quantita.add(request.getParameter(quantitaNomi.get(k)));
-                    }
-                }
-
-                for (int k = 0; k < ingredienti.size(); k++) {
-                    ingS += ingredienti.get(k) + " " + quantita.get(k) + "_";
-                }
-
-                String old = "";
-                if (!ingS.equals("")) {
-                    StringBuilder b = new StringBuilder(ingS);
-                    b.replace(ingS.lastIndexOf("_"), ingS.lastIndexOf("_"), "");
-                    old = b.toString();
-                    ingS = "";
-                }
-
-                for (String g : ricettedao.getRecipe(id).getIngredienti()) {
-                    if (!g.equals("")) {
-                        ingS += g + "_";
-                    }
-                }
-
-                
-                if (!old.equals("") && !old.isEmpty()) {
-                    ingS += old;
-                }
-                
-            } catch (DAOException e) {
-                System.out.println("Errore form ingredienti");
-            }
-
-            //Load dell'immagine
-            if (filePart1 != null) {
-                System.out.println("IMAGE CONTENT: " + filePart1.getContentType());
-                if (filePart1.getContentType().contains("image/")) {
-                    String upload_directory = "";
-                    upload_directory = UPLOAD_DIRECTORY + catS + "/";
                     try {
-                        String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
-                        File directory = new File(listsFolder);
-                        if (!directory.exists()) {
-                            directory.mkdir();
-                            // If you require it to make the entire directory path including parents,
-                            // use directory.mkdirs(); here instead.
+                        ImageDispatcher.deleteImgFromDirectory(listsFolder);
+                    } catch (Exception e) {
+                        System.out.println("L'immagine non esiste");
+                    }
+                    ricettedao.deleteRecipe(id);
+
+                } catch (DAOException ex) {
+                    Logger.getLogger(updateRecipe.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }else{
+                System.out.println("Password sbagliata");
+            }
+            response.sendRedirect("/console/idee.jsp");
+        } else {
+
+            try {
+
+                if (request.getParameter("titolo") != null) {
+                    nome = request.getParameter("titolo");
+                }
+                if (request.getParameter("product") != null) {
+                    id_prod = Integer.parseInt(request.getParameter("product"));
+                }
+
+                if (request.getParameter("autore") != null) {
+                    creatore = request.getParameter("autore");
+                }
+                if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
+                    creatore = request.getParameter("newCreator");
+                }
+
+                if (request.getParameter("timeInput") != null) {
+                    tempo = Integer.parseInt(request.getParameter("timeInput"));
+                }
+                if (request.getParameter("difficultInput") != null) {
+                    difficolta = request.getParameter("difficultInput");
+                }
+                if (request.getParameter("procedimento") != null) {
+                    procedimento = request.getParameter("procedimento");
+                    descrizione = procedimento.replaceAll("[<](/)?[^>]*[>]", "");
+                }
+                if (request.getPart("immagine") != null) {
+                    filePart1 = request.getPart("immagine");
+                }
+                if (request.getParameter("oldIMG") != null) {
+                    immagine = request.getParameter("oldIMG");
+                }
+
+                if (request.getParameter("categoria") != null) {
+                    if (request.getParameter("categoria").equals("nostre")) {
+                        categoria = true;
+                    }
+                    if (request.getParameter("categoria").equals("utenti")) {
+                        categoria = false;
+                    }
+                    catS = request.getParameter("categoria");
+                }
+
+                ArrayList<String> ingredientiNomi = new ArrayList<>();
+                ArrayList<String> quantitaNomi = new ArrayList<>();
+
+                ArrayList<String> ingredienti = new ArrayList<>();
+                ArrayList<String> quantita = new ArrayList<>();
+
+                Enumeration keys = request.getParameterNames();
+                try {
+                    while (keys.hasMoreElements()) {
+                        String key = (String) keys.nextElement();
+                        if (key.contains("[ingrediente]")) {
+                            ingredientiNomi.add(key);
                         }
-                        String extension = getImageExtension(filePart1);
-                        String imagineName = id + "." + extension;
+                        if (key.contains("[quantity]")) {
+                            quantitaNomi.add(key);
+                        }
+                    }
+
+                    for (int k = 0; k < ingredientiNomi.size(); k++) {
+                        if (!request.getParameter(ingredientiNomi.get(k)).equals("")) {
+                            ingredienti.add(request.getParameter(ingredientiNomi.get(k)));
+                        }
+                        if (!request.getParameter(quantitaNomi.get(k)).equals("")) {
+                            quantita.add(request.getParameter(quantitaNomi.get(k)));
+                        }
+                    }
+
+                    for (int k = 0; k < ingredienti.size(); k++) {
+                        ingS += ingredienti.get(k) + " " + quantita.get(k) + "_";
+                    }
+
+                    String old = "";
+                    if (!ingS.equals("")) {
+                        StringBuilder b = new StringBuilder(ingS);
+                        b.replace(ingS.lastIndexOf("_"), ingS.lastIndexOf("_"), "");
+                        old = b.toString();
+                        ingS = "";
+                    }
+
+                    for (String g : ricettedao.getRecipe(id).getIngredienti()) {
+                        if (!g.equals("")) {
+                            ingS += g + "_";
+                        }
+                    }
+
+                    if (!old.equals("") && !old.isEmpty()) {
+                        ingS += old;
+                    }
+
+                } catch (DAOException e) {
+                    System.out.println("Errore form ingredienti");
+                }
+
+                //Load dell'immagine
+                if (filePart1 != null) {
+                    if (filePart1.getContentType().contains("image/")) {
+                        String upload_directory = "";
+                        upload_directory = UPLOAD_DIRECTORY + catS + "/";
                         try {
-                            ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                        } catch (Exception e) {
-                            System.out.println("Nessuna immagine da cancellare");
+                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
+                            File directory = new File(listsFolder);
+                            if (!directory.exists()) {
+                                directory.mkdir();
+                                // If you require it to make the entire directory path including parents,
+                                // use directory.mkdirs(); here instead.
+                            }
+                            String extension = getImageExtension(filePart1);
+                            String imagineName = id + "." + extension;
+                            try {
+                                ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
+                            } catch (Exception e) {
+                                System.out.println("Nessuna immagine da cancellare");
+                            }
+                            ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                        } catch (RuntimeException e) {
+                            System.out.println("RuntimeException:");
+                            throw e;
                         }
-                        ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
-                    } catch (RuntimeException e) {
-                        System.out.println("RuntimeException:");
-                        throw e;
+                    } else {
+                        System.out.println("FilePart not in image/");
                     }
                 } else {
-                    System.out.println("FilePart not in image/");
+                    System.out.println("filePart = null");
                 }
-            } else {
-                System.out.println("filePart = null");
+
+                ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria);
+            } catch (DAOException ex) {
+                Logger.getLogger(updateRecipe.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria);
-        } catch (DAOException ex) {
-            Logger.getLogger(updateRecipe.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("/console/idea.jsp?id=" + id);
         }
-        response.sendRedirect("/console/idea.jsp?id=" + id);
     }
 
     /**

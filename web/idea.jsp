@@ -137,17 +137,17 @@
                         <a href="idee.jsp"><i class="fas fa-arrow-left"></i> Torna a tutti le idee</a>
                         <c:choose>
                             <c:when test="${param.id eq 'new'}" >
-                                <form method="POST" action="addRecipe"  enctype="multipart/form-data">
+                                <form method="POST" action="addIdea"  enctype="multipart/form-data">
                                     <button class="btn btn-outline-info mt-4">Aggiungi</button>
                                     <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="Titolo" required/>
 
                                     <h4>Cosa usare</h4>
                                     <div class="form-group form-inline" id="dynamic_form">                                        
                                         <div class="form-group col-lg-5 col-md-12 name">
-                                            <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Ingrediente" required>
+                                            <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Cosa" required>
                                         </div>
                                         <div class="form-group col-lg-5 col-md-12 name">
-                                            <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quantità" required>
+                                            <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quanto" required>
                                         </div>
                                         <div class="button-group form-group col-lg-2 col-md-12">
                                             <a href="javascript:void(0)" class="btn btn-primary" id="plus" style="padding: .375rem .75rem;">+</a>
@@ -155,7 +155,7 @@
                                         </div>
                                     </div>     
 
-                                    <textarea id="editor" name="testo" required>Scrivi l'idea qui.</textarea>
+                                    <textarea id="editor" name="procedimento" required>Scrivi l'idea qui.</textarea>
 
                                     <div class="row">
                                         <div class="col-md-6 mt-5">
@@ -163,14 +163,14 @@
                                                 <div class="col-md-4">
                                                     <label for="categoria">Categoria</label>
                                                     <select style="width: auto;" class="form-control mb-4" name="categoria" id="categoria" required>
-                                                        <option value="our" 
+                                                        <option value="nostre" 
                                                                 <c:if test="${ide.categoria eq true}">
                                                                     selected
                                                                 </c:if>
                                                                 >
                                                             Nostra
                                                         </option>
-                                                        <option value="user" 
+                                                        <option value="utenti" 
                                                                 <c:if test="${ide.categoria eq false}">
                                                                     selected
                                                                 </c:if>
@@ -183,7 +183,7 @@
                                                 <div class="col-md-4">
                                                     <label for="categoria">Prodotto assiociato</label>
                                                     <select style="width: auto;" class="form-control mb-4" name="product" id="productPicker" required>
-                                                        <option value="no" selected>Nessun prodotto</option>
+                                                        <option value="0" selected>Nessun prodotto</option>
                                                         <c:forEach var="prod" items="${productdao.getAllProducts()}">
                                                             <option value="${prod.id}">${prod.nome}</option>
                                                         </c:forEach>
@@ -220,10 +220,36 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </div>
+                                            <div style="width: fit-content;">
+                                                <label for="timeInput">Tempo (minuti)</label>
+                                                <input class="form-control mb-4" type="number" id="timeInput" name="timeInput" value="${idea.tempo}" min="1" required>
+
+                                                <label for="difficultInput">Difficoltà</label>
+                                                <select class="form-control mb-4" name="difficultInput" id="difficultInput" required>
+                                                    <option value="Difficile" 
+                                                            <c:if test="${idea.difficolta eq 'Difficile'}">
+                                                                selected
+                                                            </c:if>>
+                                                        Difficile
+                                                    </option>
+                                                    <option value="Media"
+                                                            <c:if test="${idea.difficolta eq 'Media'}">
+                                                                selected
+                                                            </c:if>>
+                                                        Media
+                                                    </option>
+                                                    <option value="Facile"
+                                                            <c:if test="${idea.difficolta eq 'Facile'}">
+                                                                selected
+                                                            </c:if>>
+                                                        Facile
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-6 text-center mt-5">
-                                            <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
-                                            <input type='file' name="immagine" onchange="readURL(this, 'InputIMGBlog');"/>
+                                            <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="border-radius: 5%; max-width: 500px; max-height: 500px;"/>
+                                            <input type='file' name="immagine" onchange="readURL(this, 'InputIMGBlog');" required/>
                                         </div>
                                     </div>
                                 </form>
@@ -271,10 +297,10 @@
                                             </div>
                                             <div class="form-group form-inline" id="dynamic_form">                                                   
                                                 <div class="form-group col-lg-5 col-md-12 name">
-                                                    <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Ingrediente">
+                                                    <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Cosa">
                                                 </div>
                                                 <div class="form-group col-lg-5 col-md-12 name">
-                                                    <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quantità">
+                                                    <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quanto">
                                                 </div>
                                                 <div class="button-group form-group col-lg-2 col-md-12">
                                                     <a href="javascript:void(0)" class="btn btn-primary" id="plus" style="padding: .375rem .75rem;">+</a>
@@ -286,7 +312,7 @@
 
                                             <div class="row">
                                                 <div class="col-md-6 mt-5">
-                                                    
+
                                                     <div id="ratingDiv" class="no-padding mb-5 personalized center-small col-lg-12 col-md-12 col-12">
                                                         <label class="text-muted">${ricettedao.getNumberRate(idea.id)} valutazioni</label><br>
                                                         <fieldset class="rating text-center" style="display: initial;">
@@ -342,7 +368,7 @@
                                                             <label class="half" for="starhalf" title="0.5 stelle"></label>
                                                         </fieldset><br>                                
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <label for="categoria">Categoria</label>
@@ -367,7 +393,7 @@
                                                         <div class="col-md-6">
                                                             <label for="categoria">Prodotto assiociato</label>
                                                             <select style="width: auto;" class="form-control mb-4" name="product" id="productPicker" required>
-                                                                <option value="no">Nessun prodotto</option>
+                                                                <option value="0">Nessun prodotto</option>
                                                                 <c:forEach var="prod" items="${productdao.getAllProducts()}">
                                                                     <option value="${prod.id}" 
                                                                             <c:if test="${prod.id eq idea.id_prod}">
@@ -421,7 +447,7 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label for="timeInput">Tempo (minuti)</label>
-                                                            <input class="form-control mb-4" type="number" id="timeInput" name="timeInput" value="${idea.tempo}" required>
+                                                            <input class="form-control mb-4" type="number" id="timeInput" name="timeInput" value="${idea.tempo}" min="1" required>
 
                                                             <label for="difficultInput">Difficoltà</label>
                                                             <select class="form-control mb-4" name="difficultInput" id="difficultInput" required>
@@ -450,7 +476,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 text-center mt-5">
-                                                    <img id="InputIMGRecipe" src="${idea.immagine}" alt="${idea.nome}_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
+                                                    <img id="InputIMGRecipe" src="${idea.immagine}" alt="${idea.nome}_Modal_IMG" class="mb-3" style="border-radius: 5%; max-width: 500px; max-height: 500px;"/>
                                                     <input type='file' name="immagine" onchange="readURL(this, 'InputIMGRecipe');"/>
                                                     <input type="hidden" name="oldIMG" value="${idea.immagine}" required />
                                                 </div>
@@ -461,7 +487,6 @@
                                             <div class="text-center invisible mt-4" id="sureToDeleteBlog" style="width: fit-content;">
                                                 <input type="hidden" name="id" value="${idea.id}" />
                                                 <input type="hidden" name="immagine" value="${idea.immagine}" required/>
-                                                <input type="hidden" name="categoria" value="${idea.category}" />
                                                 <p>Sicuro di eliminare l'idea '${idea.nome}'?</p>
                                                 <input type="hidden" name="DELETE" value="true"/>
                                                 <input type="password" class="form-control" name="password" placeholder="Password" required /><br>

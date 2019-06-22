@@ -111,7 +111,7 @@
                                 <a href="articolo.jsp?id=new">
                                     <div class="card card-profile">
                                         <div class="card-avatar" style="box-shadow: none;">
-                                            <img src="img/ico/add.svg" style="width: 100px; padding: 0; " class="zoom"/>
+                                            <img src="img/ico/add.svg" style="width: 100px; padding: 0; "/>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title">Crea un nuovo articolo</h4>
@@ -147,6 +147,7 @@
                                             </div>
                                             </p>
                                             <a href="articolo.jsp?id=${articolo.id}" class="btn btn-primary btn-round">Modifica</a>
+                                            <a href="../MacAPP/articolo.jsp?id=${articolo.id}" class="btn btn-primary btn-round" target="_blank">Visualizza</a>
                                         </div>
                                     </div>
                                 </div>

@@ -61,8 +61,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
                     r.setDifficolta(rs.getString("difficolta"));
-                    String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
-                    r.setDifficolta(s);
+                    if(!r.getDifficolta().equals("")){
+                        String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
+                        r.setDifficolta(s);
+                    }
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
@@ -118,8 +120,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
                     r.setDifficolta(rs.getString("difficolta"));
-                    String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
-                    r.setDifficolta(s);
+                    if(!r.getDifficolta().equals("")){
+                        String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
+                        r.setDifficolta(s);
+                    }
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
@@ -164,8 +168,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
                     r.setDifficolta(rs.getString("difficolta"));
-                    String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
-                    r.setDifficolta(s);
+                    if(!r.getDifficolta().equals("")){
+                        String s = Character.toUpperCase(r.getDifficolta().charAt(0)) + r.getDifficolta().substring(1);
+                        r.setDifficolta(s);
+                    }
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
@@ -276,8 +282,10 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     c.setImmagine(rs.getString("immagine"));
                     c.setTempo(rs.getInt("tempo"));
                     c.setDifficolta(rs.getString("difficolta"));
-                    String s = Character.toUpperCase(c.getDifficolta().charAt(0)) + c.getDifficolta().substring(1);
-                    c.setDifficolta(s);
+                    if(!c.getDifficolta().equals("")){
+                        String s = Character.toUpperCase(c.getDifficolta().charAt(0)) + c.getDifficolta().substring(1);
+                        c.setDifficolta(s);
+                    }
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setDescrizione(rs.getString("descrizione"));
@@ -525,5 +533,64 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                 Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    @Override
+    public void deleteRecipe(int id) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement(
+                "delete from ricette where id = ?"
+        )) {
+            try {
+                stm.setInt(1, id);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error deleting blog " + id);
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria) throws DAOException {
+        int id = 0;
+        try (PreparedStatement stm = CON.prepareStatement("insert into ricette (nome, procedimento, descrizione, difficolta, ingredienti, creatore, tempo, id_prod, categoria, immagine) VALUES (?,?,?,?,?,?,?,?,?,?)")) {
+            try {
+                stm.setString(1, nome);
+                stm.setString(2, procedimento);
+                stm.setString(3, descrizione);
+                stm.setString(4, difficolta);
+                stm.setString(5, ingredienti);
+                stm.setString(6, creatore);
+                stm.setInt(7, tempo);
+                stm.setInt(8, id_prod);
+                stm.setBoolean(9, categoria);
+                stm.setString(10, "");
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    throw new DAOException("Impossible to add new recipe");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try (PreparedStatement stm = CON.prepareStatement("select MAX(id) as id from ricette")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    id = rs.getInt("id");
+                }
+            }
+        } catch (SQLException ex) { 
+        }
+        return id;
     }
 }

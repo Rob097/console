@@ -48,12 +48,12 @@ var totalRevenue; /* totale guadagni */
 var copyMonthRevenue;
 function printArrayValue(array) {
     var print = "";
+    var somma = 0;
     for (var i = 0; i < array.length; i++) {
-        print += "" + array[i].toFixed(2);
-        if (i + 1 !== array.length) {
-            print += " | ";
-        }
+        print += "" + array[i].toFixed(2) + " | ";
+        somma += array[i];
     }
+    print += "TOT: " + somma.toFixed(2);
     return print;
 }
 

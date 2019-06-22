@@ -308,7 +308,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="card-header card-header-tabs card-header-primary">
+                                    <div class="card-header card-header-tabs card-header-info">
                                         <h3>Visualizzazioni per pagina</h3>
                                     </div>
                                     <div class="card-body">
@@ -331,7 +331,7 @@
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
-                                    <div class="card-header card-header-tabs card-header-primary">
+                                    <div class="card-header card-header-tabs card-header-success">
                                         <h3>Vendita prodotti</h3>
                                     </div>
                                     <div class="card-body">

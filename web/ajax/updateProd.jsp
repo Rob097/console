@@ -14,7 +14,7 @@
 
     <div class="modal-content container">
         <div class="modal-header">
-            <h5 class="modal-title" id="catImgChangeTitle">${prodotto.nome}</h5>
+            <h5 class="modal-title" id="catImgChangeTitle">${prodotto.nome} <span>(${productdao.getRate(prodotto.id)}<i class="fas fa-star ml-2 mr-2"></i> |  ${productdao.getNumberRate(prodotto.id)} <i class="fas fa-user ml-2 mr-2"></i>)</span></h5>
             <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
                 <span aria-hidden="true">&times;</span>
             </button>
