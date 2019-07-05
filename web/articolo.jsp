@@ -29,6 +29,7 @@
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
         <!-- CSS Just for demo purpose, don't include it in your project -->
         <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/tagsinput.css" rel="stylesheet" />
         <!-- include summernote css/js -->
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css">
 
@@ -153,6 +154,26 @@
 
                                     <div class="row">
                                         <div class="col-md-6 mt-5">
+
+                                            <div class=" mb-5">     
+                                                <h3>Tag</h3>
+
+                                                <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
+                                                    <option style="color: #ad9966;" disabled="true">Categorie</option>
+                                                    <c:forEach var="cat" items="${categorydao.getAllCategories()}">
+                                                        <option value="${cat.nome}">${cat.nome}</option>
+                                                    </c:forEach>
+                                                    <option style="color: #ad9966;" disabled="true">Prodotti</option>
+                                                    <c:forEach var="prod" items="${productdao.getAllProducts()}">
+                                                        <option value="${prod.nome}">${prod.nome}</option>
+                                                    </c:forEach>
+                                                </select>
+
+                                                <select data-role="tagsinput" name="tags" id="tags" multiple>
+                                                </select>
+                                                <input type="hidden" name="tag" id="tag" value="" />
+                                            </div>
+
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <label for="categoria">Categoria</label>
@@ -232,14 +253,34 @@
                                         <h1>NESSUN ARTICOLO TROVATO CON QUESTO ID</h1>
                                     </c:when>
                                     <c:otherwise>
-                                        <form method="POST" action="updateBlog"  enctype="multipart/form-data">
+                                        <form method="POST" action="updateBlog"  enctype="multipart/form-data" multiple>
                                             <button class="btn btn-outline-info mt-4">Aggiorna</button>
                                             <input type="hidden" name="id" value="${articolo.id}" />
                                             <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${articolo.nome}" required/>
-                                           
+
                                             <textarea id="editor" name="testo" required>${articolo.testo}</textarea>
                                             <div class="row">
                                                 <div class="col-md-6 mt-5">
+
+                                                    <div class=" mb-5">     
+                                                        <h3>Tag</h3>
+
+                                                        <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
+                                                            <option style="color: #ad9966;" disabled="true">Categorie</option>
+                                                            <c:forEach var="cat" items="${categorydao.getAllCategories()}">
+                                                                <option value="${cat.nome}">${cat.nome}</option>
+                                                            </c:forEach>
+                                                            <option style="color: #ad9966;" disabled="true">Prodotti</option>
+                                                            <c:forEach var="prod" items="${productdao.getAllProducts()}">
+                                                                <option value="${prod.nome}">${prod.nome}</option>
+                                                            </c:forEach>
+                                                        </select>
+
+                                                        <select data-role="tagsinput" name="tags" id="tags" multiple>
+                                                        </select>
+                                                        <input type="hidden" name="tag" id="tag" value="" />
+                                                    </div>
+
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <label for="categoria">Categoria</label>
@@ -365,17 +406,18 @@
 
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/messages/messages.it-it.js" type="text/javascript"></script>
+        <script src="js/tagsinput.js"></script>
         <script>
 
         </script>
         <script type="text/javascript">
-        $(document).ready(function () {
-            $("#editor").editor({
-                height: 500,
-                locale: 'it-it'
+            $(document).ready(function () {
+                $("#editor").editor({
+                    height: 500,
+                    locale: 'it-it'
+                });
             });
-        });
-    </script>
+        </script>
 
         <script type="text/javascript">
             $(document).ready(function () {
@@ -428,6 +470,67 @@
                 }
 
             }
+
+            $('#tags').tagsinput({
+                allowDuplicates: false,
+                itemValue: 'id', // this will be used to set id of tag
+                itemText: 'text', // this will be used to set text of tag
+                freeInput: true
+            });
+
+            $(document).ready(function () {
+
+                var mytagsinput = $('#tags');
+                var o = null;
+
+            <c:if test="${param.id ne null && param.id ne '0' && param.id.matches('[0-9]+')}">
+                <c:forEach var="tag" items="${blogdao.getAllTagsOfBlog(param.id)}">
+                    <c:set var="tagText" value="${blogdao.getTagName(tag)}" />
+                if (o === null) {
+                    o = "${tagText}";
+                } else {
+                    o += ";${tagText}";
+                }
+                //console.log("o: " + o + " tag: ${tagText}");
+                //add my tags object
+                mytagsinput.tagsinput('add', {id: '${tagText}', text: '${tagText}'});
+                $('#tag').val(o);
+                </c:forEach>
+            </c:if>
+            });
+            function addTag(element) {
+                event.preventDefault();
+                var val = element;
+                var mytagsinput = $('#tags');
+                //add my tags object
+                mytagsinput.tagsinput('add', {id: val, text: val});
+                var inp = '';
+                inp = $('#tag').val();
+                if (inp === '') {
+                    $('#tag').val(val);
+                } else {
+                    inp += ";" + val;
+                    $('#tag').val(inp);
+                }
+            }
+
+            $('#tags').on('itemRemoved', function (event) {
+                var t = $('#tag').val().split(";");
+                var n = "";
+                for (var i = 0; i < t.length; i++) {
+                    console.log(t[i]);
+                    if (t[i] === "" + event.item.id) {
+                    } else {
+                        if (n === "") {
+                            n += t[i];
+                        } else {
+                            n += ";" + t[i];
+                        }
+                    }
+                }
+
+                $('#tag').val(n);
+            });
         </script>
         <script>
             $(document).ready(function () {

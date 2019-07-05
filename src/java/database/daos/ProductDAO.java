@@ -19,6 +19,7 @@ public interface ProductDAO{
     public ArrayList<Prodotto> getConfProducts() throws DAOException;
     public ArrayList<Prodotto> getAllProductsOfCategory(String categoryName) throws DAOException;
     public Prodotto getProduct(int id) throws DAOException;
+    public Prodotto getProductByName(String name) throws DAOException;
     public int getNumberRate(int id) throws DAOException;
     public double getRate(int id) throws DAOException;
     public void deleteProd(int id) throws DAOException;

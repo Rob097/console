@@ -306,8 +306,468 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     id = rs.getInt("id");
                 }
             }
-        } catch (SQLException ex) { 
+        } catch (SQLException ex) {
         }
         return id;
+    }
+
+    @Override
+    public void addTags(ArrayList<String> tags, int idBlog) throws DAOException {
+
+        boolean check = false;
+        System.out.println(tags.toString());
+        ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
+        for (String s : tags) {
+            if (!s.isEmpty()) {
+                check = false;
+                try (PreparedStatement stm = CON.prepareStatement("select id from tags where testo = ?")) {
+                    stm.setString(1, s);
+                    try (ResultSet rs = stm.executeQuery()) {
+                        while (rs.next()) {
+                            check = true;
+                            prodT.add(rs.getInt("id"));
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (!check) {
+
+                    try (PreparedStatement stm = CON.prepareStatement("insert into tags (testo) value (?)")) {
+                        stm.setString(1, s);
+                        try {
+                            if (stm.executeUpdate() == 1) {
+                            } else {
+                                throw new DAOException("Impossible to add new tag (addProdTag)");
+                            }
+                        } catch (SQLException ex) {
+                            throw new DAOException(ex);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try (PreparedStatement stm = CON.prepareStatement("select id from tags where testo = ?")) {
+                        stm.setString(1, s);
+                        try (ResultSet rs = stm.executeQuery()) {
+                            while (rs.next()) {
+                                prodT.add(rs.getInt("id"));
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+        }
+
+        try (PreparedStatement stm = CON.prepareStatement("delete from blog_tags where blog = ?")) {
+            stm.setInt(1, idBlog);
+            try {
+                stm.execute();
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        for (int q : prodT) {
+            try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?);")) {
+                System.out.println("idBlog: " + idBlog + "\nidTag: " + q);
+                stm.setInt(1, idBlog);
+                stm.setInt(2, q);
+                try {
+                    stm.execute();
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        cleanTags();
+
+    }
+
+    /*@Override
+    public void addProdTags(ArrayList<String> prodTags, int idBlog) throws DAOException {
+
+        boolean check = false;
+
+        ArrayList<String> prods = new ArrayList<String>();
+        for (String element : prodTags) {
+
+            // If this element is not present in newList 
+            // then add it 
+            if (!prods.contains(element)) {
+
+                prods.add(element);
+            }
+        }
+        System.out.println("prods: " + prods.toString());
+        ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
+        for (String s : prods) {
+            if (!s.isEmpty()) {
+                check = false;
+                try (PreparedStatement stm = CON.prepareStatement("select id from tags where prodotto = ?")) {
+                    stm.setInt(1, Integer.parseInt(s));
+                    try (ResultSet rs = stm.executeQuery()) {
+                        while (rs.next()) {
+                            check = true;
+                            prodT.add(rs.getInt("id"));
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (!check) {
+
+                    try (PreparedStatement stm = CON.prepareStatement("insert into tags (prodotto) value (?)")) {
+                        stm.setInt(1, Integer.parseInt(s));
+                        try {
+                            if (stm.executeUpdate() == 1) {
+                            } else {
+                                throw new DAOException("Impossible to add new tag (addProdTag)");
+                            }
+                        } catch (SQLException ex) {
+                            throw new DAOException(ex);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try (PreparedStatement stm = CON.prepareStatement("select id from tags where prodotto = ?")) {
+                        stm.setInt(1, Integer.parseInt(s));
+                        try (ResultSet rs = stm.executeQuery()) {
+                            while (rs.next()) {
+                                prodT.add(rs.getInt("id"));
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+
+            System.out.println("prodT: " + prodT.toString());
+            try (PreparedStatement stm = CON.prepareStatement("delete from blog_tags where blog = ?")) {
+                stm.setInt(1, idBlog);
+                try {
+                    stm.execute();
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            for (int q : prodT) {
+                try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?)")) {
+                    stm.setInt(1, idBlog);
+                    stm.setInt(2, q);
+                    try {
+                        if (stm.executeUpdate() == 1) {
+                        } else {
+                            throw new DAOException("Impossible to add tags to blog");
+                        }
+                    } catch (SQLException ex) {
+                        throw new DAOException(ex);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addCatTags(ArrayList<String> catTags, int idBlog) throws DAOException {
+        boolean check = false;
+
+        ArrayList<String> prods = new ArrayList<String>();
+        for (String element : catTags) {
+
+            // If this element is not present in newList 
+            // then add it 
+            if (!prods.contains(element)) {
+
+                prods.add(element);
+            }
+        }
+        System.out.println("prods: " + prods.toString());
+        ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
+        for (String s : prods) {
+            if (!s.isEmpty()) {
+                check = false;
+                try (PreparedStatement stm = CON.prepareStatement("select id from tags where categoria = ?")) {
+                    stm.setInt(1, Integer.parseInt(s));
+                    try (ResultSet rs = stm.executeQuery()) {
+                        while (rs.next()) {
+                            check = true;
+                            prodT.add(rs.getInt("id"));
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (!check) {
+
+                    try (PreparedStatement stm = CON.prepareStatement("insert into tags (categoria) value (?)")) {
+                        stm.setInt(1, Integer.parseInt(s));
+                        try {
+                            if (stm.executeUpdate() == 1) {
+                            } else {
+                                throw new DAOException("Impossible to add new tag (addCatTags)");
+                            }
+                        } catch (SQLException ex) {
+                            throw new DAOException(ex);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try (PreparedStatement stm = CON.prepareStatement("select id from tags where categoria = ?")) {
+                        stm.setInt(1, Integer.parseInt(s));
+                        try (ResultSet rs = stm.executeQuery()) {
+                            while (rs.next()) {
+                                prodT.add(rs.getInt("id"));
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+        }
+        System.out.println("prodT: " + prodT.toString());
+        try (PreparedStatement stm = CON.prepareStatement("delete from blog_tags where blog = ?")) {
+            stm.setInt(1, idBlog);
+            try {
+                stm.execute();
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        for (int s : prodT) {
+            try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?)")) {
+                stm.setInt(1, idBlog);
+                stm.setInt(2, s);
+                try {
+                    if (stm.executeUpdate() == 1) {
+                    } else {
+                        throw new DAOException("Impossible to add tags to blog");
+                    }
+                } catch (SQLException ex) {
+                    throw new DAOException(ex);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }*/
+    @Override
+    public String getTag(int id) throws DAOException {
+        String query;
+        String tag = "";
+
+        try (PreparedStatement stm = CON.prepareStatement("select testo from tags where id = ?")) {
+            stm.setInt(1, id);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    try {
+                        tag = rs.getString("testo");
+                    } catch (SQLException e) {
+                        System.out.println(e.getSQLState());
+                    }
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw new DAOException("getTag error", ex);
+        }
+        return tag;
+    }
+
+    @Override
+    public String getTagName(int id) throws DAOException {
+        String tag = "";
+        try (PreparedStatement stm = CON.prepareStatement("select testo from tags where id = ?")) {
+            stm.setInt(1, id);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    tag = rs.getString("testo");
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw new DAOException("getTag error", ex);
+        }
+
+        return tag;
+    }
+
+    @Override
+    public ArrayList<Integer> getAllTagsOfBlog(int id_blog) throws DAOException {
+        ArrayList<Integer> tags = new ArrayList<>();
+        ArrayList<Integer> prods = new ArrayList<>();
+
+        try (PreparedStatement stm = CON.prepareStatement("select tag from blog_tags where blog=?")) {
+            stm.setInt(1, id_blog);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    int a = rs.getInt("tag");
+                    if (a != 0) {
+                        tags.add(a);
+                    }
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw new DAOException("getAllTagsOfBlog error 1", ex);
+        }
+        return tags;
+    }
+
+    /*
+    This method return id of tag that contain only product
+     */
+    @Override
+    public ArrayList<Integer> getProductTagsOfBlog(int id_blog) throws DAOException {
+        ArrayList<String> tags = getAllTextTagsOfBlog(id_blog);
+        ArrayList<Integer> prodotti = new ArrayList<>();
+
+        for (String nome : tags) {
+            try (PreparedStatement stm = CON.prepareStatement("select id from prodotto where nome = ?")) {
+                stm.setString(1, nome);
+                try (ResultSet rs = stm.executeQuery()) {
+                    while (rs.next()) {
+                        prodotti.add(rs.getInt("id"));
+                    }
+                }
+            } catch (SQLException ex) {
+                throw new DAOException("Impossibile restituire tutti i prodotti dei tag del blog. (JDBCBlogDAO, getProductTagsOfBlog)", ex);
+            }
+        }
+
+        Collections.shuffle(prodotti);
+
+        return prodotti;
+    }
+
+    /*
+    This method return id of tag that contain only category
+     */
+    @Override
+    public ArrayList<Integer> getCategoryTagsOfBlog(int id_blog) throws DAOException {
+        ArrayList<String> tags = getAllTextTagsOfBlog(id_blog);
+        ArrayList<Integer> categorie = new ArrayList<>();
+
+        for (String nome : tags) {
+            try (PreparedStatement stm = CON.prepareStatement("select id from categorie where nome = ?")) {
+                stm.setString(1, nome);
+                try (ResultSet rs = stm.executeQuery()) {
+                    while (rs.next()) {
+                        categorie.add(rs.getInt("id"));
+                    }
+                }
+            } catch (SQLException ex) {
+                throw new DAOException("Impossibile restituire tutte le categorie dei tag del blog. (JDBCBlogDAO, getCategoryTagsOfBlog)", ex);
+            }
+        }
+
+        Collections.shuffle(categorie);
+
+        return categorie;
+    }
+
+    @Override
+    public ArrayList<String> getAllTextTagsOfBlog(int id_blog) throws DAOException {
+        ArrayList<String> tags = new ArrayList<>();
+        ArrayList<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stm = CON.prepareStatement("select tag from blog_tags where blog=?")) {
+            stm.setInt(1, id_blog);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("tag"));
+                }
+            }
+
+        } catch (SQLException ex) {
+            throw new DAOException("getAllTagsOfBlog error 1", ex);
+        }
+
+        for (int id : ids) {
+            try (PreparedStatement stm = CON.prepareStatement("select testo from tags where id=?")) {
+                stm.setInt(1, id);
+
+                try (ResultSet rs = stm.executeQuery()) {
+                    while (rs.next()) {
+                        tags.add(rs.getString("testo"));
+                    }
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException("getAllTagsOfBlog error 1", ex);
+            }
+        }
+
+        Collections.shuffle(tags);
+
+        return tags;
+    }
+
+    @Override
+    public void cleanTags() throws DAOException {
+        boolean check = false;
+        ArrayList<Integer> ids = new ArrayList<>();
+
+        try (PreparedStatement stm = CON.prepareStatement("select id from tags")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("id"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        for (int id : ids) {
+            try (PreparedStatement stm = CON.prepareStatement("select id from blog_tags where tag = ?")) {
+                stm.setInt(1, id);
+                try (ResultSet rs = stm.executeQuery()) {
+                    while (rs.next()) {
+                        check = true;
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (!check) {
+                try (PreparedStatement stm = CON.prepareStatement("delete from tags where id = ?")) {
+                    stm.setInt(1, id);
+                    try {
+                        stm.execute();
+                    } catch (SQLException ex) {
+                        throw new DAOException(ex);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 }

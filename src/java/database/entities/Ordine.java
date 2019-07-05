@@ -5,7 +5,6 @@
  */
 package database.entities;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -23,11 +22,12 @@ public class Ordine {
     private ArrayList<String> prodotti;
     private String tipo;
     private double tot;
+    private String stato;
 
     public Ordine() {
     }
 
-    public Ordine(String id, String data, String nome, String email, String citta, String indirizzo, String zip, ArrayList<String> prodotti, String tipo, double tot) {
+    public Ordine(String id, String data, String nome, String email, String citta, String indirizzo, String zip, ArrayList<String> prodotti, String tipo, double tot, String stato) {
         this.id = id;
         this.data = data;
         this.nome = nome;
@@ -38,6 +38,7 @@ public class Ordine {
         this.prodotti = prodotti;
         this.tipo = tipo;
         this.tot = tot;
+        this.stato = stato;
     }
 
     public String getId() {
@@ -118,6 +119,14 @@ public class Ordine {
 
     public void setTot(double tot) {
         this.tot = tot;
+    }
+
+    public String getStato() {
+        return stato;
+    }
+
+    public void setStato(String stato) {
+        this.stato = stato;
     }
 
     @Override

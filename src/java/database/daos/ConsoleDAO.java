@@ -6,9 +6,11 @@
 package database.daos;
 
 import database.entities.Ordine;
+import database.entities.Prodotto;
 import database.exceptions.DAOException;
 import java.util.ArrayList;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -59,5 +61,8 @@ public interface ConsoleDAO {
     public int getNumberOfType(String type) throws DAOException;
     public double getTotOfType(String type) throws DAOException;
     public Ordine getLastOfType(String type) throws DAOException;
+    public Ordine getOrder(String id) throws DAOException;
     public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException;
+    public ArrayList<Prodotto> getProdOfOrder(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
+    public void setOrderStatus(String id, int stato) throws DAOException;
 }

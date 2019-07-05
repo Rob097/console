@@ -13,6 +13,8 @@ import database.jdbc.JDBCBlogDAO;
 import database.jdbc.JDBCCatBlogDAO;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -46,7 +48,7 @@ public class addBlog extends HttpServlet {
         blogdao = new JDBCBlogDAO(daoFactory.getConnection());
         catblogdao = new JDBCCatBlogDAO(daoFactory.getConnection());
     }
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -58,20 +60,26 @@ public class addBlog extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             request.setCharacterEncoding("UTF-8");
-            String categoria = "", titolo = "", testo = "", creatore = "", immagine = "", descrizione = "";
+
+            String categoria = "", titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "";
+            ArrayList<String> tags = new ArrayList<>();
             Part filePart1 = null;
+
             if (request.getParameter("titolo") != null) {
                 titolo = request.getParameter("titolo");
             }
             if (request.getParameter("testo") != null) {
                 testo = request.getParameter("testo");
             }
+            if (request.getParameter("tag") != null) {
+                tag = request.getParameter("tag");
+            }
             if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
                 creatore = request.getParameter("newCreator");
-            } else if (request.getParameter("autore") != null){
+            } else if (request.getParameter("autore") != null) {
                 creatore = request.getParameter("autore");
             }
             if (request.getParameter("newCategory") != null && !request.getParameter("newCategory").isEmpty()) {
@@ -87,9 +95,15 @@ public class addBlog extends HttpServlet {
             if (request.getPart("immagine") != null) {
                 filePart1 = request.getPart("immagine");
             }
-            System.out.println("Creatore: " + creatore);
+
             descrizione = testo.replaceAll("[<](/)?[^>]*[>]", "");
+
             int id = blogdao.addBlog(titolo, testo, creatore, categoria, descrizione);
+            
+            tags.addAll(Arrays.asList(tag.split(";")));
+            blogdao.addTags(tags, id);
+            
+            
             //Load dell'immagine
             if (filePart1 != null) {
                 if (filePart1.getContentType().contains("image/")) {
@@ -124,12 +138,12 @@ public class addBlog extends HttpServlet {
             } else {
                 System.out.println("filePart = null");
             }
-            blogdao.alterBlog(""+id, titolo, testo, creatore, categoria, immagine, descrizione);
-            response.sendRedirect("/console/articolo.jsp?id="+id);
+            blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione);
+            response.sendRedirect("/console/articolo.jsp?id=" + id);
         } catch (DAOException ex) {
             Logger.getLogger(addBlog.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

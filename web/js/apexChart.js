@@ -71,8 +71,13 @@ function initColumnChart() {
 function initPieChart() {
     var keyPieProduct = []; /* Valore chiavi hashmap visualizzazioni ultime 4 settimane */
     var valuePieProduct = []; /* Valore valori hashmap visualizzazioni ultime 4 settimane */
-    var copyPieProduct;
-
+    Apex = {
+        chart: {
+            toolbar: {
+                show: true
+            }
+        }
+    };
     $.ajax({
         type: "GET",
         url: "/console/getProductBuy",
@@ -101,12 +106,9 @@ function initPieChart() {
                             }
                         }
                     }]
-            }
+            };
 
-            var chart = new ApexCharts(
-                    document.querySelector("#pieProduct"),
-                    options
-                    );
+            var chart = new ApexCharts(document.querySelector("#pieProduct"), options);
 
             chart.render();
         },
@@ -129,7 +131,7 @@ function initBlogViewChart(tipo) {
     var copyBlogViews;
     var i = 0;
     var arrayData = [], dataYearSeries = [], quart = [];
-    
+
     Apex = {
         chart: {
             toolbar: {
@@ -156,7 +158,7 @@ function initBlogViewChart(tipo) {
         }
         return array;
     }
-    
+
     $.ajax({
         type: "GET",
         url: "/console/getBlogCatViews",
@@ -192,7 +194,7 @@ function initBlogViewChart(tipo) {
                     });
                     return tmp;
                 }();
-                
+
                 var graphDataArt = jQuery.parseJSON(JSON.stringify(r));
                 for (var keyArt in graphDataArt) {
                     keyBlogArtViews.push("" + keyArt);
@@ -309,7 +311,7 @@ function initBlogViewChart(tipo) {
             };
 
             var yearChart = new ApexCharts(
-                    document.querySelector("#chart-year-"+tipo),
+                    document.querySelector("#chart-year-" + tipo),
                     optionsYear
                     );
 
@@ -352,7 +354,7 @@ function initBlogViewChart(tipo) {
 
             var optionsQuarters = {
                 chart: {
-                    id: 'barQuarter-'+tipo,
+                    id: 'barQuarter-' + tipo,
                     height: 400,
                     width: '100%',
                     type: 'bar',
@@ -394,8 +396,8 @@ function initBlogViewChart(tipo) {
                 tooltip: {
                     x: {
                         /*formatter: function (val, opts) {
-                            return opts.w.globals.seriesNames[opts.seriesIndex]
-                        } */
+                         return opts.w.globals.seriesNames[opts.seriesIndex]
+                         } */
                         show: false
                     },
                     y: {
@@ -409,25 +411,25 @@ function initBlogViewChart(tipo) {
             };
 
             var chartQuarters = new ApexCharts(
-                    document.querySelector("#chart-quarter-"+tipo),
+                    document.querySelector("#chart-quarter-" + tipo),
                     optionsQuarters
                     );
             chartQuarters.render();
 
             yearChart.addEventListener('dataPointSelection', function (e, chart, opts) {
-                var quarterChartEl = document.querySelector("#chart-quarter-"+tipo);
-                var yearChartEl = document.querySelector("#chart-year-"+tipo);
+                var quarterChartEl = document.querySelector("#chart-quarter-" + tipo);
+                var yearChartEl = document.querySelector("#chart-year-" + tipo);
 
                 if (opts.selectedDataPoints[0].length === 1) {
                     if (quarterChartEl.classList.contains("active")) {
-                        updateQuarterChart(chart, 'barQuarter-'+tipo)
+                        updateQuarterChart(chart, 'barQuarter-' + tipo)
                     } else {
                         yearChartEl.classList.add("chart-quarter-activated")
                         quarterChartEl.classList.add("active");
-                        updateQuarterChart(chart, 'barQuarter-'+tipo)
+                        updateQuarterChart(chart, 'barQuarter-' + tipo)
                     }
                 } else {
-                    updateQuarterChart(chart, 'barQuarter-'+tipo)
+                    updateQuarterChart(chart, 'barQuarter-' + tipo)
                 }
 
                 if (opts.selectedDataPoints[0].length === 0) {
@@ -438,11 +440,11 @@ function initBlogViewChart(tipo) {
             })
 
             yearChart.addEventListener('updated', function (chart) {
-                updateQuarterChart(chart, 'barQuarter-'+tipo)
+                updateQuarterChart(chart, 'barQuarter-' + tipo)
             })
 
 
-            document.querySelector("#app-"+tipo).addEventListener("change", function (e) {
+            document.querySelector("#app-" + tipo).addEventListener("change", function (e) {
                 yearChart.updateSeries([{
                         data: makeData()
                     }])
@@ -465,7 +467,7 @@ function initCommentChart(tipo) {
     var keyArtComment = []; /* Valore chiavi hashmap visualizzazioni ultime 4 settimane */
     var valueArtComment = []; /* Valore valori hashmap visualizzazioni ultime 4 settimane */
     var arrayData = [], dataYearSeries = [], quart = [];
-    
+
     Apex = {
         chart: {
             toolbar: {
@@ -479,7 +481,7 @@ function initCommentChart(tipo) {
     };
     var colors = ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#00D9E9', '#FF66C3'];
 
-    
+
     $.ajax({
         type: "GET",
         url: "/console/getCatComment",
@@ -515,7 +517,7 @@ function initCommentChart(tipo) {
                     });
                     return tmp;
                 }();
-                
+
                 var graphDataArt = jQuery.parseJSON(JSON.stringify(r));
                 for (var keyArt in graphDataArt) {
                     keyArtComment.push("" + keyArt);
@@ -632,7 +634,7 @@ function initCommentChart(tipo) {
             };
 
             var yearChart = new ApexCharts(
-                    document.querySelector("#chart-year-"+tipo+"-comments"),
+                    document.querySelector("#chart-year-" + tipo + "-comments"),
                     optionsYear
                     );
 
@@ -675,7 +677,7 @@ function initCommentChart(tipo) {
 
             var optionsQuarters = {
                 chart: {
-                    id: 'barQuarter-'+tipo+"-comments",
+                    id: 'barQuarter-' + tipo + "-comments",
                     height: 400,
                     width: '100%',
                     type: 'bar',
@@ -717,8 +719,8 @@ function initCommentChart(tipo) {
                 tooltip: {
                     x: {
                         /*formatter: function (val, opts) {
-                            return opts.w.globals.seriesNames[opts.seriesIndex]
-                        } */
+                         return opts.w.globals.seriesNames[opts.seriesIndex]
+                         } */
                         show: false
                     },
                     y: {
@@ -732,25 +734,25 @@ function initCommentChart(tipo) {
             };
 
             var chartQuarters = new ApexCharts(
-                    document.querySelector("#chart-quarter-"+tipo+"-comments"),
+                    document.querySelector("#chart-quarter-" + tipo + "-comments"),
                     optionsQuarters
                     );
             chartQuarters.render();
 
             yearChart.addEventListener('dataPointSelection', function (e, chart, opts) {
-                var quarterChartEl = document.querySelector("#chart-quarter-"+tipo+"-comments");
-                var yearChartEl = document.querySelector("#chart-year-"+tipo+"-comments");
+                var quarterChartEl = document.querySelector("#chart-quarter-" + tipo + "-comments");
+                var yearChartEl = document.querySelector("#chart-year-" + tipo + "-comments");
 
                 if (opts.selectedDataPoints[0].length === 1) {
                     if (quarterChartEl.classList.contains("active")) {
-                        updateQuarterChart(chart, 'barQuarter-'+tipo+"-comments")
+                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-comments")
                     } else {
                         yearChartEl.classList.add("chart-quarter-activated")
                         quarterChartEl.classList.add("active");
-                        updateQuarterChart(chart, 'barQuarter-'+tipo+"-comments")
+                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-comments")
                     }
                 } else {
-                    updateQuarterChart(chart, 'barQuarter-'+tipo+"-comments")
+                    updateQuarterChart(chart, 'barQuarter-' + tipo + "-comments")
                 }
 
                 if (opts.selectedDataPoints[0].length === 0) {
@@ -761,11 +763,11 @@ function initCommentChart(tipo) {
             })
 
             yearChart.addEventListener('updated', function (chart) {
-                updateQuarterChart(chart, 'barQuarter-'+tipo+"-comments")
+                updateQuarterChart(chart, 'barQuarter-' + tipo + "-comments")
             })
 
 
-            document.querySelector("#app-"+tipo+"-comments").addEventListener("change", function (e) {
+            document.querySelector("#app-" + tipo + "-comments").addEventListener("change", function (e) {
                 yearChart.updateSeries([{
                         data: makeData()
                     }])
@@ -788,7 +790,7 @@ function initRateChart(tipo) {
     var keyArtRate = []; /* Valore chiavi hashmap visualizzazioni ultime 4 settimane */
     var valueArtRate = []; /* Valore valori hashmap visualizzazioni ultime 4 settimane */
     var arrayData = [], dataYearSeries = [], quart = [];
-    
+
     Apex = {
         chart: {
             toolbar: {
@@ -802,7 +804,7 @@ function initRateChart(tipo) {
     };
     var colors = ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#00D9E9', '#FF66C3'];
 
-    
+
     $.ajax({
         type: "GET",
         url: "/console/getCatRate",
@@ -838,7 +840,7 @@ function initRateChart(tipo) {
                     });
                     return tmp;
                 }();
-                
+
                 var graphDataArt = jQuery.parseJSON(JSON.stringify(r));
                 for (var keyArt in graphDataArt) {
                     keyArtRate.push("" + keyArt);
@@ -955,7 +957,7 @@ function initRateChart(tipo) {
             };
 
             var yearChart = new ApexCharts(
-                    document.querySelector("#chart-year-"+tipo+"-rate"),
+                    document.querySelector("#chart-year-" + tipo + "-rate"),
                     optionsYear
                     );
 
@@ -998,7 +1000,7 @@ function initRateChart(tipo) {
 
             var optionsQuarters = {
                 chart: {
-                    id: 'barQuarter-'+tipo+"-rate",
+                    id: 'barQuarter-' + tipo + "-rate",
                     height: 400,
                     width: '100%',
                     type: 'bar',
@@ -1040,8 +1042,8 @@ function initRateChart(tipo) {
                 tooltip: {
                     x: {
                         /*formatter: function (val, opts) {
-                            return opts.w.globals.seriesNames[opts.seriesIndex]
-                        } */
+                         return opts.w.globals.seriesNames[opts.seriesIndex]
+                         } */
                         show: false
                     },
                     y: {
@@ -1055,25 +1057,25 @@ function initRateChart(tipo) {
             };
 
             var chartQuarters = new ApexCharts(
-                    document.querySelector("#chart-quarter-"+tipo+"-rate"),
+                    document.querySelector("#chart-quarter-" + tipo + "-rate"),
                     optionsQuarters
                     );
             chartQuarters.render();
 
             yearChart.addEventListener('dataPointSelection', function (e, chart, opts) {
-                var quarterChartEl = document.querySelector("#chart-quarter-"+tipo+"-rate");
-                var yearChartEl = document.querySelector("#chart-year-"+tipo+"-rate");
+                var quarterChartEl = document.querySelector("#chart-quarter-" + tipo + "-rate");
+                var yearChartEl = document.querySelector("#chart-year-" + tipo + "-rate");
 
                 if (opts.selectedDataPoints[0].length === 1) {
                     if (quarterChartEl.classList.contains("active")) {
-                        updateQuarterChart(chart, 'barQuarter-'+tipo+"-rate")
+                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate")
                     } else {
                         yearChartEl.classList.add("chart-quarter-activated")
                         quarterChartEl.classList.add("active");
-                        updateQuarterChart(chart, 'barQuarter-'+tipo+"-rate")
+                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate")
                     }
                 } else {
-                    updateQuarterChart(chart, 'barQuarter-'+tipo+"-rate")
+                    updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate")
                 }
 
                 if (opts.selectedDataPoints[0].length === 0) {
@@ -1084,11 +1086,11 @@ function initRateChart(tipo) {
             })
 
             yearChart.addEventListener('updated', function (chart) {
-                updateQuarterChart(chart, 'barQuarter-'+tipo+"-rate")
+                updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate")
             })
 
 
-            document.querySelector("#app-"+tipo+"-rate").addEventListener("change", function (e) {
+            document.querySelector("#app-" + tipo + "-rate").addEventListener("change", function (e) {
                 yearChart.updateSeries([{
                         data: makeData()
                     }])

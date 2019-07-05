@@ -180,7 +180,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Blog</h3>
 
                                         <div id="app-blog">
@@ -194,7 +194,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Idee</h3>
 
                                         <div id="app-idee">
@@ -223,7 +223,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Blog</h3>
 
                                         <div id="app-blog-comments">
@@ -237,7 +237,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Idee</h3>
 
                                         <div id="app-idee-comments">
@@ -266,7 +266,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Blog</h3>
 
                                         <div id="app-blog-rate">
@@ -280,7 +280,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-lg-6 col-12">
                                         <h3>Idee</h3>
 
                                         <div id="app-idee-rate">

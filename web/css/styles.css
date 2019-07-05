@@ -200,3 +200,57 @@ h1 { font-size: 1.5em; margin: 10px; }
 .rating > input:checked ~ label, /* show gold star when clicked */
 .rating:not(:checked)  /* hover current star */
 .rating:not(:checked) label { color: #FFD700;  } /* hover previous stars in list */
+
+
+/* SPINNER */
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+.spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+}
+
+
+.comment-form {
+    background: #fafaff;
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 50px 20px;
+    margin-top: 50px;
+}
+.comment-form h4 {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.form-inline {
+    display: flex;
+    align-items: center;
+    flex-flow: row wrap;
+}
+.comment-form .name {
+    padding-left: 0px;
+}
+.comment-form .form-control {
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 0px;
+    width: 100%;
+    font-size: 13px;
+    color: #777777;
+}
+.comment-form .primary-btn {
+    border-radius: 0px !important;
+    border: 1px solid transparent;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: none !important;
+}

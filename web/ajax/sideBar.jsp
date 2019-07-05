@@ -20,7 +20,7 @@
                     <p>Dashboard</p>
                 </a>
             </li>
-            <li class="nav-item <c:if test='${param.page.equals("ordini")}'> active </c:if>">
+            <li class="nav-item <c:if test='${param.page.equals("ordini") || param.page.equals("ordine")}'> active </c:if>">
                 <a class="nav-link" href="./ordini.jsp">
                     <i class="material-icons">shopping_cart</i>
                     <p>Ordini</p>

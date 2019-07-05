@@ -161,8 +161,8 @@
                                                 </div>
                                             </div>
                                             </p>
-                                            <a href="idea.jsp?id=${idea.id}" class="btn btn-primary btn-round">Modifica</a>
-                                            <a href="../MacAPP/idea.jsp?id=${idea.id}" class="btn btn-primary btn-round" target="_blank">Visualizza</a>
+                                            <a href="idea.jsp?id=${idea.id}" class="btn btn-outline-success">Modifica</a>
+                                            <a href="../MacAPP/idea.jsp?id=${idea.id}" class="btn btn-outline-warning" target="_blank">Visualizza</a>
                                         </div>
                                     </div>
                                 </div>

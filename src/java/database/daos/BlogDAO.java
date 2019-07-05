@@ -22,4 +22,16 @@ public interface BlogDAO {
     public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione) throws DAOException;
     public void deleteBlog(String id)  throws DAOException;
     public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione) throws DAOException;
+   
+    /* TAGS */
+    public void addTags(ArrayList<String> prodTags, int idBlog) throws DAOException;
+    /*public void addProdTags(ArrayList<String> prodTags, int idBlog) throws DAOException;
+    public void addCatTags(ArrayList<String> catTags, int idBlog) throws DAOException;*/
+    public String getTag(int id) throws DAOException;
+    public String getTagName(int id) throws DAOException;
+    public ArrayList<Integer> getAllTagsOfBlog(int id_blog) throws DAOException;    
+    public ArrayList<String> getAllTextTagsOfBlog(int id_blog) throws DAOException;
+    public ArrayList<Integer> getProductTagsOfBlog(int id_blog) throws DAOException;
+    public ArrayList<Integer> getCategoryTagsOfBlog(int id_blog) throws DAOException;
+    public void cleanTags() throws DAOException;
 }

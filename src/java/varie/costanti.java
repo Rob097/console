@@ -19,4 +19,9 @@ public class costanti {
     public static final String USER = "info@macelleriadellantonio.it";
     public static final String PASS = "Bortoleto1";
     
+    public static String ROB_MAIL = "dellantonio47@gmail.com";
+    public static String ROB_PASS = "jwjdxemvcgvppvgp";
+    public static String MAC_MAIL = "macelleriabortoleto@gmail.com";
+    public static String MAC_PASS = "zwvbnhynldgwqugc";
+    
 }

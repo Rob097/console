@@ -211,6 +211,32 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
             return null;
         }
     }
+    
+    @Override
+    public Prodotto getProductByName(String name) throws DAOException {
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where nome = ?")) {
+            stm.setString(1, name);
+            Prodotto p = null;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    p = new Prodotto();
+                    p.setId(rs.getInt("id"));
+                    p.setNome(rs.getString("nome"));
+                    p.setDescrizione(rs.getString("descrizione"));
+                    p.setImmagine(rs.getString("immagine"));
+                    p.setCategoria(rs.getString("categoria"));
+                    p.setCosto(rs.getFloat("costo"));
+                    p.setDisponibile(rs.getBoolean("disponibile"));
+                    p.setFresco(rs.getBoolean("fresco"));
+                }
+                return p;
+            }
+        } catch (SQLException ex) {
+            //throw new DAOException("Impossibile restituire il prodotto. (JDBCProductDAO, getProduct)", ex);
+            return null;
+        }
+    }
 
     /**
      * Metodo che ritorna la valutazione media di un prodotto.

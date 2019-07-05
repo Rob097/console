@@ -13,6 +13,8 @@ import database.jdbc.JDBCBlogDAO;
 import database.jdbc.JDBCCatBlogDAO;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -104,7 +106,8 @@ public class updateBlog extends HttpServlet {
 
                 try {
 
-                    String titolo = "", testo = "", creatore = "", immagine = "", descrizione = "";
+                    String titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "";
+                    ArrayList<String> tags = new ArrayList<>();
                     Part filePart1 = null;
 
                     if (request.getParameter("titolo") != null) {
@@ -132,7 +135,14 @@ public class updateBlog extends HttpServlet {
                     if (request.getParameter("oldIMG") != null) {
                         immagine = request.getParameter("oldIMG");
                     }
-
+                    if (request.getParameter("tag") != null) {
+                        tag = request.getParameter("tag");
+                    }
+                    
+                    tags.addAll(Arrays.asList(tag.split(";")));
+                    
+                    blogdao.addTags(tags, Integer.parseInt(id));
+                    
                     descrizione = testo.replaceAll("[<](/)?[^>]*[>]", "");
 
                     //Load dell'immagine

@@ -146,8 +146,8 @@
                                                 </div>
                                             </div>
                                             </p>
-                                            <a href="articolo.jsp?id=${articolo.id}" class="btn btn-primary btn-round">Modifica</a>
-                                            <a href="../MacAPP/articolo.jsp?id=${articolo.id}" class="btn btn-primary btn-round" target="_blank">Visualizza</a>
+                                            <a href="articolo.jsp?id=${articolo.id}" class="btn btn-outline-success">Modifica</a>
+                                            <a href="../MacAPP/articolo.jsp?id=${articolo.id}" class="btn btn-outline-warning" target="_blank">Visualizza</a>
                                         </div>
                                     </div>
                                 </div>

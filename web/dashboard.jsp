@@ -315,7 +315,7 @@
                                         <div class="chart" id="columnChart"></div>
                                     </div>
                                     <div class="card-footer">
-                                        <div class="stats">
+                                        <div class="stats" data-toggle="tooltip" title="Prossimo aggiornamento: ${LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}">
                                             <i class="material-icons">date_range</i> Fino  
                                             <c:choose>
                                                 <c:when test="${LocalDate.now().getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())}">

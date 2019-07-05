@@ -112,7 +112,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
-                                    <div class="card-header card-header-primary">
+                                    <div class="card-header card-header-danger">
                                         <h4 class="card-title ">Categorie</h4>
                                         <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addCategory"><i class="fas fa-plus"></i> Aggiungi categoria</a>                                       
                                         <p class="card-category"> Categorie di prodotti</p>                                        
@@ -120,7 +120,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table">
-                                                <thead class=" text-primary">
+                                                <thead class=" text-danger">
                                                 <th>
                                                     ID
                                                 </th>
@@ -136,7 +136,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td colspan="4" class="subDivisionTable"> Prodotti confezionati</td>
+                                                        <td colspan="4" class="subDivisionTable text-danger"> Prodotti confezionati</td>
                                                     </tr>
                                                     <c:forEach var="categoria" items="${categorydao.getConfCategories()}">
                                                         <tr>
@@ -155,7 +155,7 @@
                                                         </tr>
                                                     </c:forEach>
                                                     <tr>
-                                                        <td colspan="4" class="subDivisionTable"> Prodotti freschi</td>
+                                                        <td colspan="4" class="subDivisionTable text-danger"> Prodotti freschi</td>
                                                     </tr>
                                                     <c:forEach var="categoria" items="${categorydao.getFreshCategories()}">
                                                         <tr>
@@ -181,7 +181,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="card card-plain">
-                                    <div class="card-header card-header-primary">
+                                    <div class="card-header card-header-warning">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
                                         <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addConfezionato"><i class="fas fa-plus"></i> Aggiungi prodotto confezionato</a>                                       
                                         <p class="card-category">Prodotti Confezionati</p>
@@ -189,7 +189,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table table-hover">
-                                                <thead class="">
+                                                <thead class="text-warning">
                                                 <th>
                                                     ID
                                                 </th>
@@ -215,7 +215,7 @@
                                                 <tbody>
                                                     <c:forEach var="categoria" items="${categorydao.getConfCategories()}">
                                                         <tr>
-                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable"> ${categoria.nome}</td>
+                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable text-warning"> ${categoria.nome}</td>
                                                         </tr>
                                                         <c:forEach var="prodotto" items="${productdao.getAllProductsOfCategory(categoria.nome)}">
                                                             <tr style="cursor: pointer;" onclick="updateProd(${prodotto.id});">
@@ -251,7 +251,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="card card-plain">
-                                    <div class="card-header card-header-primary">
+                                    <div class="card-header card-header-warning">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
                                         <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addFresco"><i class="fas fa-plus"></i> Aggiungi prodotto fresco</a>                                       
                                         <p class="card-category">Prodotti Freschi</p>
@@ -259,7 +259,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table table-hover">
-                                                <thead class="">
+                                                <thead class="text-warning">
                                                 <th>
                                                     ID
                                                 </th>
@@ -285,7 +285,7 @@
                                                 <tbody>
                                                     <c:forEach var="categoria" items="${categorydao.getFreshCategories()}">
                                                         <tr>
-                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable"> ${categoria.nome}</td>
+                                                            <td id="${categoria.nome}" colspan="7" class="subDivisionTable text-warning"> ${categoria.nome}</td>
                                                         </tr>
                                                         <c:forEach var="prodotto" items="${productdao.getAllProductsOfCategory(categoria.nome)}">
                                                             <tr style="cursor: pointer;" onclick="updateProd(${prodotto.id});">
@@ -322,14 +322,14 @@
                             <c:if test="${productdao.getNullCategoryProducts() ne null}">
                                 <div class="col-md-12">
                                     <div class="card card-plain">
-                                        <div class="card-header card-header-primary">
+                                        <div class="card-header card-header-info">
                                             <h4 class="card-title mt-0"> Prodotti</h4>                                      
                                             <p class="card-category">Prodotti senza categoria</p>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
-                                                    <thead class="">
+                                                    <thead class="text-warning">
                                                     <th>
                                                         ID
                                                     </th>

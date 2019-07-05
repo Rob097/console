@@ -130,7 +130,10 @@
                                                     TOT
                                                 </th>
                                                 <th>
-                                                    Ultimo ordine
+                                                    Data ultimo ordine
+                                                </th>
+                                                <th>
+                                                    Totale ultimo ordine
                                                 </th>
                                                 </thead>
                                                 <tbody>
@@ -146,7 +149,10 @@
                                                                 € ${consoledao.getTotOfType(tipo)}
                                                             </td>
                                                             <td>
-                                                                ${consoledao.getLastOfType(tipo).data} | € ${consoledao.getLastOfType(tipo).tot}
+                                                                ${consoledao.getLastOfType(tipo).data}
+                                                            </td>
+                                                            <td>
+                                                                € ${consoledao.getLastOfType(tipo).tot}
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
@@ -192,12 +198,15 @@
                                                     <th>
                                                         TOT
                                                     </th>
+                                                    <th>
+                                                        Stato
+                                                    </th>
                                                     </thead>
                                                     <tbody>
                                                         <c:forEach var="ordine" items="${consoledao.getOrdersOfType(tipo)}">
                                                             <tr>
                                                                 <td>
-                                                                    ${ordine.id}
+                                                                    <a style="color: black;" href="ordine.jsp?id=${ordine.id}">${ordine.id}</a>
                                                                 </td>
                                                                 <td>
                                                                     ${ordine.data}
@@ -219,6 +228,9 @@
                                                                 </td>
                                                                 <td>
                                                                     € ${ordine.tot}
+                                                                </td>
+                                                                <td>
+                                                                    ${StringUtils.capitalize(ordine.stato)}
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>

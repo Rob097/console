@@ -6,7 +6,9 @@
 package database.jdbc;
 
 import database.daos.ConsoleDAO;
+import database.daos.ProductDAO;
 import database.entities.Ordine;
+import database.entities.Prodotto;
 import database.exceptions.DAOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -605,7 +608,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(rs.getString("categoria"), rate);
                 }
@@ -631,7 +634,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                         categoria = "Utenti";
                     }
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(categoria, rate);
                 }
@@ -652,7 +655,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(rs.getString("categoria"), rate);
                 }
@@ -673,7 +676,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(rs.getString("nome"), rate);
                 }
@@ -694,7 +697,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(rs.getString("nome"), rate);
                 }
@@ -715,7 +718,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     Double rate = rs.getDouble("rate");
-                    String rateS = String.format("%.2f", rate);
+                    String rateS = String.format("%.2f", rate).replace(",", ".");
                     rate = Double.parseDouble(rateS);
                     dati.put(rs.getString("nome"), rate);
                 }
@@ -775,7 +778,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 while (rs.next()) {
                     Double tot = rs.getDouble("tot");
                     String totS = String.format("%.2f", tot);
-                    number = Double.parseDouble(totS);
+                    number = Double.parseDouble(totS.replace(",", "."));
                 }
             }
         } catch (SQLException ex) {
@@ -803,9 +806,10 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     ordine.setZip(rs.getString("zip"));
                     ordine.setTipo(rs.getString("delivery"));
                     ordine.setProdotti(new ArrayList<>());
-                    String[] prodotti = rs.getString("items").split(":");
+                    String[] prodotti = rs.getString("items").split(";");
                     ordine.getProdotti().addAll(Arrays.asList(prodotti));
                     ordine.setTot(rs.getDouble("totale"));
+                    ordine.setStato(rs.getString("stato"));
                 }
             }
         } catch (SQLException ex) {
@@ -813,7 +817,36 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
         return ordine;
     }
-    
+
+    @Override
+    public Ordine getOrder(String id) throws DAOException {
+        Ordine ordine = null;
+        try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where id = ?")) {
+            stm.setString(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    ordine = new Ordine();
+                    ordine.setId(rs.getString("id"));
+                    ordine.setData(rs.getTimestamp("date").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    ordine.setNome(rs.getString("nome"));
+                    ordine.setEmail(rs.getString("email"));
+                    ordine.setCitta(rs.getString("citta"));
+                    ordine.setIndirizzo(rs.getString("indirizzo"));
+                    ordine.setZip(rs.getString("zip"));
+                    ordine.setTipo(rs.getString("delivery"));
+                    ordine.setProdotti(new ArrayList<>());
+                    String[] prodotti = rs.getString("items").split(";");
+                    ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setTot(rs.getDouble("totale"));
+                    ordine.setStato(rs.getString("stato"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ordine;
+    }
+
     @Override
     public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException {
         ArrayList<Ordine> ordini = new ArrayList<>();
@@ -833,9 +866,10 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     ordine.setZip(rs.getString("zip"));
                     ordine.setTipo(rs.getString("delivery"));
                     ordine.setProdotti(new ArrayList<>());
-                    String[] prodotti = rs.getString("items").split(":");
+                    String[] prodotti = rs.getString("items").split(";");
                     ordine.getProdotti().addAll(Arrays.asList(prodotti));
                     ordine.setTot(rs.getDouble("totale"));
+                    ordine.setStato(rs.getString("stato"));
                     ordini.add(ordine);
                 }
             }
@@ -862,6 +896,77 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
 
         return ordini;
+    }
+
+    @Override
+    public ArrayList<Prodotto> getProdOfOrder(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+        try {
+            ProductDAO productdao = (ProductDAO) request.getSession().getAttribute("productdao");
+
+            if (productdao != null) {
+
+                ArrayList<String> nomi = new ArrayList<>();
+                ArrayList<String> quantita = new ArrayList<>();
+                ArrayList<Prodotto> products = new ArrayList<>();
+
+                for (String split1 : prodotti) {
+                    String[] s = split1.split("_");
+                    nomi.add(s[0]);
+                    quantita.add(s[1]);
+                }
+                for (int i = 0; i < nomi.size(); i++) {
+                    products.add(productdao.getProductByName(nomi.get(i)));
+                    products.get(i).setQuantita(Integer.parseInt(quantita.get(i).replace(" ", "")));
+                }
+
+                return products;
+
+            } else {
+                return null;
+            }
+        } catch (Exception s) {
+            s.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void setOrderStatus(String id, int stato) throws DAOException {
+        String statoS = "";
+
+        switch (stato) {
+            case (1):
+                statoS = "preparazione";
+                break;
+            case (2):
+                statoS = "spedito";
+                break;
+            case (3):
+                statoS = "consegnato";
+                break;
+            case (4):
+                statoS = "ritirato";
+                break;
+            case (5):
+                statoS = "altro";
+        }
+
+        try (PreparedStatement stm = CON.prepareStatement("update orderSum set stato = ? where id = ?;")) {
+            try {
+                stm.setString(1, statoS);
+                stm.setString(2, id);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error updating order status: " + id);
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
