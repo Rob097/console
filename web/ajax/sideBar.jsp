@@ -32,6 +32,12 @@
                     <p>Prodotti</p>
                 </a>
             </li>
+            <li class="nav-item <c:if test='${param.page.equals("menu")}'> active </c:if>">
+                <a class="nav-link" href="./menu.jsp">
+                    <i class="material-icons">content_paste</i>
+                    <p>Menu Ristorante</p>
+                </a>
+            </li>
             <li class="nav-item <c:if test='${param.page.equals("articoli") || param.page.equals("articolo")}'> active </c:if>">
                 <a class="nav-link" href="./articoli.jsp">
                     <i class="material-icons">library_books</i>

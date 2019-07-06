@@ -50,13 +50,20 @@ public class JDBCDAOFactory implements DAOFactory{
         try {
             // dynamically loading the appropriate driver class with a call to Class.forName()
             Class.forName(DRIVER);
+            if (CON == null) {
+                try {
+                    CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
+                } catch (SQLException sqle) {
+                    throw new DAOFactoryException("Cannot get connection", sqle);
+                }
+            }
         } catch (ClassNotFoundException cnfe) {
             throw new RuntimeException(cnfe.getMessage(), cnfe.getCause());
         }
 
         try {
             //assegna la connessione
-            CON = DriverManager.getConnection(dbUrl,USERNAME,PASSWORD);
+            CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
         } catch (SQLException sqle) {
             throw new DAOFactoryException("Cannot create connection", sqle);
         }
@@ -71,16 +78,18 @@ public class JDBCDAOFactory implements DAOFactory{
                 try {
                     Class.forName(DRIVER);
                     CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
-                    System.out.println("CONNESSIONE");
+                    
                 } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         }catch (SQLException ex) {
             try {
                 Class.forName(DRIVER);
                 CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
-                System.out.println("CONNESSIONE IN CATCH");
+                
             } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
         return CON;

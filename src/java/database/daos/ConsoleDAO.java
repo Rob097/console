@@ -65,4 +65,7 @@ public interface ConsoleDAO {
     public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException;
     public ArrayList<Prodotto> getProdOfOrder(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
     public void setOrderStatus(String id, int stato) throws DAOException;
+    public double getOrderDeliveryCost(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
+    public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
+    public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
 }

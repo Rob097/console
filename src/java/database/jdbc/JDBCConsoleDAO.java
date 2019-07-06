@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +31,11 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import static varie.costanti.MAX_COSTO;
+import static varie.costanti.MAX_W_PRICE;
+import static varie.costanti.MED_W_PRICE;
+import static varie.costanti.MIN_COSTO;
+import static varie.costanti.MIN_W_PRICE;
 
 /**
  *
@@ -967,6 +973,105 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         } catch (SQLException ex) {
             Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public double getOrderDeliveryCost(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+
+        ArrayList<Prodotto> products = getProdOfOrder(prodotti, request);
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setMaximumFractionDigits(2);
+        double totale = 0.00;
+
+        try {
+            if (prodotti != null) {
+                for (Prodotto p : products) {
+                    totale += (df.parse(p.getCosto()).doubleValue() * p.getQuantita());
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String costo = String.format("%.2f", totale);
+
+        if (costo == null || costo.isEmpty()) {
+            return 0.0;
+        } else {
+            df.setMaximumFractionDigits(2);
+            double costoN = 0.00, tot = 0.00;
+            String spedizione = null;
+            String freshBox;
+
+            try {
+                costoN += (df.parse(costo).doubleValue());
+                if (costoN <= MIN_COSTO) {
+                    spedizione = "17.50";
+                } else if (costoN > MIN_COSTO && costoN < MAX_COSTO) {
+                    spedizione = "24.00";
+                } else if (costoN >= MAX_COSTO) {
+                    spedizione = String.format("%.2f", MAX_W_PRICE).replace(",", ".");
+                }
+
+                if (costoN >= MAX_COSTO) {
+                    spedizione = String.format("%.2f", MAX_W_PRICE).replace(",", ".");
+                } else {
+
+                    if (totale > 0 && totale < MIN_COSTO) {
+                        tot = MIN_W_PRICE;
+                    } else if (totale >= MIN_COSTO && totale < MAX_COSTO) {
+                        tot = MED_W_PRICE;
+                    } else if (totale >= MAX_COSTO) {
+                        tot = MAX_W_PRICE;
+                    }
+                    freshBox = String.format("%.2f", tot);
+                    freshBox = freshBox.replace(",", ".");
+
+                    Double sD = Double.parseDouble(spedizione);
+                    Double fD = Double.parseDouble(freshBox);
+                    Double tD = sD + fD;
+
+                    spedizione = String.format("%.2f", tD);
+                }
+
+            } catch (ParseException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return Double.parseDouble(spedizione.replace(",", "."));
+        }
+
+    }
+
+    @Override
+    public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+
+        String box = "";
+        double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
+
+        if (totaleProducts > 0 && totaleProducts < MIN_COSTO) {
+            box = "Box piccolo";
+        } else if (totaleProducts >= MIN_COSTO && totaleProducts < MAX_COSTO) {
+            box = "Box medio";
+        } else if (totaleProducts >= MAX_COSTO) {
+            box = "Box grande";
+        }
+        return box;
+    }
+
+    @Override
+    public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+
+        double tot = 0.0;
+        double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
+
+        if (totaleProducts > 0 && totaleProducts < MIN_COSTO) {
+            tot = MIN_W_PRICE;
+        } else if (totaleProducts >= MIN_COSTO && totaleProducts < MAX_COSTO) {
+            tot = MED_W_PRICE;
+        } else if (totaleProducts >= MAX_COSTO) {
+            tot = MAX_W_PRICE;
+        }
+        String totS = String.format("%.2f", tot).replace(",", ".");
+        return totS;
     }
 
 }

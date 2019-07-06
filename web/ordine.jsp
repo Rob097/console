@@ -186,11 +186,14 @@
                                                                         <td>
                                                                             <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('https://lh3.googleusercontent.com/6QOIaGv5w7KSjKo8XuMGgg_aXFQPbjQUX1TADK7LBCmxvRvNQncQRs-xDhdOz8rxnDg1tHL-zuybheQTO5a-ad3TE1YkXASmHIY7zd1jVhLMzbJE-W1rD_7NwYN-phBCflLlXuRB5Q=w2400');"></div>
                                                                         </td>
-                                                                        <td colspan="3">
+                                                                        <td colspan="2">
                                                                             Kit spedizione alimenti freschi Keatchen
                                                                         </td>
                                                                         <td>
-                                                                            € 12
+                                                                            ${consoledao.getfreshBoxType(ordine.tot, ordine.prodotti, request)}
+                                                                        </td>
+                                                                        <td>
+                                                                            € ${consoledao.getfreshBoxCost(ordine.tot, ordine.prodotti, request)}
                                                                         </td>
                                                                     </tr>
                                                                 </c:if>
@@ -221,17 +224,17 @@
                                                     <option value="3" <c:if test="${ordine.stato eq 'consegnato'}">selected</c:if>>Consegnato</option>
                                                     <option value="4" <c:if test="${ordine.stato eq 'ritirato'}">selected</c:if>>Ritirato</option>
                                                     <option value="5" <c:if test="${ordine.stato eq 'altro'}">selected</c:if>>Altro</option>
-                                                </select>
-                                                <input id="senderButtonUpdStatus" type="submit" class="btn btn-outline-success" value="Aggiorna">
-                                            </div>
-                                        </form>
+                                                    </select>
+                                                    <input id="senderButtonUpdStatus" type="submit" class="btn btn-outline-success" value="Aggiorna">
+                                                </div>
+                                            </form>
 
-                                        <div class="container comment-form" style="margin-top: 5rem;">
-                                            <!--Section description-->
-                                            <form method="POST" class="text-center" action="orderSent" id="sendEmailOrderSent">
-                                                <div class="form-row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <input type="text" class="form-control" name="nome" id="nome" value="${ordine.nome}" required>
+                                            <div class="container comment-form" style="margin-top: 5rem;">
+                                                <!--Section description-->
+                                                <form method="POST" class="text-center" action="orderSent" id="sendEmailOrderSent">
+                                                    <div class="form-row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <input type="text" class="form-control" name="nome" id="nome" value="${ordine.nome}" required>
                                                         <div class="invalid-feedback">
                                                             Il campo relativo al nome non è complilato in modo corretto
                                                         </div>

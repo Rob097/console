@@ -31,3 +31,85 @@ DELIMITER ;
 SET FOREIGN_KEY_CHECKS=0;
 
 ################################################################################
+
+TRIGGER PER AUMENTARE I DEFAULT TIMESTAMP DI DUE ORE SUL SERVER DELL'HOST
+
+DELIMITER $$
+
+CREATE TRIGGER blog_date_trigger
+BEFORE INSERT
+ON blog FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER blog_commenti_date_trigger
+BEFORE INSERT
+ON blog_commenti FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER commenti_date_trigger
+BEFORE INSERT
+ON commenti FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER email_sub_date_trigger
+BEFORE INSERT
+ON email_sub FOR EACH ROW
+
+BEGIN
+
+SET NEW.date = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER orderSumdate_trigger
+BEFORE INSERT
+ON orderSum FOR EACH ROW
+
+BEGIN
+
+SET NEW.date = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER ricette_date_trigger
+BEFORE INSERT
+ON ricette FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+################################################################################

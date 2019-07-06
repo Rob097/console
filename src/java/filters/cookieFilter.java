@@ -5,6 +5,7 @@ import database.daos.CatBlogDAO;
 import database.daos.CategoryDAO;
 import database.daos.CommBlogDAO;
 import database.daos.ConsoleDAO;
+import database.daos.MenuDAO;
 import database.daos.ProductDAO;
 import database.daos.RicetteDAO;
 import database.exceptions.DAOFactoryException;
@@ -16,6 +17,7 @@ import database.jdbc.JDBCCatBlogDAO;
 import database.jdbc.JDBCCategoryDAO;
 import database.jdbc.JDBCCommBlogDAO;
 import database.jdbc.JDBCConsoleDAO;
+import database.jdbc.JDBCMenuDAO;
 import database.jdbc.JDBCProductDAO;
 import database.jdbc.JDBCRicetteDAO;
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class cookieFilter implements Filter {
     private BlogDAO blogdao;
     private CommBlogDAO commblogdao;
     private ConsoleDAO consoledao;
+    private MenuDAO menudao;
     DAOFactory daoFactory;
 
     /**
@@ -78,6 +81,7 @@ public class cookieFilter implements Filter {
         blogdao = new JDBCBlogDAO(daoFactory.getConnection());
         commblogdao = new JDBCCommBlogDAO(daoFactory.getConnection());
         consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
+        menudao = new JDBCMenuDAO(daoFactory.getConnection());
     }
 
     /**
@@ -106,6 +110,10 @@ public class cookieFilter implements Filter {
                 session.setAttribute("commblogdao", commblogdao);
                 //Console
                 session.setAttribute("consoledao", consoledao);
+                
+                //Menu
+                session.setAttribute("menudao", menudao);
+                
                 //Cookies
                 Cookie[] cookies = ((HttpServletRequest) request).getCookies();
                 String ids;
@@ -327,6 +335,7 @@ public class cookieFilter implements Filter {
         blogdao = new JDBCBlogDAO(daoFactory.getConnection());
         commblogdao = new JDBCCommBlogDAO(daoFactory.getConnection());
         consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
+        menudao = new JDBCMenuDAO(daoFactory.getConnection());
         /*if (DEBUG) {
             log("cookieFilter:DoBeforeProcessing");
         }*/
@@ -346,6 +355,10 @@ public class cookieFilter implements Filter {
                 session.setAttribute("commblogdao", commblogdao);
                 //Console
                 session.setAttribute("consoledao", consoledao);
+                
+                //Menu
+                session.setAttribute("menudao", menudao);
+                
                 //Cookies
                 Cookie[] cookies = ((HttpServletRequest) request).getCookies();
                 String ids;
