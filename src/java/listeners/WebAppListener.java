@@ -21,31 +21,34 @@ public class WebAppListener implements ServletContextListener {
 
     //Ascolta, se viene fatto una richiesta al sito crea una connessione con mysql
     @Override//Ascolta, se viene fatto una richiesta al sito crea una connessione con mysql
-    public void contextInitialized(ServletContextEvent sce) {       
-       try{
-           //Crea una daoFactory e la inizializza con un istanza di JDBCDAOFactoy(db driver e db connection)
-           DAOFactory daoFactory = JDBCDAOFactory.getInstance();
-           //System.out.println("Log: WebAPPListener initialized");
-           
-           //l`evento sce mette nella Servlet-Context un attributo daoFactory ad accedere da ogni servlet
-           sce.getServletContext().setAttribute("daoFactory", daoFactory);
-                                  
-       } catch (DAOFactoryException ex) {
+    public void contextInitialized(ServletContextEvent sce) {
+        try {
+            //Crea una daoFactory e la inizializza con un istanza di JDBCDAOFactoy(db driver e db connection)
+            DAOFactory daoFactory = JDBCDAOFactory.getInstance();
+            //System.out.println("Log: WebAPPListener initialized");
+
+            //l`evento sce mette nella Servlet-Context un attributo daoFactory ad accedere da ogni servlet
+            sce.getServletContext().setAttribute("daoFactory", daoFactory);
+
+        } catch (DAOFactoryException ex) {
+            System.out.println("webAppListener init catch");
             Logger.getLogger(getClass().getName()).severe(ex.toString());
             throw new RuntimeException(ex);
         }
 
     }
-    
-        //Quando il browser viene chiuso anche la connessione viene chiuso
+
+    //Quando il browser viene chiuso anche la connessione viene chiuso
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         //crea un oggetto daoFactory inizzializzato col attributo daoFactory (inizzializzato sopra)
-       DAOFactory daoFactory =(DAOFactory) sce.getServletContext().getAttribute("daoFactory");
+        DAOFactory daoFactory = (DAOFactory) sce.getServletContext().getAttribute("daoFactory");
         //System.out.println("Log:WebAppListener destroyed");
-       //chiude la connessione 
-       if(daoFactory != null){
-           daoFactory.shutdown();
-       }
+        //chiude la connessione 
+        if (daoFactory != null) {
+            System.out.println("webAppListener destroy != null");
+            daoFactory.shutdown();
+        }
+        daoFactory = null;
     }
 }

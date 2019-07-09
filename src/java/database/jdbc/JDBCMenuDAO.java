@@ -22,7 +22,14 @@ import java.util.logging.Logger;
  */
 public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
-    public JDBCMenuDAO(Connection con) {
+    /**
+     * Questa è il costruttore e serve fondamentalmente per collegarsi alla
+     * connessione aperta con il DB
+     *
+     * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
+     */
+    public JDBCMenuDAO(Connection con) throws SQLException {
         super(con);
     }
 

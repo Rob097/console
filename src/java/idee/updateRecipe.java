@@ -212,14 +212,10 @@ public class updateRecipe extends HttpServlet {
                                 // use directory.mkdirs(); here instead.
                             }
                             String extension = getImageExtension(filePart1);
-                            String imagineName = id + "." + extension;
-                            try {
-                                ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                            } catch (Exception e) {
-                                System.out.println("Nessuna immagine da cancellare");
-                            }
-                            ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                            String imagineName = "uncompressed" + id + "." + extension;
+
+                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
                         } catch (RuntimeException e) {
                             System.out.println("RuntimeException:");
                             throw e;

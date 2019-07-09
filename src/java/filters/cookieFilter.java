@@ -68,9 +68,11 @@ public class cookieFilter implements Filter {
     /**
      * Inizializza i vari JDBCDAO
      */
-    private void conInit(FilterConfig filterConfig) throws ServletException {
+    private void conInit(FilterConfig filterConfig) throws ServletException, DAOFactoryException {
         daoFactory = (DAOFactory) filterConfig.getServletContext().getAttribute("daoFactory");
         if (daoFactory == null) {
+            daoFactory = new JDBCDAOFactory(DBURL);
+            System.out.println("\n\nErroe conInit\n");
             throw new ServletException("Impossible to get dao factory for user storage system");
         }
 
@@ -238,10 +240,14 @@ public class cookieFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
-            /*if (DEBUG) {
+            try {
+                /*if (DEBUG) {
                 log("CookieFilter:Initializing filter");
-            }*/
-            conInit(filterConfig);
+                }*/
+                conInit(filterConfig);
+            } catch (DAOFactoryException ex) {
+                Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -325,7 +331,7 @@ public class cookieFilter implements Filter {
      */
     public void ifBadCon(ServletRequest request, ServletResponse response) throws DAOFactoryException {
 
-        System.out.println("\nIn Bad Con\n");
+        System.out.println("\n\nBad Con\n");
 
         daoFactory = new JDBCDAOFactory(DBURL);
         categorydao = new JDBCCategoryDAO(daoFactory.getConnection());

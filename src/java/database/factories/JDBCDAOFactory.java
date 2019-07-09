@@ -16,33 +16,35 @@ import java.util.logging.Logger;
  *
  * @author Roberto97
  */
-public class JDBCDAOFactory implements DAOFactory{
-    private final  String DRIVER = "com.mysql.jdbc.Driver";
+public class JDBCDAOFactory implements DAOFactory {
+
+    private final String DRIVER = "com.mysql.jdbc.Driver";
     /*DB on cloud
     public static final String DBURL = "jdbc:mysql://macelleriadellantonio.it:3306/maceller_MacAPPDB?confluence?autoReconnect=true";
-    private final  String USERNAME = "maceller_Mac_Usr";
-    private final String PASSWORD ="Bortoleto1901";
+    private static final  String USERNAME = "maceller_Mac_Usr";
+    private static final String PASSWORD ="Bortoleto1901";
     
     /*DB on Rasp*/
     public static final String DBURL = "jdbc:mysql://ourlists.ddns.net:3306/DBB?autoReconnect=true&zeroDateTimeBehavior=convertToNull";
-    private final  String USERNAME = "user";
-    private final String PASSWORD ="the_password";
+    public static final String USERNAME = "user";
+    public static final String PASSWORD = "the_password";
     private transient Connection CON;
     private static JDBCDAOFactory instance;
-    
+
     //ritorna un istanza di questa Classe
-     public static synchronized JDBCDAOFactory getInstance() throws DAOFactoryException {
+    public static synchronized JDBCDAOFactory getInstance() throws DAOFactoryException {
         if (instance == null) {
             //crea un istanza di questa classe e la inizializza con il costruttore. 
             instance = new JDBCDAOFactory(DBURL);
         } else {
             throw new DAOFactoryException("DAOFactory already configured");
         }
-         /*if (instance == null) {
+        /*if (instance == null) {
             throw new DAOFactoryException("DAOFactory not yet configured. Call DAOFactory.getInstnce() before use the class");
         }*/
         return instance;
     }
+
     //Costruttore
     public JDBCDAOFactory(String dbUrl) throws DAOFactoryException {
         super();
@@ -51,6 +53,7 @@ public class JDBCDAOFactory implements DAOFactory{
             // dynamically loading the appropriate driver class with a call to Class.forName()
             Class.forName(DRIVER);
             if (CON == null) {
+                System.out.println("\n\nCostruttore is null\n");
                 try {
                     CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
                 } catch (SQLException sqle) {
@@ -62,39 +65,53 @@ public class JDBCDAOFactory implements DAOFactory{
         }
 
         try {
+            System.out.println("\n\nCostruttore assegna la connessione\n");
             //assegna la connessione
             CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
         } catch (SQLException sqle) {
             throw new DAOFactoryException("Cannot create connection", sqle);
         }
-        
+
     }
+
     //ritorna una connessione
     @Override
-    public Connection getConnection(){
+    public Connection getConnection() {
         try {
-            if(CON.isValid(0)){
-            }else{
+            if (CON.isClosed()) {
+                System.out.println("\n\ngetConnection is closed\n");
                 try {
                     Class.forName(DRIVER);
                     CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
-                    
+
                 } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
-        }catch (SQLException ex) {
+            if (CON.isValid(0)) {
+            } else {
+                System.out.println("\n\ngetConnection is not valid\n");
+                try {
+                    Class.forName(DRIVER);
+                    CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
+
+                } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (SQLException ex) {
             try {
+                System.out.println("\n\ngetConnection in catch\n");
                 Class.forName(DRIVER);
                 CON = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
-                
+
             } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
         return CON;
     }
-    
+
     //Chiude la connessione
     @Override
     public void shutdown() {

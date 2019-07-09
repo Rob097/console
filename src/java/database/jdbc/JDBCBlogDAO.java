@@ -25,8 +25,9 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      * connessione aperta con il DB
      *
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCBlogDAO(Connection con) {
+    public JDBCBlogDAO(Connection con) throws SQLException {
         super(con);
     }
 

@@ -5,11 +5,25 @@
  */
 package varie;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.regex.Pattern;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.Part;
 
 /**
@@ -63,9 +77,8 @@ public class ImageDispatcher {
 
             CompleteImgName = imgName;
             CompleteImgName = CompleteImgName.replaceAll("\\s+", "");
-            
+
             File file1 = new File(Directory, CompleteImgName);
-            
             try (InputStream fileContent = filePart1.getInputStream()) {
                 Files.copy(fileContent, file1.toPath());
             } catch (RuntimeException e) {
@@ -77,7 +90,83 @@ public class ImageDispatcher {
 
             }
         }
-        
+
+    }
+
+    public static void insertCompressedImg(String Directory, String imgName, Part filePart1, String extension) throws FileNotFoundException, IOException, IOException, IOException, IOException, IOException {
+        //Creo l'immagine della cartella in modo da avere un file da comprimere
+        insertImgIntoDirectory(Directory, imgName, filePart1);
+        String CompleteImgName, CompleteImgName1;
+
+        if ((filePart1 != null) && (filePart1.getSize() > 0)) {
+
+            CompleteImgName = imgName;
+            CompleteImgName = CompleteImgName.replaceAll("\\s+", "");
+            CompleteImgName1 = imgName.replace("uncompressed", "");
+            CompleteImgName1 = CompleteImgName1.replaceAll("\\s+", "");
+
+            //File originale
+            File file1 = new File(Directory, CompleteImgName);
+            //File compresso
+            File file2 = new File(Directory, CompleteImgName1);
+
+            InputStream inputStream = new FileInputStream(file1);
+            OutputStream outputStream = new FileOutputStream(file2);
+
+            //Qualità del file compresso
+            float imageQuality = 0.3f;
+            //Create the buffered image
+            BufferedImage bufferedImage = ImageIO.read(inputStream);
+
+            //Get image writers
+            Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(extension);
+
+            if (!imageWriters.hasNext()) {
+                throw new IllegalStateException("Writers Not Found!!");
+            }
+
+            ImageWriter imageWriter = (ImageWriter) imageWriters.next();
+            ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+            imageWriter.setOutput(imageOutputStream);
+
+            ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+
+            //Set the compress quality metrics
+            imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            imageWriteParam.setCompressionQuality(imageQuality);
+            
+            try {
+                //Created image
+                imageWriter.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, extension, os);
+                InputStream is = new ByteArrayInputStream(os.toByteArray());
+                // close all streams
+                inputStream.close();
+                outputStream.close();
+                imageOutputStream.close();
+                imageWriter.dispose();
+
+                try (InputStream fileContent = is) {
+                    Files.copy(fileContent, file2.toPath());
+                } catch (RuntimeException e) {
+                    throw e;
+                }catch (Exception imgexception) {
+                    System.out.println("L'immagine esiste già ma verrà sostituita");
+                } 
+                
+            } catch (IOException | RuntimeException e) {
+                inputStream.close();
+                outputStream.close();
+                imageOutputStream.close();
+                imageWriter.dispose();
+            }
+            try {
+                deleteImgFromDirectory(Directory + imgName);
+            } catch (Exception e) {
+                System.out.println("Nessuna immagine da cancellare2");
+            }
+        }
     }
 
     /**
@@ -93,32 +182,32 @@ public class ImageDispatcher {
         String extension = Paths.get(filePart1.getSubmittedFileName()).getFileName().toString().split(Pattern.quote("."))[1];
         return extension;
     }
-    
+
     /**
-     * questa funzione configura il formato con il quali le immagini o meglio il percorso delle immagini
-     * verranno salvate del DB
+     * questa funzione configura il formato con il quali le immagini o meglio il
+     * percorso delle immagini verranno salvate del DB
+     *
      * @param relativePath percorso relativo dell'immagine
      * @param imgName il nome dell immagine con estensione
      * @return [reative path] + imgName.jpg
      */
-    public static String savePathImgInDatabsae(String relativePath, String imgName){
+    public static String savePathImgInDatabsae(String relativePath, String imgName) {
         String immagine = "../console";
         //String immagine = "http://www.macelleriadellantonio.it/console";
         immagine += relativePath + imgName;
         immagine = immagine.replaceAll("\\s+", "");
         return immagine;
     }
-    
-    public static String setImgName(String name, String extension){
-        
+
+    public static String setImgName(String name, String extension) {
+
         String s;
         s = name;
         s = s.trim();
         s = s.replace("@", "");
         s = s.replace(".", "");
-       
+
         return s + "." + extension;
     }
-            
 
 }

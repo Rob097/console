@@ -21,8 +21,9 @@ public class JDBCCommBlogDAO extends JDBCDAO implements CommBlogDAO {
      * Questa è il costruttore e serve fondamentalmente per collegarsi alla connessione aperta con il DB
      * 
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCCommBlogDAO(Connection con) {
+    public JDBCCommBlogDAO(Connection con) throws SQLException {
         super(con);
     }
 

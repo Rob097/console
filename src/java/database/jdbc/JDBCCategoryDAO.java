@@ -28,8 +28,9 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      * connessione aperta con il DB
      *
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCCategoryDAO(Connection con) {
+    public JDBCCategoryDAO(Connection con) throws SQLException {
         super(con);
     }
 

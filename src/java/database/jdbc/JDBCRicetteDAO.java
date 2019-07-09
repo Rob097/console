@@ -32,8 +32,9 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * connessione aperta con il DB
      *
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCRicetteDAO(Connection con) {
+    public JDBCRicetteDAO(Connection con) throws SQLException {
         super(con);
     }
 

@@ -24,8 +24,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -43,7 +46,7 @@ import static varie.costanti.MIN_W_PRICE;
  */
 public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
-    public JDBCConsoleDAO(Connection con) {
+    public JDBCConsoleDAO(Connection con) throws SQLException {
         super(con);
     }
 
@@ -64,51 +67,114 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getMonthViews() throws DAOException {
+        
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
-        HashMap<String, Integer> dati = new HashMap<>();
-        LocalDate date;
-        try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc limit 4")) {
+        LocalDate today = LocalDate.now();
+        LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        if (today.getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())) {
+            previousMonday = today;
+        }
+        LocalDate secondMonday = previousMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate thirdMonday = secondMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate fourthMonday = thirdMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        //System.out.println("TODAY: " + today + "\nFIRST: " + previousMonday + "\n SECOND: " + secondMonday + "\nTHIRD: " + thirdMonday + "\nFOURTH: " + fourthMonday);
+
+        int fourth = 0, third = 0, second = 0, first = 0;
+
+        Map<LocalDate, Integer> date = new TreeMap<>();
+        
+        try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    date = rs.getDate("week").toLocalDate();
-                    dati.put(formatter.format(date), rs.getInt("views"));
+                    date.put(rs.getDate("week").toLocalDate(), rs.getInt("views"));
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JDBCProductDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-        Map<String, Integer> map = new TreeMap<>(dati);
+        
+        Iterator<Map.Entry<LocalDate, Integer>> it = date.entrySet().iterator();
+
+         while (it.hasNext()) {
+            Map.Entry<LocalDate, Integer> v = it.next();
+            
+            if (v.getKey().isAfter(fourthMonday.minusDays(1)) && v.getKey().isBefore(thirdMonday)) {
+                fourth += v.getValue();
+            } else if (v.getKey().isAfter(thirdMonday.minusDays(1)) && v.getKey().isBefore(secondMonday)) {
+                third += v.getValue();
+            } else if (v.getKey().isAfter(secondMonday.minusDays(1)) && v.getKey().isBefore(previousMonday)) {
+                second += v.getValue();
+            } else if (v.getKey().isAfter(previousMonday.minusDays(1)) && v.getKey().isBefore(today.plusDays(1))) {
+                first += v.getValue();
+            }
+        }
+         
+        Map<String, Integer> map = new TreeMap<>();
+        map.put(previousMonday.format(formatter), first);
+        map.put(secondMonday.format(formatter), second);
+        map.put(thirdMonday.format(formatter), third);
+        map.put(fourthMonday.format(formatter), fourth);
+
         return map;
+        
     }
 
     @Override
     public Map<String, Integer> getLastMonthViews() throws DAOException {
+        
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
-        HashMap<String, Integer> dati = new HashMap<>();
-        LocalDate date;
-        int counter = 4;
-        int c = 0;
-        try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc limit 8")) {
+        LocalDate today = LocalDate.now();
+        today = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusWeeks(4);
+        System.out.println("TODAY LAST: " + today);
+        LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        if (today.getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())) {
+            previousMonday = today;
+        }
+        LocalDate secondMonday = previousMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate thirdMonday = secondMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate fourthMonday = thirdMonday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        //System.out.println("TODAY: " + today + "\nFIRST: " + previousMonday + "\n SECOND: " + secondMonday + "\nTHIRD: " + thirdMonday + "\nFOURTH: " + fourthMonday);
+
+        int fourth = 0, third = 0, second = 0, first = 0;
+
+        Map<LocalDate, Integer> date = new TreeMap<>();
+        
+        try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    if (counter > 0) {
-                        counter--;
-                        c++;
-                    } else {
-                        date = rs.getDate("week").toLocalDate();
-                        dati.put(formatter.format(date), rs.getInt("views"));
-                        c++;
-                    }
+                    date.put(rs.getDate("week").toLocalDate(), rs.getInt("views"));
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JDBCProductDAO.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-        Map<String, Integer> map = new TreeMap<>(dati);
-        if (c < 8) {
-            return null;
+        
+        Iterator<Map.Entry<LocalDate, Integer>> it = date.entrySet().iterator();
+
+         while (it.hasNext()) {
+            Map.Entry<LocalDate, Integer> v = it.next();
+            
+            if (v.getKey().isAfter(fourthMonday.minusDays(1)) && v.getKey().isBefore(thirdMonday)) {
+                fourth += v.getValue();
+            } else if (v.getKey().isAfter(thirdMonday.minusDays(1)) && v.getKey().isBefore(secondMonday)) {
+                third += v.getValue();
+            } else if (v.getKey().isAfter(secondMonday.minusDays(1)) && v.getKey().isBefore(previousMonday)) {
+                second += v.getValue();
+            } else if (v.getKey().isAfter(previousMonday.minusDays(1)) && v.getKey().isBefore(today.plusDays(1))) {
+                first += v.getValue();
+            }
         }
+         
+        Map<String, Integer> map = new TreeMap<>();
+        map.put(previousMonday.format(formatter), first);
+        map.put(secondMonday.format(formatter), second);
+        map.put(thirdMonday.format(formatter), third);
+        map.put(fourthMonday.format(formatter), fourth);
+
         return map;
+        
     }
 
     @Override
@@ -170,10 +236,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException {
+        
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         if (isLast) {
-            today = today.withMonth(today.getMonthValue() - 1);
+            today = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusWeeks(4);
         }
         LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         if (today.getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())) {
@@ -278,7 +345,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         if (isLast) {
-            today = today.withMonth(today.getMonthValue() - 1);
+            today = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusWeeks(4);
         }
         LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         if (today.getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())) {
@@ -1072,6 +1139,46 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
         String totS = String.format("%.2f", tot).replace(",", ".");
         return totS;
+    }
+
+    @Override
+    public void copyWeekViews() throws DAOException {
+
+        try (PreparedStatement stm = CON.prepareStatement("INSERT INTO weeks_views (pagina, week, views) SELECT pagina, ? AS date, SUM(`views`) AS views FROM curr_week_views group by pagina;")) {
+            try {
+                Calendar cal = Calendar.getInstance();
+                Timestamp timestamp = new Timestamp(new Date().getTime());
+                cal.setTimeInMillis(timestamp.getTime());
+                cal.add(Calendar.HOUR, -10);
+                timestamp = new Timestamp(cal.getTime().getTime());
+                stm.setTimestamp(1, timestamp);
+                if(stm.executeUpdate() >= 1){                    
+                }else{
+                    throw new DAOException("impossibile to copy week views");
+                };
+            } catch (SQLException ex) {
+                System.out.println("E rror Code: " + ex.getErrorCode());
+                ex.printStackTrace();
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error Code: " + ex.getErrorCode());
+            ex.printStackTrace();
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try (PreparedStatement stm = CON.prepareStatement("DELETE FROM curr_week_views;")) {
+            try {
+                if (stm.executeUpdate() >= 1) {
+                } else {
+                    throw new DAOException("Impossible to delete this week views");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

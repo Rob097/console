@@ -61,7 +61,7 @@ public class addMenu extends HttpServlet {
         Part immaginePart = null, copertinaPart = null;
 
         try {
-            
+
             if (request.getParameter("nome") != null) {
                 nome = unaccent(request.getParameter("nome"));
             }
@@ -78,15 +78,11 @@ public class addMenu extends HttpServlet {
                     try {
                         String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_IMG, getServletContext());
                         String extension = getImageExtension(immaginePart);
-                        String imagineName = nome + "." + extension;
+                        String imagineName = "uncompressed" + nome + "." + extension;
                         imagineName = imagineName.replace(" ", "");
-                        try {
-                            ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                        } catch (Exception e) {
-                            System.out.println("Nessuna immagine da cancellare");
-                        }
-                        ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, immaginePart);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_IMG, imagineName);
+                        ImageDispatcher.insertCompressedImg(listsFolder, imagineName, immaginePart, extension);
+                        immagine = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_IMG, imagineName.replace("uncompressed", ""));
+
                     } catch (RuntimeException e) {
                         System.out.println("RuntimeException:");
                         throw e;
@@ -106,15 +102,11 @@ public class addMenu extends HttpServlet {
                     try {
                         String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_COPERTINA, getServletContext());
                         String extension = getImageExtension(copertinaPart);
-                        String imagineName = nome + "." + extension;
+                        String imagineName = "uncompressed" + nome + "." + extension;
                         imagineName = imagineName.replace(" ", "");
-                        try {
-                            ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                        } catch (Exception e) {
-                            System.out.println("Nessuna immagine da cancellare");
-                        }
-                        ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, copertinaPart);
-                        copertina = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_COPERTINA, imagineName);
+                        ImageDispatcher.insertCompressedImg(listsFolder, imagineName, copertinaPart, extension);
+                        copertina = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_COPERTINA, imagineName.replace("uncompressed", ""));
+
                     } catch (RuntimeException e) {
                         System.out.println("RuntimeException:");
                         throw e;
@@ -127,9 +119,9 @@ public class addMenu extends HttpServlet {
             } else {
                 System.out.println("filePart = null");
             }
-            
+
             menudao.addMenu(nome, immagine, copertina);
-            
+
         } catch (Exception ex) {
             Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);
         }

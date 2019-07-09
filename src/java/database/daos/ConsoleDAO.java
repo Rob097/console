@@ -28,6 +28,7 @@ public interface ConsoleDAO {
     public Map<String, Integer> getRecipeCatViews() throws DAOException;
     public Map<String, Integer> getBlogArtViews(String categoria) throws DAOException;
     public Map<String, Integer> getRecipeArtViews(boolean categoria) throws DAOException;
+    public void copyWeekViews() throws DAOException;
     
     /* EMAIL */
     public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException;

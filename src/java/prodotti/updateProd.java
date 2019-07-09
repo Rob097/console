@@ -129,19 +129,13 @@ public class updateProd extends HttpServlet {
                         try {
                             String listsFolder = obtainRootFolderPath(upload_directory, getServletContext());
                             String extension = getImageExtension(filePart1);
-                            String imagineName = idProd + "." + extension;
-                            try {
-                                ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                            } catch (Exception e) {
-                                System.out.println("Nessuna immagine da cancellare");
-                            }
-                            ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                            String imagineName = "uncompressed" + idProd + "." + extension;
+
+                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
                         } catch (RuntimeException e) {
                             System.out.println("RuntimeException:");
                             throw e;
-                        } catch (Exception e) {
-                            System.out.println("Exception:");
                         }
                     } else {
                         System.out.println("FilePart not in image/");

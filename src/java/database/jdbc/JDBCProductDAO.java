@@ -23,8 +23,9 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * connessione aperta con il DB
      *
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCProductDAO(Connection con) {
+    public JDBCProductDAO(Connection con) throws SQLException {
         super(con);
     }
 

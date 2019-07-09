@@ -28,8 +28,9 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      * connessione aperta con il DB
      *
      * @param con E' la connessione al DB
+     * @throws java.sql.SQLException
      */
-    public JDBCCatBlogDAO(Connection con) {
+    public JDBCCatBlogDAO(Connection con) throws SQLException {
         super(con);
     }
 

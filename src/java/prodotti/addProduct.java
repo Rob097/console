@@ -76,9 +76,9 @@ public class addProduct extends HttpServlet {
                 if (request.getParameter("costo").equals(".") || request.getParameter("costo").equals(",")) {
                     costo = 0.01;
                 } else {
-                    try{
-                    costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
-                    }catch(NumberFormatException e){
+                    try {
+                        costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 }
@@ -107,14 +107,10 @@ public class addProduct extends HttpServlet {
                     try {
                         String listsFolder = obtainRootFolderPath(upload_directory, getServletContext());
                         String extension = getImageExtension(filePart1);
-                        String imagineName = id + "." + extension;
-                        try {
-                            ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                        } catch (Exception e) {
-                            System.out.println("Nessuna immagine da cancellare");
-                        }
-                        ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                        String imagineName = "uncompressed" + id + "." + extension;
+
+                        ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
                     } catch (RuntimeException e) {
                         System.out.println("RuntimeException:");
                         throw e;
@@ -129,7 +125,7 @@ public class addProduct extends HttpServlet {
             }
 
             productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo);
-            response.sendRedirect("/console/prodotti.jsp#"+categoria);
+            response.sendRedirect("/console/prodotti.jsp#" + categoria);
 
         } catch (DAOException ex) {
             Logger.getLogger(addProduct.class.getName()).log(Level.SEVERE, null, ex);

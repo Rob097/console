@@ -21,6 +21,7 @@ import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
 import static varie.utili.unaccent;
+import static varie.utili.obtainRootFolderPath;
 
 /**
  *
@@ -85,16 +86,12 @@ public class addCategory extends HttpServlet {
                             upload_directory = UPLOAD_DIRECTORY +  "confezionati/";
                         }
                         try {
-                            String listsFolder = obtainRootFolderPath(upload_directory);
+                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
                             String extension = getImageExtension(filePart1);
-                            String imagineName = id + "." + extension;
-                            try {
-                                ImageDispatcher.deleteImgFromDirectory(listsFolder + imagineName);
-                            } catch (Exception e) {
-                                System.out.println("Nessuna immagine da cancellare");
-                            }
-                            ImageDispatcher.insertImgIntoDirectory(listsFolder, imagineName, filePart1);
-                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName);
+                            String imagineName = "uncompressed" + id + "." + extension;
+
+                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
                         } catch (RuntimeException e) {
                             System.out.println("RuntimeException:");
                             throw e;
@@ -157,22 +154,6 @@ public class addCategory extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
-    /**
-     * Questo metodo restituisce il percorso il percorso alla directory
-     *
-     * @param relativePath se questa stringa è vuota allora il metodo
-     * restituisce il percorso a "...Web/" altrimenti restituisce il percroso
-     * alla cartella "...Web/[relativePath]" Esempio: relativePath =
-     * "Image/AvatarImg"
-     * @return web/Image/AvatarImg
-     */
-    public String obtainRootFolderPath(String relativePath) {
-        String folder;
-        folder = relativePath;
-        folder = getServletContext().getRealPath(folder);
-        folder = folder.replace("\\build", "");
-        return folder;
-    }
+
 
 }
