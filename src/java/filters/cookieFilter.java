@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
@@ -68,7 +69,7 @@ public class cookieFilter implements Filter {
     /**
      * Inizializza i vari JDBCDAO
      */
-    private void conInit(FilterConfig filterConfig) throws ServletException, DAOFactoryException {
+    private void conInit(FilterConfig filterConfig) throws ServletException, DAOFactoryException, SQLException {
         daoFactory = (DAOFactory) filterConfig.getServletContext().getAttribute("daoFactory");
         if (daoFactory == null) {
             daoFactory = new JDBCDAOFactory(DBURL);
@@ -199,7 +200,7 @@ public class cookieFilter implements Filter {
                     throw (IOException) problem;
                 }
                 sendProcessingError(problem, request, response);
-            } catch (DAOFactoryException ex) {
+            } catch (DAOFactoryException | SQLException ex) {
                 Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -245,7 +246,7 @@ public class cookieFilter implements Filter {
                 log("CookieFilter:Initializing filter");
                 }*/
                 conInit(filterConfig);
-            } catch (DAOFactoryException ex) {
+            } catch (DAOFactoryException | SQLException ex) {
                 Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -267,7 +268,7 @@ public class cookieFilter implements Filter {
         return (sb.toString());
     }
 
-    private void sendProcessingError(Throwable t, ServletRequest request, ServletResponse response) throws DAOFactoryException {
+    private void sendProcessingError(Throwable t, ServletRequest request, ServletResponse response) throws DAOFactoryException, SQLException {
         String stackTrace = getStackTrace(t);
 
         if (stackTrace != null && !stackTrace.equals("")) {
@@ -328,8 +329,9 @@ public class cookieFilter implements Filter {
      * @param request
      * @param response
      * @throws DAOFactoryException
+     * @throws java.sql.SQLException
      */
-    public void ifBadCon(ServletRequest request, ServletResponse response) throws DAOFactoryException {
+    public void ifBadCon(ServletRequest request, ServletResponse response) throws DAOFactoryException, SQLException {
 
         System.out.println("\n\nBad Con\n");
 
