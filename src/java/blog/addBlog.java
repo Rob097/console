@@ -13,6 +13,7 @@ import database.jdbc.JDBCBlogDAO;
 import database.jdbc.JDBCCatBlogDAO;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -40,13 +41,17 @@ public class addBlog extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        //carica la Connessione inizializzata in JDBCDAOFactory, quindi ritorna il Class.for() e la connessione
-        DAOFactory daoFactory = (DAOFactory) super.getServletContext().getAttribute("daoFactory");
-        if (daoFactory == null) {
-            throw new ServletException("Impossible to get dao factory for user storage system");
+        try {
+            //carica la Connessione inizializzata in JDBCDAOFactory, quindi ritorna il Class.for() e la connessione
+            DAOFactory daoFactory = (DAOFactory) super.getServletContext().getAttribute("daoFactory");
+            if (daoFactory == null) {
+                throw new ServletException("Impossible to get dao factory for user storage system");
+            }
+            blogdao = new JDBCBlogDAO(daoFactory.getConnection());
+            catblogdao = new JDBCCatBlogDAO(daoFactory.getConnection());
+        } catch (SQLException ex) {
+            Logger.getLogger(addBlog.class.getName()).log(Level.SEVERE, null, ex);
         }
-        blogdao = new JDBCBlogDAO(daoFactory.getConnection());
-        catblogdao = new JDBCCatBlogDAO(daoFactory.getConnection());
     }
 
     /**

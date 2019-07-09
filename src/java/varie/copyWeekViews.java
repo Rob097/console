@@ -9,6 +9,7 @@ import database.daos.ConsoleDAO;
 import database.exceptions.DAOException;
 import database.factories.DAOFactory;
 import database.jdbc.JDBCConsoleDAO;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
@@ -32,12 +33,12 @@ public class copyWeekViews implements Runnable {
         try {
             getConnection();
             consoledao.copyWeekViews();
-        } catch (DAOException | ServletException ex) {       
+        } catch (DAOException | ServletException | SQLException ex) {
             Logger.getLogger(copyWeekViews.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void getConnection() throws ServletException{
+    private void getConnection() throws ServletException, SQLException{
         DAOFactory daoFactory = (DAOFactory) sce.getServletContext().getAttribute("daoFactory");
         if (daoFactory == null) {
             throw new ServletException("Impossible to get dao factory for user storage system");

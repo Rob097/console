@@ -21,8 +21,8 @@ public class JDBCDAOFactory implements DAOFactory {
     private final String DRIVER = "com.mysql.jdbc.Driver";
     /*DB on cloud
     public static final String DBURL = "jdbc:mysql://macelleriadellantonio.it:3306/maceller_MacAPPDB?confluence?autoReconnect=true";
-    private static final  String USERNAME = "maceller_Mac_Usr";
-    private static final String PASSWORD ="Bortoleto1901";
+    public static final  String USERNAME = "maceller_Mac_Usr";
+    public static final String PASSWORD ="Bortoleto1901";
     
     /*DB on Rasp*/
     public static final String DBURL = "jdbc:mysql://ourlists.ddns.net:3306/DBB?autoReconnect=true&zeroDateTimeBehavior=convertToNull";

@@ -11,6 +11,7 @@ import database.factories.DAOFactory;
 import database.jdbc.JDBCRicetteDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -28,12 +29,16 @@ public class removeRecipeIng extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        //carica la Connessione inizializzata in JDBCDAOFactory, quindi ritorna il Class.for() e la connessione
-        DAOFactory daoFactory = (DAOFactory) super.getServletContext().getAttribute("daoFactory");
-        if (daoFactory == null) {
-            throw new ServletException("Impossible to get dao factory for user storage system");
+        try {
+            //carica la Connessione inizializzata in JDBCDAOFactory, quindi ritorna il Class.for() e la connessione
+            DAOFactory daoFactory = (DAOFactory) super.getServletContext().getAttribute("daoFactory");
+            if (daoFactory == null) {
+                throw new ServletException("Impossible to get dao factory for user storage system");
+            }
+            ricettedao = new JDBCRicetteDAO(daoFactory.getConnection());
+        } catch (SQLException ex) {
+            Logger.getLogger(removeRecipeIng.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ricettedao = new JDBCRicetteDAO(daoFactory.getConnection());
     }
 
     /**

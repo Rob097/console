@@ -57,7 +57,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setId_prod(rs.getInt("id_prod"));
                     r.setNome(rs.getString("nome"));
                     ingredienti = rs.getString("ingredienti").split("_");
-                    r.setIngredienti(new ArrayList(Arrays.asList(ingredienti)));
+                    r.setIngredienti(new ArrayList<>(Arrays.asList(ingredienti)));
                     r.setImmagine(rs.getString("immagine"));
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
@@ -116,7 +116,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setId_prod(rs.getInt("id_prod"));
                     r.setNome(rs.getString("nome"));
                     ingredienti = rs.getString("ingredienti").split("_");
-                    r.setIngredienti(new ArrayList(Arrays.asList(ingredienti)));
+                    r.setIngredienti(new ArrayList<>(Arrays.asList(ingredienti)));
                     r.setImmagine(rs.getString("immagine"));
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
@@ -164,7 +164,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setId_prod(rs.getInt("id_prod"));
                     r.setNome(rs.getString("nome"));
                     ingredienti = rs.getString("ingredienti").split("_");
-                    r.setIngredienti(new ArrayList(Arrays.asList(ingredienti)));
+                    r.setIngredienti(new ArrayList<>(Arrays.asList(ingredienti)));
                     r.setImmagine(rs.getString("immagine"));
                     r.setProcedimento(rs.getString("procedimento"));
                     r.setTempo(rs.getInt("tempo"));
@@ -279,7 +279,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     c.setNome(rs.getString("nome"));
                     c.setProcedimento(rs.getString("procedimento"));
                     ingredienti = rs.getString("ingredienti").split("_");
-                    c.setIngredienti(new ArrayList(Arrays.asList(ingredienti)));
+                    c.setIngredienti(new ArrayList<>(Arrays.asList(ingredienti)));
                     c.setImmagine(rs.getString("immagine"));
                     c.setTempo(rs.getInt("tempo"));
                     c.setDifficolta(rs.getString("difficolta"));
@@ -331,7 +331,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     @Override
     public ArrayList<Ricetta> getByType(String type) throws DAOException {
         ArrayList<Ricetta> recipes = getAllRecipes();
-        ArrayList<Ricetta> ricette = new ArrayList();
+        ArrayList<Ricetta> ricette = new ArrayList<>();
 
         switch (type) {
             case "1":
