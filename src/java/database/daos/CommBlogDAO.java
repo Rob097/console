@@ -14,6 +14,9 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface CommBlogDAO {
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<CommBlog> getAllCommBlog() throws DAOException;
     public ArrayList<CommBlog> getAllCommOfBlog(int id_blog) throws DAOException;
 }

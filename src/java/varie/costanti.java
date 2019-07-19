@@ -9,7 +9,7 @@ package varie;
  *
  * @author Roberto97
  */
-public class costanti {
+public class costanti {    
     public static final int CART_COOKIE_MAX_AGE = 60*60*24*30;
     public static final int PREF_COOKIE_MAX_AGE = 60*60*24*365;
     
@@ -30,5 +30,7 @@ public class costanti {
     public static double MAX_W_PRICE = 6.40+2.50;
     public static float MIN_COSTO = 100;
     public static float MAX_COSTO = 250;
+    
+    public static final long MAX_IMG_SIZE = 2100000;
     
 }

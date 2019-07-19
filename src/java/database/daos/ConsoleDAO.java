@@ -5,6 +5,7 @@
  */
 package database.daos;
 
+import database.entities.Notifica;
 import database.entities.Ordine;
 import database.entities.Prodotto;
 import database.exceptions.DAOException;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Roberto97
  */
 public interface ConsoleDAO {
+    public void checkCON() throws DAOException;
     
     /* VIEWS */
     public int getWeekViews() throws DAOException;
@@ -35,6 +37,8 @@ public interface ConsoleDAO {
     public int getEmailChanges(boolean lastValue) throws DAOException;
     public String getTotalEmailSub() throws DAOException;
     public String getLastEmailSub() throws DAOException;
+    public ArrayList<String> getAllEmail() throws DAOException;
+    public void annullaIscrizione(String email) throws DAOException;
     
     /* REVENUE */
     public Map<String, Double> getMonthRevenue(boolean isLast) throws DAOException;
@@ -69,4 +73,12 @@ public interface ConsoleDAO {
     public double getOrderDeliveryCost(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
     public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
     public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
+    public int getNumberByStatusOfType(String stato, String tipo) throws DAOException;
+    
+    /* NOTIFICHE */
+    public ArrayList<Notifica> getAllNotifiche() throws DAOException;
+    public Notifica getNotifica(int id) throws DAOException;
+    public ArrayList<Notifica> getNotificheByType(String testo) throws DAOException;
+    public void deleteNotifica(int id) throws DAOException;
+    public void deleteALLNotifiche() throws DAOException;
 }

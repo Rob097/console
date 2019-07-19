@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,7 @@ import javax.servlet.http.Part;
 import prodotti.updateProd;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.MAX_IMG_SIZE;
 import static varie.utili.obtainRootFolderPath;
 import static varie.utili.unaccent;
 
@@ -29,8 +31,10 @@ import static varie.utili.unaccent;
  *
  * @author Roberto97
  */
-@MultipartConfig(maxFileSize = 16177215)
+@MultipartConfig()
 public class updateMenu extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     MenuDAO menudao = null;
     private final String UPLOAD_DIRECTORY_IMG = "/img/menu/";
@@ -66,6 +70,9 @@ public class updateMenu extends HttpServlet {
         int idMenu = 0;
         String nome = null, immagine = null, copertina = null;
         Part immaginePart = null, copertinaPart = null;
+        RequestDispatcher view = request.getRequestDispatcher("menu.jsp");
+        String url = "";
+        boolean checkIMG = true;
 
         try {
 
@@ -80,12 +87,6 @@ public class updateMenu extends HttpServlet {
             }
             if (request.getParameter("oldCopertina") != null) {
                 copertina = unaccent(request.getParameter("oldCopertina"));
-            }
-            if (request.getPart("immagineMenu") != null) {
-                immaginePart = request.getPart("immagineMenu");
-            }
-            if (request.getPart("copertinaMenu") != null) {
-                copertinaPart = request.getPart("copertinaMenu");
             }
 
             if (request.getParameter("DELETE") != null && request.getParameter("DELETE").equals("true")) {
@@ -123,60 +124,84 @@ public class updateMenu extends HttpServlet {
                 menudao.deleteMenu(idMenu);
             } else {
 
-                //Load dell'immagine
-                if (immaginePart != null) {
-                    if (immaginePart.getContentType().contains("image/")) {
-                        try {
-                            String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_IMG, getServletContext());
-                            String extension = getImageExtension(immaginePart);
-                            String imagineName = "uncompressed" + nome + "." + extension;
-                            imagineName = imagineName.replace(" ", "");
-                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, immaginePart, extension);
-                            immagine = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_IMG, imagineName.replace("uncompressed", ""));
+                if (request.getPart("immagineMenu") != null) {
+                    if (request.getPart("immagineMenu").getSize() <= MAX_IMG_SIZE) {
+                        immaginePart = request.getPart("immagineMenu");
+                    } else {
+                        checkIMG = false;
+                    }
+                }
+                if (request.getPart("copertinaMenu") != null) {
+                    if (request.getPart("copertinaMenu").getSize() <= MAX_IMG_SIZE) {
+                        copertinaPart = request.getPart("copertinaMenu");
+                    } else {
+                        checkIMG = false;
+                    }
+                }
+                if (checkIMG) {
+                    //Load dell'immagine
+                    if (immaginePart != null) {
+                        if (immaginePart.getContentType().contains("image/")) {
+                            try {
+                                String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_IMG, getServletContext());
+                                String extension = getImageExtension(immaginePart);
+                                String imagineName = "uncompressed" + nome + "." + extension;
+                                imagineName = imagineName.replace(" ", "");
+                                ImageDispatcher.insertCompressedImg(listsFolder, imagineName, immaginePart, extension);
+                                immagine = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_IMG, imagineName.replace("uncompressed", ""));
 
-                        } catch (RuntimeException e) {
-                            System.out.println("RuntimeException:");
-                            throw e;
-                        } catch (Exception e) {
-                            System.out.println("Exception:");
+                            } catch (RuntimeException e) {
+                                System.out.println("RuntimeException:");
+                                throw e;
+                            } catch (IOException e) {
+                                System.out.println("Exception:");
+                            }
+                        } else {
+                            System.out.println("FilePart not in image/ updateMenu 1");
                         }
                     } else {
-                        System.out.println("FilePart not in image/ updateMenu 1");
+                        System.out.println("filePart = null");
                     }
-                } else {
-                    System.out.println("filePart = null");
-                }
 
-                //Load della copertina
-                if (copertinaPart != null) {
-                    if (copertinaPart.getContentType().contains("image/")) {
-                        try {
-                            String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_COPERTINA, getServletContext());
-                            String extension = getImageExtension(copertinaPart);
-                            String imagineName = "uncompressed" + nome + "." + extension;
-                            imagineName = imagineName.replace(" ", "");
-                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, copertinaPart, extension);
-                            copertina = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_COPERTINA, imagineName.replace("uncompressed", ""));
-                        } catch (RuntimeException e) {
-                            System.out.println("RuntimeException:");
-                            throw e;
-                        } catch (Exception e) {
-                            System.out.println("Exception:");
+                    //Load della copertina
+                    if (copertinaPart != null) {
+                        if (copertinaPart.getContentType().contains("image/")) {
+                            try {
+                                String listsFolder = obtainRootFolderPath(UPLOAD_DIRECTORY_COPERTINA, getServletContext());
+                                String extension = getImageExtension(copertinaPart);
+                                String imagineName = "uncompressed" + nome + "." + extension;
+                                imagineName = imagineName.replace(" ", "");
+                                ImageDispatcher.insertCompressedImg(listsFolder, imagineName, copertinaPart, extension);
+                                copertina = ImageDispatcher.savePathImgInDatabsae(UPLOAD_DIRECTORY_COPERTINA, imagineName.replace("uncompressed", ""));
+                            } catch (RuntimeException e) {
+                                System.out.println("RuntimeException:");
+                                throw e;
+                            } catch (Exception e) {
+                                System.out.println("Exception:");
+                            }
+                        } else {
+                            System.out.println("FilePart not in image/ updateMenu2");
                         }
                     } else {
-                        System.out.println("FilePart not in image/ updateMenu2");
+                        System.out.println("filePart = null");
                     }
-                } else {
-                    System.out.println("filePart = null");
-                }
 
-                menudao.updateMenu(idMenu, nome, copertina, immagine);
+                    menudao.updateMenu(idMenu, nome, copertina, immagine);
+                    url = "menu.jsp";
+                } else {
+                    response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                }
             }
 
-        } catch (Exception ex) {
+        } catch (DAOException | IOException | RuntimeException | ServletException ex) {
             Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);
+            response.setHeader("NOTIFICA", "Errore generico");
         }
-        response.sendRedirect("menu.jsp");
+        if (url.equals("")) {
+            view.forward(request, response);
+        } else {
+            response.sendRedirect(url);
+        }
     }
 
     /**

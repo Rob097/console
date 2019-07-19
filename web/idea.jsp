@@ -10,6 +10,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="request" value="<%=request%>"/> <!-- Request lo chiamo con una scriplets e lo salvo in una variabile perchè serve per diversi metodi java -->
+<c:set var="response" value="<%=response%>"/>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +20,7 @@
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>
-            Dashboard
+            Console
         </title>
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
         <!--     Fonts and icons     -->
@@ -28,7 +29,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <!-- CSS Files -->
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
-        <!-- CSS Just for demo purpose, don't include it in your project -->
         <link href="css/styles.css" rel="stylesheet" />
         <!-- include summernote css/js -->
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css">
@@ -62,75 +62,13 @@
     <body class="">
         <a class="rightGold" href="#topPage" id="myBtn45" title="Torna in cima"><i class="fas fa-arrow-up"></i></a>
         <div class="wrapper ">
-            <div class="sidebar" data-color="purple" data-background-color="white" data-image="assets/img/sidebar-1.jpg">
+            <div class="sidebar" data-color="purple" data-background-color="white" data-image="img/ico/sidebar-1.jpg">
                 <!-- Load with javascript from /ajax -->
             </div>
             <div class="main-panel">
-                <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
-                    <div class="container-fluid">
-                        <div class="navbar-wrapper">
-                            <a id="topPage" class="navbar-brand" href="#pablo">${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}</a>
-                        </div>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                        </button>
-                        <div class="collapse navbar-collapse justify-content-end">
-                            <form class="navbar-form">
-                                <div class="input-group no-border">
-                                    <input type="text" value="" class="form-control" placeholder="Search...">
-                                    <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                                        <i class="material-icons">search</i>
-                                        <div class="ripple-container"></div>
-                                    </button>
-                                </div>
-                            </form>
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#pablo">
-                                        <i class="material-icons">dashboard</i>
-                                        <p class="d-lg-none d-md-block">
-                                            Stats
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">notifications</i>
-                                        <span class="notification">5</span>
-                                        <p class="d-lg-none d-md-block">
-                                            Some Actions
-                                        </p>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" href="#">Mike John responded to your email</a>
-                                        <a class="dropdown-item" href="#">You have 5 new tasks</a>
-                                        <a class="dropdown-item" href="#">You're now friend with Andrew</a>
-                                        <a class="dropdown-item" href="#">Another Notification</a>
-                                        <a class="dropdown-item" href="#">Another One</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="#pablo" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">person</i>
-                                        <p class="d-lg-none d-md-block">
-                                            Account
-                                        </p>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                                        <a class="dropdown-item" href="#">Profilo</a>
-                                        <a class="dropdown-item" href="#">Impostazioni</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="logout">Log out</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
+                <div id="navbar">
+
+                </div>
                 <!-- End Navbar -->
                 <div class="content">
                     <div class="container-fluid">
@@ -144,10 +82,10 @@
                                     <h4>Cosa usare</h4>
                                     <div class="form-group form-inline" id="dynamic_form">                                        
                                         <div class="form-group col-lg-5 col-md-12 name">
-                                            <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Cosa" required>
+                                            <input type="text" class="form-control" id="ingrediente" name="ingrediente" placeholder="Cosa">
                                         </div>
                                         <div class="form-group col-lg-5 col-md-12 name">
-                                            <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quanto" required>
+                                            <input type="text" class="form-control" id="quantity" name="quantity" placeholder="Quanto">
                                         </div>
                                         <div class="button-group form-group col-lg-2 col-md-12">
                                             <a href="javascript:void(0)" class="btn btn-primary" id="plus" style="padding: .375rem .75rem;">+</a>
@@ -245,10 +183,25 @@
                                                         Facile
                                                     </option>
                                                 </select>
+                                                <label for="difficultInput">Visibilità</label>
+                                                <select class="form-control mb-4" name="approvata" id="approvata" required>
+                                                    <option value="0"
+                                                            <c:if test="${idea.approvata eq false}">
+                                                                selected
+                                                            </c:if>>
+                                                        Non Pubblicata
+                                                    </option>
+                                                    <option value="1"
+                                                            <c:if test="${idea.approvata eq true}">
+                                                                selected
+                                                            </c:if>>
+                                                        Pubblicata
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6 text-center mt-5">
-                                            <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="border-radius: 5%; max-width: 500px; max-height: 500px;"/>
+                                            <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
                                             <input type='file' name="immagine" onchange="readURL(this, 'InputIMGBlog');" required/>
                                         </div>
                                     </div>
@@ -266,7 +219,10 @@
                                     </c:when>
                                     <c:otherwise>
                                         <form method="POST" action="updateRecipe"  enctype="multipart/form-data">
-                                            <button class="btn btn-outline-info mt-4">Aggiorna</button>
+                                            <div class="mt-4">
+                                                <button class="btn btn-outline-info">Aggiorna</button>
+                                                <a class="btn btn-outline-warning" target="_blank" rel="noopener" href="../MacAPP/idea.jsp?id=${idea.id}">Visualizza</a>
+                                            </div>
                                             <input type="hidden" name="id" value="${idea.id}" />
                                             <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${idea.nome}" required/>
 
@@ -314,55 +270,56 @@
                                                 <div class="col-md-6 mt-5">
 
                                                     <div id="ratingDiv" class="no-padding mb-5 personalized center-small col-lg-12 col-md-12 col-12">
-                                                        <label class="text-muted">${ricettedao.getNumberRate(idea.id)} valutazioni</label><br>
+                                                        <c:set var="rate" value="${ricettedao.getRate(idea.id)}"/>
+                                                        <label class="text-muted">${ricettedao.getNumberRate(idea.id)} valutazioni (${rate} <i class="far fa-star"></i>)</label><br>
                                                         <fieldset class="rating text-center" style="display: initial;">
                                                             <input type="radio" id="star5" name="rating" value="5" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 5}">
+                                                                   <c:if test="${rate >= 5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class = "full" for="star5" title="5 stelle"></label>
                                                             <input type="radio" id="star4half" name="rating" value="4.5" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 4.5 && ricettedao.getRate(idea.id) < 5}">
+                                                                   <c:if test="${rate >= 4.5 && rate < 5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class="half" for="star4half" title="4.5 stelle"></label>
                                                             <input type="radio" id="star4" name="rating" value="4" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 4 && ricettedao.getRate(idea.id) < 4.5}">
+                                                                   <c:if test="${rate >= 4 && rate < 4.5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class = "full" for="star4" title="4 stelle"></label>
                                                             <input type="radio" id="star3half" name="rating" value="3.5" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 3.5 && ricettedao.getRate(idea.id) < 4}">
+                                                                   <c:if test="${rate >= 3.5 && rate < 4}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class="half" for="star3half" title="3.5 stelle"></label>
                                                             <input type="radio" id="star3" name="rating" value="3" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 3 && ricettedao.getRate(idea.id) < 3.5}">
+                                                                   <c:if test="${rate >= 3 && rate < 3.5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class = "full" for="star3" title="3 stelle"></label>
                                                             <input type="radio" id="star2half" name="rating" value="2.5"
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 2.5 && ricettedao.getRate(idea.id) < 3}">
+                                                                   <c:if test="${rate >= 2.5 && rate < 3}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class="half" for="star2half" title="2.5 stelle"></label>
                                                             <input type="radio" id="star2" name="rating" value="2" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 2 && ricettedao.getRate(idea.id) < 2.5}">
+                                                                   <c:if test="${rate >= 2 && rate < 2.5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class = "full" for="star2" title="2 stelle"></label>
                                                             <input type="radio" id="star1half" name="rating" value="1.5" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 1.5 && ricettedao.getRate(idea.id) < 2}">
+                                                                   <c:if test="${rate >= 1.5 && rate < 2}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class="half" for="star1half" title="1.5 stelle"></label>
                                                             <input type="radio" id="star1" name="rating" value="1" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 1 && ricettedao.getRate(idea.id) < 1.5}">
+                                                                   <c:if test="${rate >= 1 && rate < 1.5}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class = "full" for="star1" title="1 stella"></label>
                                                             <input type="radio" id="starhalf" name="rating" value="0.5" 
-                                                                   <c:if test="${ricettedao.getRate(idea.id) >= 0.5 && ricettedao.getRate(idea.id) < 1}">
+                                                                   <c:if test="${rate >= 0.5 && rate < 1}">
                                                                        checked
                                                                    </c:if>/>
                                                             <label class="half" for="starhalf" title="0.5 stelle"></label>
@@ -411,7 +368,7 @@
                                                         <div class="col-md-4">
                                                             <label for="creatore">Autore</label>
                                                             <select style="width: auto;" class="form-control mb-4" name="autore" id="autore" required>
-                                                                <c:forEach var="aut" items="${ricettedao.getOurCreators()}">
+                                                                <c:forEach var="aut" items="${ricettedao.getAllCreators()}">
                                                                     <option value="${aut}" 
                                                                             <c:if test="${aut eq idea.creatore}">
                                                                                 selected
@@ -470,6 +427,21 @@
                                                                     Facile
                                                                 </option>
                                                             </select>
+                                                            <label for="difficultInput">Visibilità</label>
+                                                            <select class="form-control mb-4" name="approvata" id="approvata" required>
+                                                                <option value="0"
+                                                                        <c:if test="${idea.approvata eq false}">
+                                                                            selected
+                                                                        </c:if>>
+                                                                    Non Pubblicata
+                                                                </option>
+                                                                <option value="1"
+                                                                        <c:if test="${idea.approvata eq true}">
+                                                                            selected
+                                                                        </c:if>>
+                                                                    Pubblicata
+                                                                </option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div id="commentiBox">
@@ -501,39 +473,6 @@
                     </div>
                 </div>
                 <footer class="footer">
-                    <div class="container-fluid">
-                        <nav class="float-left">
-                            <ul>
-                                <li>
-                                    <a href="https://www.creative-tim.com">
-                                        Creative Tim
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://creative-tim.com/presentation">
-                                        About Us
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="http://blog.creative-tim.com">
-                                        Blog
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.creative-tim.com/license">
-                                        Licenses
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <div class="copyright float-right">
-                            &copy;
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script>, made with <i class="material-icons">favorite</i> by
-                            <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
-                        </div>
-                    </div>
                 </footer>
             </div>
         </div>>
@@ -542,14 +481,12 @@
         <script src="assets/js/core/jquery.min.js"></script>
         <script src="assets/js/core/popper.min.js"></script>
         <script src="assets/js/core/bootstrap-material-design.min.js"></script>
-        <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+        <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script> 
+        <script src="assets/js/plugins/bootstrap-notify.js"></script>
         <!-- Chartist JS -->
         <script src="assets/js/plugins/chartist.min.js"></script>
-        <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-
-
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <script>
 
@@ -711,6 +648,8 @@
             /* Sidebar */
             $(function () {
                 $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
+                $("#navbar").load("ajax/navbar.jsp?page=<c:out value='${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}' />");
+                $("footer").load("ajax/footer.jsp");
             });
         </script>
         <script src="js/dynamic-form.js"></script>
@@ -741,6 +680,34 @@
                     event.preventDefault();
                 });
             });
+
+            <c:if test="${response.getHeader('NOTIFICA') ne null}">
+            $.notify({
+                // options
+                message: "${response.getHeader('NOTIFICA')}"
+            }, {
+                // settings
+                element: 'body',
+                type: "warning",
+                allow_dismiss: true,
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                icon_type: 'class',
+                template: '<div class="col-xs-11 col-sm-3 alert alert-{0} alert-with-icon" data-notify="container" role="alert">' +
+                        '<i class="material-icons" data-notify="icon">warning</i>' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<i class="material-icons">close</i>' +
+                        '</button>' +
+                        '<span data-notify="message">{2}</span>' +
+                        '</div>'
+            });
+            </c:if>
         </script>
     </body>
 </html>

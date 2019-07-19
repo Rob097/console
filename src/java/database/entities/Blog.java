@@ -23,11 +23,12 @@ public class Blog {
     private String creatore;
     private Timestamp data;
     private int views;
+    private boolean pubblicato;
 
     public Blog() {
     }
 
-    public Blog(int id, String categoria, String nome, String testo, String descrizione, String immagine, String creatore, Timestamp data, int views) {
+    public Blog(int id, String categoria, String nome, String testo, String descrizione, String immagine, String creatore, Timestamp data, int views, boolean pubblicato) {
         this.id = id;
         this.categoria = categoria;
         this.nome = nome;
@@ -37,6 +38,7 @@ public class Blog {
         this.creatore = creatore;
         this.data = data;
         this.views = views;
+        this.pubblicato = pubblicato;
     }
     
     public int getId() {
@@ -110,6 +112,13 @@ public class Blog {
     public void setViews(int views) {
         this.views = views;
     }
-    
+
+    public boolean isPubblicato() {
+        return pubblicato;
+    }
+
+    public void setPubblicato(boolean pubblicato) {
+        this.pubblicato = pubblicato;
+    }
     
 }

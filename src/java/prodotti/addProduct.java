@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.MAX_IMG_SIZE;
 import static varie.utili.obtainRootFolderPath;
 import static varie.utili.unaccent;
 
@@ -28,8 +30,10 @@ import static varie.utili.unaccent;
  *
  * @author Roberto97
  */
-@MultipartConfig(maxFileSize = 16177215)
+@MultipartConfig()
 public class addProduct extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     ProductDAO productdao = null;
     private final String UPLOAD_DIRECTORY = "/img/prodotti/";
@@ -61,6 +65,8 @@ public class addProduct extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
+        RequestDispatcher view = request.getRequestDispatcher("prodotti.jsp");
+        String url = "";
         try {
 
             String nome = null, descrizione = null, immagine = null, categoria = null;
@@ -68,72 +74,81 @@ public class addProduct extends HttpServlet {
             Part filePart1 = null;
             boolean fresco = false, disponibile = true;
 
-            if (request.getParameter("nome") != null) {
-                nome = unaccent(request.getParameter("nome"));
-            }
-            if (request.getParameter("categoria") != null) {
-                categoria = unaccent(request.getParameter("categoria"));
-            }
-            if (request.getParameter("descrizione") != null) {
-                descrizione = unaccent(request.getParameter("descrizione"));
-            }
-            if (request.getParameter("costo") != null) {
-                if (request.getParameter("costo").equals(".") || request.getParameter("costo").equals(",")) {
-                    costo = 0.01;
-                } else {
-                    try {
-                        costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            if (request.getPart("immagine") != null) {
+            if (request.getPart("immagine") != null && request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
                 filePart1 = request.getPart("immagine");
-            }
-            if (request.getParameter("fresco") != null) {
-                fresco = request.getParameter("fresco").equals("true");
-            }
-            if (request.getParameter("disponibile") != null) {
-                disponibile = true;
-            }
-
-            int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco);
-
-            //Load dell'immagine
-            if (filePart1 != null) {
-                if (filePart1.getContentType().contains("image/")) {
-                    String upload_directory = "";
-                    if (fresco) {
-                        upload_directory = UPLOAD_DIRECTORY + "freschi/";
+                if (request.getParameter("nome") != null) {
+                    nome = unaccent(request.getParameter("nome"));
+                }
+                if (request.getParameter("categoria") != null) {
+                    categoria = unaccent(request.getParameter("categoria"));
+                }
+                if (request.getParameter("descrizione") != null) {
+                    descrizione = unaccent(request.getParameter("descrizione"));
+                }
+                if (request.getParameter("costo") != null) {
+                    if (request.getParameter("costo").equals(".") || request.getParameter("costo").equals(",")) {
+                        costo = 0.01;
                     } else {
-                        upload_directory = UPLOAD_DIRECTORY + "confezionati/";
+                        try {
+                            costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    try {
-                        String listsFolder = obtainRootFolderPath(upload_directory, getServletContext());
-                        String extension = getImageExtension(filePart1);
-                        String imagineName = "uncompressed" + id + "." + extension;
+                }
+                if (request.getParameter("fresco") != null) {
+                    fresco = request.getParameter("fresco").equals("true");
+                }
+                if (request.getParameter("disponibile") != null) {
+                    disponibile = true;
+                }
 
-                        ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
-                    } catch (RuntimeException e) {
-                        System.out.println("RuntimeException:");
-                        throw e;
-                    } catch (Exception e) {
-                        System.out.println("Exception:");
+                int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco);
+
+                //Load dell'immagine
+                if (filePart1 != null) {
+                    if (filePart1.getContentType().contains("image/")) {
+                        String upload_directory = "";
+                        if (fresco) {
+                            upload_directory = UPLOAD_DIRECTORY + "freschi/";
+                        } else {
+                            upload_directory = UPLOAD_DIRECTORY + "confezionati/";
+                        }
+                        try {
+                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext());
+                            String extension = getImageExtension(filePart1);
+                            String imagineName = "uncompressed" + id + "." + extension;
+
+                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
+                        } catch (RuntimeException e) {
+                            System.out.println("RuntimeException:");
+                            throw e;
+                        } catch (Exception e) {
+                            System.out.println("Exception:");
+                        }
+                    } else {
+                        System.out.println("FilePart not in image/");
                     }
                 } else {
-                    System.out.println("FilePart not in image/");
+                    System.out.println("filePart = null");
                 }
-            } else {
-                System.out.println("filePart = null");
-            }
 
-            productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo);
-            response.sendRedirect("/console/prodotti.jsp#" + categoria);
+                productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo);
+                url = "prodotti.jsp#" + categoria;
+
+            } else {
+                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+            }
 
         } catch (DAOException ex) {
             Logger.getLogger(addProduct.class.getName()).log(Level.SEVERE, null, ex);
+            response.setHeader("NOTIFICA", "Errore generico");
+        }
+        if (url.equals("")) {
+            view.forward(request, response);
+        } else {
+            response.sendRedirect(url);
         }
     }
 

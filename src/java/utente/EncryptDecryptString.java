@@ -41,8 +41,8 @@ public class EncryptDecryptString {
             IvParameterSpec ivparameterspec = new IvParameterSpec(key);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivparameterspec);
             byte[] cipherText = cipher.doFinal(plainText.getBytes("UTF8"));
-            Base64.Encoder encoder = Base64.getEncoder();
-            encryptedText = encoder.encodeToString(cipherText).replaceAll("=", "_");
+            Base64.Encoder encoder = Base64.getUrlEncoder();
+            encryptedText = encoder.encodeToString(cipherText);
 
         } catch (Exception E) {
             System.err.println("Encrypt Exception : " + E.getMessage());
@@ -64,9 +64,9 @@ public class EncryptDecryptString {
             SecretKeySpec secretKey = new SecretKeySpec(key, aesEncryptionAlgorithem);
             IvParameterSpec ivparameterspec = new IvParameterSpec(key);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivparameterspec);
-            Base64.Decoder decoder = Base64.getDecoder();
+            Base64.Decoder decoder = Base64.getUrlDecoder();
             byte[] cipherText = decoder.decode(encryptedText.getBytes("UTF8"));
-            decryptedText = new String(cipher.doFinal(cipherText), "UTF-8");
+            decryptedText = new String(cipher.doFinal(cipherText), "UTF8");
 
         } catch (Exception E) {
             System.err.println("decrypt Exception : " + E.getMessage());
@@ -80,11 +80,11 @@ public class EncryptDecryptString {
         String plainString = sc.nextLine();
 
         String encyptStr = encrypt(plainString);
-        //String decryptStr = decrypt(encyptStr);
+        String decryptStr = decrypt(encyptStr);
 
-        //System.out.println("Plain   String  : " + plainString);
-        //System.out.println("Encrypt String  : " + encyptStr);
-        //System.out.println("Decrypt String  : " + decryptStr);
+        System.out.println("Plain   String  : " + plainString);
+        System.out.println("Encrypt String  : " + encyptStr);
+        System.out.println("Decrypt String  : " + decryptStr);
 
     }
 }

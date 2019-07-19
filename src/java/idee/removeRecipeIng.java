@@ -10,7 +10,6 @@ import database.exceptions.DAOException;
 import database.factories.DAOFactory;
 import database.jdbc.JDBCRicetteDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Roberto97
  */
 public class removeRecipeIng extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     RicetteDAO ricettedao = null;
 

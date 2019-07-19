@@ -8,6 +8,9 @@ package database.jdbc;
 import database.daos.MenuDAO;
 import database.entities.Menu;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
@@ -29,12 +32,32 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
      * @param con E' la connessione al DB
      * @throws java.sql.SQLException
      */
-    public JDBCMenuDAO(Connection con) throws SQLException {
+    public JDBCMenuDAO(Connection con) throws SQLException{
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public ArrayList<Menu> getAllMenu() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM menu")) {
             ArrayList<Menu> menu = new ArrayList<>();
 
@@ -57,6 +80,8 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
     @Override
     public Menu getMenu(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM menu where id = ?")) {
             stm.setInt(1, id);
             Menu p = null;
@@ -79,6 +104,8 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
     @Override
     public void updateMenu(int id, String nome, String copertina, String immagine) throws DAOException {
+        checkCON();
+        
         if (nome == null || copertina == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
@@ -106,6 +133,8 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
     @Override
     public void deleteMenu(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from menu where id = ?"
         )) {
@@ -127,6 +156,8 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
     @Override
     public void addMenu(String nome, String immagine, String copertina) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("insert into menu (nome, immagine, copertina) VALUES (?,?,?)")) {
             try {
                 stm.setString(1, nome);
@@ -135,7 +166,7 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
 
                 if (stm.executeUpdate() == 1) {
                 } else {
-                    throw new DAOException("Impossible to add new product");
+                    throw new DAOException("Impossible to add new menu");
                 }
 
             } catch (SQLException ex) {

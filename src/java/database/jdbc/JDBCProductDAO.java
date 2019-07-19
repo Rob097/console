@@ -3,6 +3,9 @@ package database.jdbc;
 import database.daos.ProductDAO;
 import database.entities.Prodotto;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,8 +28,26 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * @param con E' la connessione al DB
      * @throws java.sql.SQLException
      */
-    public JDBCProductDAO(Connection con) throws SQLException {
+    public JDBCProductDAO(Connection con) throws SQLException{
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -39,6 +60,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public ArrayList<Prodotto> getAllProducts() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto")) {
             ArrayList<Prodotto> prodotti = new ArrayList<>();
 
@@ -74,6 +97,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public ArrayList<Prodotto> getFreshProducts() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where fresco = 1")) {
             ArrayList<Prodotto> prodotti = new ArrayList<>();
 
@@ -109,6 +134,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public ArrayList<Prodotto> getConfProducts() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where fresco = 0")) {
             ArrayList<Prodotto> prodotti = new ArrayList<>();
 
@@ -147,6 +174,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public ArrayList<Prodotto> getAllProductsOfCategory(String categoryName) throws DAOException {
+        checkCON();
+        
         if (categoryName == null) {
             throw new DAOException("categoryName is a mandatory fields", new NullPointerException("categoryName is null"));
         }
@@ -188,6 +217,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public Prodotto getProduct(int id) throws DAOException {
+        checkCON();
+        
 
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where id = ?")) {
             stm.setInt(1, id);
@@ -215,9 +246,11 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     
     @Override
     public Prodotto getProductByName(String name) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where nome = ?")) {
             stm.setString(1, name);
-            Prodotto p = null;
+            Prodotto p = new Prodotto();
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -235,7 +268,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
             }
         } catch (SQLException ex) {
             //throw new DAOException("Impossibile restituire il prodotto. (JDBCProductDAO, getProduct)", ex);
-            return null;
+            return new Prodotto();
         }
     }
 
@@ -248,6 +281,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public double getRate(int id) throws DAOException {
+        checkCON();
+        
         double val = 0;
         try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_prod where id_prod = ?")) {
             stm.setInt(1, id);
@@ -274,6 +309,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      */
     @Override
     public int getNumberRate(int id) throws DAOException {
+        checkCON();
+        
         int val = 0;
         try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_prod where id_prod = ?")) {
             stm.setInt(1, id);
@@ -300,6 +337,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     @Override
     public void deleteProd(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from prodotto where id = ?"
         )) {
@@ -321,6 +360,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     @Override
     public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException {
+        checkCON();
+        
         if (nome == null || descrizione == null || categoria == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
@@ -351,6 +392,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     @Override
     public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException {
+        checkCON();
+        
         int id = 0;
         try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco) VALUES (?,?,?,?,?,?,?)")) {
             try {
@@ -386,6 +429,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
 
     @Override
     public ArrayList<Prodotto> getNullCategoryProducts() throws DAOException {
+        checkCON();
+        
         boolean check = false;
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where categoria IS NULL")) {
             ArrayList<Prodotto> prodotti = new ArrayList<>();

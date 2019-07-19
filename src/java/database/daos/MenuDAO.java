@@ -14,6 +14,9 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface MenuDAO {
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<Menu> getAllMenu() throws DAOException;
     public Menu getMenu(int id) throws DAOException;
     public void updateMenu(int id, String nome, String copertina, String immagine) throws DAOException;

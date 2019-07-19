@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import static utente.EncryptDecryptString.encrypt;
 import static varie.costanti.PASS;
+import static varie.costanti.ROB_PASS;
 
 /**
  *
@@ -48,8 +49,8 @@ public class loggedFilter implements Filter {
             Cookie[] cookies = ((HttpServletRequest) request).getCookies();
             if (cookies != null) {
                 for (Cookie c : cookies) {
-                    if (c.getName().equals(encrypt("LOGGED"))) {
-                        if (c.getValue().equals(encrypt(PASS))) {
+                    if (c.getName().equals(encrypt("LOGGED").replace("=",ROB_PASS))) {
+                        if (c.getValue().equals(encrypt(PASS).replace("=",ROB_PASS))) {
                             //System.out.println("truedkf");
                             check = true;
                         }
@@ -59,7 +60,7 @@ public class loggedFilter implements Filter {
 
             HttpSession session = ((HttpServletRequest) request).getSession();
             if (session != null) {
-                if (session.getAttribute(encrypt("LOGGED")) != null && session.getAttribute(encrypt("LOGGED")).equals(encrypt(PASS))) {
+                if (session.getAttribute(encrypt("LOGGED").replace("=",ROB_PASS)) != null && session.getAttribute(encrypt("LOGGED").replace("=",ROB_PASS)).equals(encrypt(PASS).replace("=",ROB_PASS))) {
                     check = true;
                     //System.out.println("session trueòlsdm");                    
                 }
@@ -148,7 +149,7 @@ public class loggedFilter implements Filter {
         this.filterConfig = filterConfig;
         if (filterConfig != null) {
             if (DEBUG) {
-                log("loggedFilter:Initializing filter");
+                //log("loggedFilter:Initializing filter");
             }
         }
     }

@@ -21,6 +21,7 @@ public class Prodotto {
     private boolean fresco;
 
     public Prodotto() {
+        this.id = 0;
     }
 
     public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco) {
@@ -110,6 +111,12 @@ public class Prodotto {
     @Override
     public String toString() {
         return "Prodotto{" + "id=" + id + ", nome=" + nome + ", categoria=" + categoria + ", immagine=" + immagine + ", descrizione=" + descrizione + ", costo=" + costo + ", disponibile=" + disponibile + '}';
+    }
+    
+    public boolean isEmpty(){
+        if(this.id == 0 && this.nome == null)
+            return true;
+        return false;
     }
     
     

@@ -18,13 +18,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.regex.Pattern;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.servlet.http.Part;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -41,7 +41,6 @@ public class ImageDispatcher {
     public static void deleteImgFromDirectory(String fileName) {
         // Creo un oggetto file
         File f = new File(fileName);
-
         // Mi assicuro che il file esista
         if (!f.exists()) {
             throw new IllegalArgumentException("Il File o la Directory non esiste: " + fileName);
@@ -95,76 +94,77 @@ public class ImageDispatcher {
 
     public static void insertCompressedImg(String Directory, String imgName, Part filePart1, String extension) throws FileNotFoundException, IOException, IOException, IOException, IOException, IOException {
         //Creo l'immagine della cartella in modo da avere un file da comprimere
-        insertImgIntoDirectory(Directory, imgName, filePart1);
-        String CompleteImgName, CompleteImgName1;
+        if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")) {
+            insertImgIntoDirectory(Directory, imgName, filePart1);
+            String CompleteImgName, CompleteImgName1;
 
-        if ((filePart1 != null) && (filePart1.getSize() > 0)) {
+            if ((filePart1 != null) && (filePart1.getSize() > 0)) {
 
-            CompleteImgName = imgName;
-            CompleteImgName = CompleteImgName.replaceAll("\\s+", "");
-            CompleteImgName1 = imgName.replace("uncompressed", "");
-            CompleteImgName1 = CompleteImgName1.replaceAll("\\s+", "");
+                CompleteImgName = imgName;
+                CompleteImgName = CompleteImgName.replaceAll("\\s+", "");
+                CompleteImgName1 = imgName.replace("uncompressed", "");
+                CompleteImgName1 = CompleteImgName1.replaceAll("\\s+", "");
 
-            //File originale
-            File file1 = new File(Directory, CompleteImgName);
-            //File compresso
-            File file2 = new File(Directory, CompleteImgName1);
+                //File originale
+                File file1 = new File(Directory, CompleteImgName);
+                //File compresso
+                File file2 = new File(Directory, CompleteImgName1);
 
-            InputStream inputStream = new FileInputStream(file1);
-            OutputStream outputStream = new FileOutputStream(file2);
+                InputStream inputStream = new FileInputStream(file1);
+                OutputStream outputStream = new FileOutputStream(file2);
 
-            //Qualità del file compresso
-            float imageQuality = 0.3f;
-            //Create the buffered image
-            BufferedImage bufferedImage = ImageIO.read(inputStream);
+                //Qualità del file compresso
+                float imageQuality = 0.3f;
+                //Create the buffered image
+                BufferedImage bufferedImage = ImageIO.read(inputStream);
 
-            //Get image writers
-            Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(extension);
+                //Get image writers
+                Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(extension);
+                if (!imageWriters.hasNext()) {
+                    throw new IllegalStateException("Writers Not Found!!");
+                }
 
-            if (!imageWriters.hasNext()) {
-                throw new IllegalStateException("Writers Not Found!!");
-            }
+                ImageWriter imageWriter = imageWriters.next();
+                ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+                imageWriter.setOutput(imageOutputStream);
 
-            ImageWriter imageWriter = (ImageWriter) imageWriters.next();
-            ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
-            imageWriter.setOutput(imageOutputStream);
+                ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
 
-            ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+                //Set the compress quality metrics
+                imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                imageWriteParam.setCompressionQuality(imageQuality);
 
-            //Set the compress quality metrics
-            imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            imageWriteParam.setCompressionQuality(imageQuality);
-            
-            try {
-                //Created image
-                imageWriter.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, extension, os);
-                InputStream is = new ByteArrayInputStream(os.toByteArray());
-                // close all streams
-                inputStream.close();
-                outputStream.close();
-                imageOutputStream.close();
-                imageWriter.dispose();
+                try {
+                    //Created image
+                    imageWriter.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ImageIO.write(bufferedImage, extension, os);
+                    InputStream is = new ByteArrayInputStream(os.toByteArray());
+                    // close all streams
+                    inputStream.close();
+                    outputStream.close();
+                    imageOutputStream.close();
+                    imageWriter.dispose();
 
-                try (InputStream fileContent = is) {
-                    Files.copy(fileContent, file2.toPath());
-                } catch (RuntimeException e) {
-                    throw e;
-                }catch (Exception imgexception) {
-                    System.out.println("L'immagine esiste già ma verrà sostituita");
-                } 
-                
-            } catch (IOException | RuntimeException e) {
-                inputStream.close();
-                outputStream.close();
-                imageOutputStream.close();
-                imageWriter.dispose();
-            }
-            try {
-                deleteImgFromDirectory(Directory + imgName);
-            } catch (Exception e) {
-                System.out.println("Nessuna immagine da cancellare2");
+                    try (InputStream fileContent = is) {
+                        Files.copy(fileContent, file2.toPath());
+                    } catch (RuntimeException e) {
+                        throw e;
+                    } catch (Exception imgexception) {
+                        System.out.println("L'immagine esiste già ma verrà sostituita");
+                    }
+
+                } catch (IOException | RuntimeException e) {
+                    inputStream.close();
+                    outputStream.close();
+                    imageOutputStream.close();
+                    imageWriter.dispose();
+                }
+                try {
+                    deleteImgFromDirectory(Directory + imgName);
+                } catch (Exception e) {
+                    System.out.println("Nessuna immagine da cancellare2");
+                }
             }
         }
     }
@@ -179,7 +179,9 @@ public class ImageDispatcher {
      * @return
      */
     public static String getImageExtension(Part filePart1) {
-        String extension = Paths.get(filePart1.getSubmittedFileName()).getFileName().toString().split(Pattern.quote("."))[1];
+        //System.out.println("Extension: "+Paths.get(filePart1.getSubmittedFileName()).getFileName().toString().split(Pattern.quote("."))[1]);
+        String extension = FilenameUtils.getExtension(Paths.get(filePart1.getSubmittedFileName()).getFileName().toString());
+        System.out.println("Extension: " + extension);
         return extension;
     }
 

@@ -7,9 +7,13 @@ package database.jdbc;
 
 import database.daos.ConsoleDAO;
 import database.daos.ProductDAO;
+import database.entities.Notifica;
 import database.entities.Ordine;
 import database.entities.Prodotto;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,12 +52,40 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     public JDBCConsoleDAO(Connection con) throws SQLException {
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if (this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)) {
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public int getWeekViews() throws DAOException {
+        checkCON();
+        Calendar calendar = Calendar.getInstance();
+        LocalDate monday = LocalDate.now();
+        java.sql.Date ourJavaDateObject = new java.sql.Date(calendar.getTime().getTime());
+        if(ourJavaDateObject.toLocalDate().getDayOfWeek().equals(DayOfWeek.MONDAY)){
+            monday = ourJavaDateObject.toLocalDate();
+        }else{
+            monday = ourJavaDateObject.toLocalDate().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        }
         int views = 0;
-        try (PreparedStatement stm = CON.prepareStatement("select SUM(views) AS views from curr_week_views")) {
+        try (PreparedStatement stm = CON.prepareStatement("select SUM(views) AS views from weeks_views where week = ?")) {
+            stm.setDate(1, java.sql.Date.valueOf(monday));
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     views = rs.getInt("views");
@@ -67,7 +99,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getMonthViews() throws DAOException {
-        
+        checkCON();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
@@ -82,7 +115,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         int fourth = 0, third = 0, second = 0, first = 0;
 
         Map<LocalDate, Integer> date = new TreeMap<>();
-        
+
         try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -93,12 +126,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             Logger.getLogger(JDBCProductDAO.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         Iterator<Map.Entry<LocalDate, Integer>> it = date.entrySet().iterator();
 
-         while (it.hasNext()) {
+        while (it.hasNext()) {
             Map.Entry<LocalDate, Integer> v = it.next();
-            
+
             if (v.getKey().isAfter(fourthMonday.minusDays(1)) && v.getKey().isBefore(thirdMonday)) {
                 fourth += v.getValue();
             } else if (v.getKey().isAfter(thirdMonday.minusDays(1)) && v.getKey().isBefore(secondMonday)) {
@@ -109,7 +142,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 first += v.getValue();
             }
         }
-         
+
         Map<String, Integer> map = new TreeMap<>();
         map.put(previousMonday.format(formatter), first);
         map.put(secondMonday.format(formatter), second);
@@ -117,16 +150,17 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         map.put(fourthMonday.format(formatter), fourth);
 
         return map;
-        
+
     }
 
     @Override
     public Map<String, Integer> getLastMonthViews() throws DAOException {
-        
+        checkCON();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         today = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusWeeks(4);
-        System.out.println("TODAY LAST: " + today);
+
         LocalDate previousMonday = today.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         if (today.getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())) {
             previousMonday = today;
@@ -139,7 +173,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         int fourth = 0, third = 0, second = 0, first = 0;
 
         Map<LocalDate, Integer> date = new TreeMap<>();
-        
+
         try (PreparedStatement stm = CON.prepareStatement("select week, SUM(views) AS views from weeks_views group by week desc")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -150,12 +184,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             Logger.getLogger(JDBCProductDAO.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         Iterator<Map.Entry<LocalDate, Integer>> it = date.entrySet().iterator();
 
-         while (it.hasNext()) {
+        while (it.hasNext()) {
             Map.Entry<LocalDate, Integer> v = it.next();
-            
+
             if (v.getKey().isAfter(fourthMonday.minusDays(1)) && v.getKey().isBefore(thirdMonday)) {
                 fourth += v.getValue();
             } else if (v.getKey().isAfter(thirdMonday.minusDays(1)) && v.getKey().isBefore(secondMonday)) {
@@ -166,7 +200,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 first += v.getValue();
             }
         }
-         
+
         Map<String, Integer> map = new TreeMap<>();
         map.put(previousMonday.format(formatter), first);
         map.put(secondMonday.format(formatter), second);
@@ -174,11 +208,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         map.put(fourthMonday.format(formatter), fourth);
 
         return map;
-        
+
     }
 
     @Override
     public Object getViewsChanges(boolean lastValue) throws DAOException {
+        checkCON();
         Map<String, Integer> current = getMonthViews();
         Map<String, Integer> last = getLastMonthViews();
 
@@ -219,6 +254,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getPagesViews() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("select pagina, sum(views) as views from weeks_views group by pagina")) {
             try (ResultSet rs = stm.executeQuery()) {
@@ -236,7 +272,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException {
-        
+        checkCON();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         if (isLast) {
@@ -294,6 +331,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public int getEmailChanges(boolean lastValue) throws DAOException {
+        checkCON();
         Map<String, Integer> current = getMonthEmailSub(false);
         Map<String, Integer> last = getMonthEmailSub(true);
         double currentSum = 0;
@@ -323,6 +361,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getTotalEmailSub() throws DAOException {
+        checkCON();
         int total = 0;
         String totale;
         try (PreparedStatement stm = CON.prepareStatement("select * from email_sub")) {
@@ -342,6 +381,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getMonthRevenue(boolean isLast) throws DAOException {
+        checkCON();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
         LocalDate today = LocalDate.now();
         if (isLast) {
@@ -399,6 +439,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Object getRevenueChanges(boolean lastValue) throws DAOException {
+        checkCON();
         Map<String, Double> current = getMonthRevenue(false);
         Map<String, Double> last = getMonthRevenue(true);
         if (last == null) {
@@ -438,6 +479,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getTotalRevenue() throws DAOException {
+        checkCON();
         double total = 0.00;
         String totale;
         try (PreparedStatement stm = CON.prepareStatement("select * from orderSum")) {
@@ -458,6 +500,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getLastEmailSub() throws DAOException {
+        checkCON();
         LocalDateTime data = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         try (PreparedStatement stm = CON.prepareStatement("SELECT MAX(date) as data FROM email_sub")) {
@@ -478,6 +521,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getLastRevenue() throws DAOException {
+        checkCON();
         LocalDateTime data = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         try (PreparedStatement stm = CON.prepareStatement("SELECT MAX(date) as data FROM orderSum")) {
@@ -498,6 +542,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getProductBuy() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         boolean check = false;
         try (PreparedStatement stm = CON.prepareStatement("select nome, num_acquisti from prodotto")) {
@@ -524,8 +569,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getBlogCatViews() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
-        try (PreparedStatement stm = CON.prepareStatement("SELECT categoria, sum(views) as views from blog group by categoria")) {
+        try (PreparedStatement stm = CON.prepareStatement("SELECT categoria, sum(views) as views from blog where views > 0 group by categoria")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
                     dati.put(rs.getString("categoria"), rs.getInt("views"));
@@ -541,6 +587,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getRecipeCatViews() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         String categoria = "";
         try (PreparedStatement stm = CON.prepareStatement("select categoria, sum(views) as views from ricette group by categoria")) {
@@ -564,8 +611,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getBlogArtViews(String categoria) throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
-        try (PreparedStatement stm = CON.prepareStatement("select nome, views from blog where categoria = ?")) {
+        try (PreparedStatement stm = CON.prepareStatement("select nome, views from blog where categoria = ? AND views > 0")) {
             stm.setString(1, categoria);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -582,8 +630,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getRecipeArtViews(boolean categoria) throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
-        try (PreparedStatement stm = CON.prepareStatement("select nome, views from ricette where categoria = ?")) {
+        try (PreparedStatement stm = CON.prepareStatement("select nome, views from ricette where categoria = ? AND views > 0")) {
             stm.setBoolean(1, categoria);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -600,6 +649,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getBlogCatComments() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("SELECT blog.categoria, COUNT(blog.id) as commenti FROM blog_commenti INNER JOIN blog ON blog.id = blog_commenti.id_blog group by categoria;")) {
             try (ResultSet rs = stm.executeQuery()) {
@@ -617,6 +667,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getRecipeCatComments() throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         String categoria = "";
         try (PreparedStatement stm = CON.prepareStatement("SELECT ricette.categoria, COUNT(ricette.id) as commenti FROM commenti INNER JOIN ricette ON ricette.id = commenti.id_ricetta group by categoria;")) {
@@ -640,6 +691,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getBlogArtComments(String categoria) throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("SELECT blog.nome, COUNT(blog.id) as commenti FROM blog_commenti INNER JOIN blog ON blog.id = blog_commenti.id_blog where categoria = ? group by blog.id;")) {
             stm.setString(1, categoria);
@@ -658,6 +710,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Integer> getRecipeArtComments(boolean categoria) throws DAOException {
+        checkCON();
         HashMap<String, Integer> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("SELECT ricette.nome, COUNT(ricette.id) as commenti FROM commenti INNER JOIN ricette ON ricette.id = commenti.id_ricetta where categoria = ? group by ricette.id")) {
             stm.setBoolean(1, categoria);
@@ -676,6 +729,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getBlogCatRate() throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("select blog.categoria, AVG(valutazione_blog.value) as rate from blog INNER JOIN valutazione_blog on blog.id = valutazione_blog.id_blog group by categoria;")) {
             try (ResultSet rs = stm.executeQuery()) {
@@ -696,6 +750,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getRecipeCatRate() throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         String categoria = "";
         try (PreparedStatement stm = CON.prepareStatement("select ricette.categoria, AVG(valutazione_ricetta.value) as rate from ricette INNER JOIN valutazione_ricetta on ricette.id = valutazione_ricetta.id_ricetta group by categoria;")) {
@@ -722,6 +777,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getProductCatRate() throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         String categoria = "";
         try (PreparedStatement stm = CON.prepareStatement("select prodotto.categoria, AVG(valutazione_prod.value) as rate from prodotto INNER JOIN valutazione_prod on prodotto.id = valutazione_prod.id_prod group by categoria;")) {
@@ -743,6 +799,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getBlogArtRate(String categoria) throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("select blog.nome, valutazione_blog.value as rate from blog INNER JOIN valutazione_blog on blog.id = valutazione_blog.id_blog where categoria = ?;")) {
             stm.setString(1, categoria);
@@ -764,6 +821,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getRecipeArtRate(boolean categoria) throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("select ricette.nome, valutazione_ricetta.value as rate from ricette INNER JOIN valutazione_ricetta on ricette.id = valutazione_ricetta.id_ricetta where categoria = ?;")) {
             stm.setBoolean(1, categoria);
@@ -785,6 +843,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Map<String, Double> getProductArtRate(String categoria) throws DAOException {
+        checkCON();
         HashMap<String, Double> dati = new HashMap<>();
         try (PreparedStatement stm = CON.prepareStatement("select prodotto.nome, valutazione_prod.value as rate from prodotto INNER JOIN valutazione_prod on prodotto.id = valutazione_prod.id_prod where categoria = ?;")) {
             stm.setString(1, categoria);
@@ -806,6 +865,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public ArrayList<String> getTypeDelivery() throws DAOException {
+        checkCON();
         ArrayList<String> tipi = new ArrayList<>();
 
         try (PreparedStatement stm = CON.prepareStatement("select delivery from orderSum group by delivery order by max(date) desc")) {
@@ -823,6 +883,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public int getNumberOfType(String type) throws DAOException {
+        checkCON();
 
         int number = 0;
 
@@ -842,6 +903,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public double getTotOfType(String type) throws DAOException {
+        checkCON();
 
         double number = 0.00;
 
@@ -864,6 +926,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Ordine getLastOfType(String type) throws DAOException {
+        checkCON();
         Ordine ordine = null;
         try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where delivery = ? order by date desc limit 1")) {
             stm.setString(1, type);
@@ -893,6 +956,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public Ordine getOrder(String id) throws DAOException {
+        checkCON();
         Ordine ordine = null;
         try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where id = ?")) {
             stm.setString(1, id);
@@ -922,6 +986,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException {
+        checkCON();
         ArrayList<Ordine> ordini = new ArrayList<>();
         Ordine ordine = null;
 
@@ -973,6 +1038,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public ArrayList<Prodotto> getProdOfOrder(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+        checkCON();
+        ArrayList<Prodotto> products = new ArrayList<>();
         try {
             ProductDAO productdao = (ProductDAO) request.getSession().getAttribute("productdao");
 
@@ -980,31 +1047,40 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
                 ArrayList<String> nomi = new ArrayList<>();
                 ArrayList<String> quantita = new ArrayList<>();
-                ArrayList<Prodotto> products = new ArrayList<>();
 
                 for (String split1 : prodotti) {
                     String[] s = split1.split("_");
-                    nomi.add(s[0]);
-                    quantita.add(s[1]);
+                    if (s.length > 1) {
+                        nomi.add(s[0]);
+                        quantita.add(s[1]);
+                    }
                 }
+                int z = 0;
                 for (int i = 0; i < nomi.size(); i++) {
-                    products.add(productdao.getProductByName(nomi.get(i)));
+                    z++;
+                    if (productdao.getProductByName(nomi.get(i)) == null) {
+                        products.add(new Prodotto());
+                    } else {
+                        products.add(productdao.getProductByName(nomi.get(i)));
+                    }
                     products.get(i).setQuantita(Integer.parseInt(quantita.get(i).replace(" ", "")));
                 }
 
                 return products;
 
             } else {
+                System.out.println("PRODUCTDAO IS NULL");
                 return null;
             }
         } catch (Exception s) {
             s.printStackTrace();
-            return null;
+            return products;
         }
     }
 
     @Override
     public void setOrderStatus(String id, int stato) throws DAOException {
+        checkCON();
         String statoS = "";
 
         switch (stato) {
@@ -1044,6 +1120,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public double getOrderDeliveryCost(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+        checkCON();
 
         ArrayList<Prodotto> products = getProdOfOrder(prodotti, request);
         DecimalFormat df = new DecimalFormat("0.00");
@@ -1053,7 +1130,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         try {
             if (prodotti != null) {
                 for (Prodotto p : products) {
-                    totale += (df.parse(p.getCosto()).doubleValue() * p.getQuantita());
+                    if (!p.isEmpty()) {
+                        totale += (df.parse(p.getCosto()).doubleValue() * p.getQuantita());
+                    }
                 }
             }
         } catch (ParseException ex) {
@@ -1110,6 +1189,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+        checkCON();
 
         String box = "";
         double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
@@ -1126,6 +1206,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+        checkCON();
 
         double tot = 0.0;
         double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
@@ -1143,6 +1224,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     @Override
     public void copyWeekViews() throws DAOException {
+        checkCON();
 
         try (PreparedStatement stm = CON.prepareStatement("INSERT INTO weeks_views (pagina, week, views) SELECT pagina, ? AS date, SUM(`views`) AS views FROM curr_week_views group by pagina;")) {
             try {
@@ -1152,8 +1234,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 cal.add(Calendar.HOUR, -10);
                 timestamp = new Timestamp(cal.getTime().getTime());
                 stm.setTimestamp(1, timestamp);
-                if(stm.executeUpdate() >= 1){                    
-                }else{
+                if (stm.executeUpdate() >= 1) {
+                } else {
                     throw new DAOException("impossibile to copy week views");
                 };
             } catch (SQLException ex) {
@@ -1171,6 +1253,178 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 if (stm.executeUpdate() >= 1) {
                 } else {
                     throw new DAOException("Impossible to delete this week views");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public ArrayList<String> getAllEmail() throws DAOException {
+        checkCON();
+        ArrayList<String> emailS = new ArrayList<>();
+
+        try (PreparedStatement stm = CON.prepareStatement("select email from email_sub")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    emailS.add(rs.getString("email"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return emailS;
+    }
+
+    @Override
+    public void annullaIscrizione(String email) throws DAOException {
+        checkCON();
+        try (PreparedStatement stm = CON.prepareStatement("DELETE FROM email_sub where email = ?;")) {
+            stm.setString(1, email);
+            try {
+                if (stm.executeUpdate() >= 1) {
+                } else {
+                    System.out.println("Impossible to delete email");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public int getNumberByStatusOfType(String stato, String tipo) throws DAOException {
+        checkCON();
+
+        int num = 0;
+
+        try (PreparedStatement stm = CON.prepareStatement("select COUNT(id) as num from orderSum where delivery = ? AND stato = ?")) {
+            stm.setString(1, tipo);
+            stm.setString(2, stato);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    num += rs.getInt("num");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return num;
+    }
+
+    @Override
+    public ArrayList<Notifica> getAllNotifiche() throws DAOException {
+        checkCON();
+
+        ArrayList<Notifica> notifiche = new ArrayList<>();
+        Notifica notifica;
+
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * from notifiche order by data desc")) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    notifica = new Notifica();
+                    notifica.setId(rs.getInt("id"));
+                    notifica.setTesto(rs.getString("testo"));
+                    notifica.setData(rs.getTimestamp("data"));
+                    notifica.setLink(rs.getString("link"));
+                    notifiche.add(notifica);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifiche;
+    }
+
+    @Override
+    public Notifica getNotifica(int id) throws DAOException {
+        checkCON();
+
+        Notifica notifica = null;
+
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * from notifiche where id = ?")) {
+            stm.setInt(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    notifica = new Notifica();
+                    notifica.setId(rs.getInt("id"));
+                    notifica.setTesto(rs.getString("testo"));
+                    notifica.setData(rs.getTimestamp("data"));
+                    notifica.setLink(rs.getString("link"));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifica;
+    }
+
+    @Override
+    public ArrayList<Notifica> getNotificheByType(String testo) throws DAOException {
+        checkCON();
+        ArrayList<Notifica> notifiche = new ArrayList<>();
+        Notifica notifica;
+
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * from notifiche where testo = ?")) {
+            stm.setString(1, testo);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    notifica = new Notifica();
+                    notifica.setId(rs.getInt("id"));
+                    notifica.setTesto(rs.getString("testo"));
+                    notifica.setData(rs.getTimestamp("data"));
+                    notifica.setLink(rs.getString("link"));
+                    notifiche.add(notifica);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifiche;
+    }
+
+    @Override
+    public void deleteNotifica(int id) throws DAOException {
+        checkCON();
+        try (PreparedStatement stm = CON.prepareStatement("DELETE FROM notifiche where id = ?;")) {
+            stm.setInt(1, id);
+            try {
+                if (stm.executeUpdate() >= 1) {
+                } else {
+                    System.out.println("Impossible to delete notifica");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void deleteALLNotifiche() throws DAOException {
+        checkCON();
+        try (PreparedStatement stm = CON.prepareStatement("DELETE FROM notifiche")) {
+            try {
+                if (stm.executeUpdate() >= 1) {
+                } else {
+                    System.out.println("Impossible to delete all notifiche");
                 }
 
             } catch (SQLException ex) {

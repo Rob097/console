@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -26,14 +27,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.MAX_IMG_SIZE;
 import static varie.utili.obtainRootFolderPath;
 
 /**
  *
  * @author Roberto97
  */
-@MultipartConfig(maxFileSize = 16177215)
+@MultipartConfig()
 public class addBlog extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     BlogDAO blogdao = null;
     CatBlogDAO catblogdao = null;
@@ -65,81 +69,98 @@ public class addBlog extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        RequestDispatcher view;
         try {
             request.setCharacterEncoding("UTF-8");
 
             String categoria = "", titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "";
             ArrayList<String> tags = new ArrayList<>();
+            boolean pubblicato = false;
             Part filePart1 = null;
-
-            if (request.getParameter("titolo") != null) {
-                titolo = request.getParameter("titolo");
-            }
-            if (request.getParameter("testo") != null) {
-                testo = request.getParameter("testo");
-            }
-            if (request.getParameter("tag") != null) {
-                tag = request.getParameter("tag");
-            }
-            if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
-                creatore = request.getParameter("newCreator");
-            } else if (request.getParameter("autore") != null) {
-                creatore = request.getParameter("autore");
-            }
-            if (request.getParameter("newCategory") != null && !request.getParameter("newCategory").isEmpty()) {
-                try {
-                    categoria = request.getParameter("newCategory");
-                    catblogdao.addCat(categoria);
-                } catch (DAOException ex) {
-                    Logger.getLogger(addBlog.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else {
-                categoria = request.getParameter("categoria");
-            }
-            if (request.getPart("immagine") != null) {
+            if (request.getPart("immagine") != null && request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
                 filePart1 = request.getPart("immagine");
-            }
 
-            descrizione = testo.replaceAll("[<](/)?[^>]*[>]", "");
-
-            int id = blogdao.addBlog(titolo, testo, creatore, categoria, descrizione);
-
-            tags.addAll(Arrays.asList(tag.split(";")));
-            blogdao.addTags(tags, id);
-
-            //Load dell'immagine
-            if (filePart1 != null) {
-                if (filePart1.getContentType().contains("image/")) {
-                    String upload_directory = "";
-                    upload_directory = UPLOAD_DIRECTORY + categoria + "/";
+                if (request.getParameter("titolo") != null) {
+                    titolo = request.getParameter("titolo");
+                }
+                if (request.getParameter("testo") != null) {
+                    testo = request.getParameter("testo");
+                }
+                if (request.getParameter("tag") != null) {
+                    tag = request.getParameter("tag");
+                }
+                if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
+                    creatore = request.getParameter("newCreator");
+                } else if (request.getParameter("autore") != null) {
+                    creatore = request.getParameter("autore");
+                }
+                if (request.getParameter("newCategory") != null && !request.getParameter("newCategory").isEmpty()) {
                     try {
-                        String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
-                        File directory = new File(listsFolder);
-                        if (!directory.exists()) {
-                            directory.mkdir();
-                            // If you require it to make the entire directory path including parents,
-                            // use directory.mkdirs(); here instead.
-                        }
-                        String extension = getImageExtension(filePart1);
-                        String imagineName = "uncompressed" + id + "." + extension;
-
-                        ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
-                        immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
-                    } catch (RuntimeException e) {
-                        System.out.println("RuntimeException:");
-                        throw e;
-                    } catch (Exception e) {
-                        System.out.println("Exception:");
+                        categoria = request.getParameter("newCategory");
+                        catblogdao.addCat(categoria);
+                    } catch (DAOException ex) {
+                        Logger.getLogger(addBlog.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    System.out.println("FilePart not in image/");
+                    categoria = request.getParameter("categoria");
                 }
+                if (request.getParameter("pubblicato") != null) {
+                    if (request.getParameter("pubblicato").equals("1")) {
+                        pubblicato = true;
+                    }
+                    if (request.getParameter("pubblicato").equals("0")) {
+                        pubblicato = false;
+                    }
+                }
+
+                descrizione = testo.replaceAll("[<](/)?[^>]*[>]", "");
+
+                int id = blogdao.addBlog(titolo, testo, creatore, categoria, descrizione, pubblicato);
+
+                tags.addAll(Arrays.asList(tag.split(";")));
+                blogdao.addTags(tags, id);
+
+                //Load dell'immagine
+                if (filePart1 != null) {
+                    if (filePart1.getContentType().contains("image/")) {
+                        String upload_directory = "";
+                        upload_directory = UPLOAD_DIRECTORY + categoria + "/";
+                        try {
+                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
+                            File directory = new File(listsFolder);
+                            if (!directory.exists()) {
+                                directory.mkdir();
+                                // If you require it to make the entire directory path including parents,
+                                // use directory.mkdirs(); here instead.
+                            }
+                            String extension = getImageExtension(filePart1);
+                            String imagineName = "uncompressed" + id + "." + extension;
+
+                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
+                        } catch (IOException e) {
+                            System.out.println("Exception:");
+                        }
+                    } else {
+                        System.out.println("FilePart not in image/");
+                    }
+                } else {
+                    System.out.println("filePart = null");
+                }
+                blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione, pubblicato);
+
+                request.setAttribute("tipo", "blog");
+                request.setAttribute("id", "" + id);
+                request.setAttribute("titolo", titolo);
+                request.setAttribute("creatore", creatore);
+                request.setAttribute("immagine", immagine);
+                view = request.getRequestDispatcher("emailSender");
             } else {
-                System.out.println("filePart = null");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                view = request.getRequestDispatcher("articolo.jsp?id=new");
             }
-            blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione);
-            response.sendRedirect("/console/articolo.jsp?id=" + id);
+            view.forward(request, response);
+
         } catch (DAOException ex) {
             Logger.getLogger(addBlog.class.getName()).log(Level.SEVERE, null, ex);
         }

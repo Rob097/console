@@ -14,6 +14,9 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface ProductDAO{ 
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<Prodotto> getAllProducts() throws DAOException;
     public ArrayList<Prodotto> getFreshProducts() throws DAOException;
     public ArrayList<Prodotto> getConfProducts() throws DAOException;

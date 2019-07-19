@@ -26,11 +26,12 @@ public class Ricetta {
     private Timestamp data;
     private int views;
     private boolean category;
+    private boolean approvata;
 
     public Ricetta() {
     }
 
-    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category) {
+    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category, boolean approvata) {
         this.id = id;
         this.id_prod = id_prod;
         this.nome = nome;
@@ -44,6 +45,7 @@ public class Ricetta {
         this.data = data;
         this.views = views;
         this.category = category;
+        this.approvata = approvata;
     }
     
     public int getId() {
@@ -148,6 +150,14 @@ public class Ricetta {
 
     public void setCategory(boolean category) {
         this.category = category;
+    }
+
+    public boolean isApprovata() {
+        return approvata;
+    }
+
+    public void setApprovata(boolean approvata) {
+        this.approvata = approvata;
     }
     
 }

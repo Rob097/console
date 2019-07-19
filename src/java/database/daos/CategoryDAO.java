@@ -14,6 +14,9 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface CategoryDAO {
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<Categoria> getAllCategories() throws DAOException;
     public ArrayList<Categoria> getFreshCategories() throws DAOException;
     public ArrayList<Categoria> getConfCategories() throws DAOException;

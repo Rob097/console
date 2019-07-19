@@ -6,7 +6,6 @@
 package utente;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -15,12 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import static utente.EncryptDecryptString.ATT_NAME;
 import static utente.EncryptDecryptString.encrypt;
+import static varie.costanti.ROB_PASS;
 
 /**
  *
  * @author Roberto97
  */
 public class logout extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,14 +41,14 @@ public class logout extends HttpServlet {
         //System.out.println("in logout");
 
         for (Cookie cc : cookies) {
-            if (cc.getName().equals(encrypt(ATT_NAME))) {
+            if (cc.getName().equals(encrypt(ATT_NAME).replace("=",ROB_PASS))) {
                 cc.setValue("false");
                 cc.setMaxAge(0);
                 cc.setPath(request.getContextPath());
                 response.addCookie(cc);
             }
         }
-        s.removeAttribute(encrypt(ATT_NAME));
+        s.removeAttribute(encrypt(ATT_NAME).replace("=",ROB_PASS));
         response.sendRedirect("/console/dashboard.jsp");
     }
 

@@ -204,7 +204,7 @@ h1 { font-size: 1.5em; margin: 10px; }
 
 /* SPINNER */
 @keyframes spinner-border {
-  to { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
 }
 .spinner-border {
     display: inline-block;

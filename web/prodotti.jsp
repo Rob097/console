@@ -9,6 +9,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="request" value="<%=request%>"/> <!-- Request lo chiamo con una scriplets e lo salvo in una variabile perchè serve per diversi metodi java -->
+<c:set var="response" value="<%=response%>"/>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,7 +19,7 @@
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title>
-            Dashboard
+            Console
         </title>
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
         <!--     Fonts and icons     -->
@@ -30,82 +32,20 @@
         <link href="css/styles.css" rel="stylesheet" />
 
         <style>
-            
+
         </style>
     </head>
 
     <body class="">
         <a class="rightGold" href="#topPage" id="myBtn45" title="Torna in cima"><i class="fas fa-arrow-up"></i></a>
         <div class="wrapper ">
-            <div class="sidebar" data-color="purple" data-background-color="white" data-image="assets/img/sidebar-1.jpg">
+            <div class="sidebar" data-color="purple" data-background-color="white" data-image="img/ico/sidebar-1.jpg">
                 <!-- Load with javascript from /ajax -->
             </div>
             <div class="main-panel">
-                <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
-                    <div class="container-fluid">
-                        <div class="navbar-wrapper">
-                            <a id="topPage" class="navbar-brand" href="#pablo">${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}</a>
-                        </div>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                            <span class="navbar-toggler-icon icon-bar"></span>
-                        </button>
-                        <div class="collapse navbar-collapse justify-content-end">
-                            <form class="navbar-form">
-                                <div class="input-group no-border">
-                                    <input type="text" value="" class="form-control" placeholder="Search...">
-                                    <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                                        <i class="material-icons">search</i>
-                                        <div class="ripple-container"></div>
-                                    </button>
-                                </div>
-                            </form>
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#pablo">
-                                        <i class="material-icons">dashboard</i>
-                                        <p class="d-lg-none d-md-block">
-                                            Stats
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">notifications</i>
-                                        <span class="notification">5</span>
-                                        <p class="d-lg-none d-md-block">
-                                            Some Actions
-                                        </p>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" href="#">Mike John responded to your email</a>
-                                        <a class="dropdown-item" href="#">You have 5 new tasks</a>
-                                        <a class="dropdown-item" href="#">You're now friend with Andrew</a>
-                                        <a class="dropdown-item" href="#">Another Notification</a>
-                                        <a class="dropdown-item" href="#">Another One</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link" href="#pablo" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">person</i>
-                                        <p class="d-lg-none d-md-block">
-                                            Account
-                                        </p>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                                        <a class="dropdown-item" href="#">Profilo</a>
-                                        <a class="dropdown-item" href="#">Impostazioni</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="logout">Log out</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
+                <div id="navbar">
+
+                </div>
                 <!-- End Navbar -->
                 <div class="content">
                     <div class="container-fluid">
@@ -386,39 +326,6 @@
                     </div>
                 </div>
                 <footer class="footer">
-                    <div class="container-fluid">
-                        <nav class="float-left">
-                            <ul>
-                                <li>
-                                    <a href="https://www.creative-tim.com">
-                                        Creative Tim
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://creative-tim.com/presentation">
-                                        About Us
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="http://blog.creative-tim.com">
-                                        Blog
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.creative-tim.com/license">
-                                        Licenses
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <div class="copyright float-right">
-                            &copy;
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script>, made with <i class="material-icons">favorite</i> by
-                            <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
-                        </div>
-                    </div>
                 </footer>
             </div>
         </div>
@@ -449,10 +356,10 @@
                         <div class="modal-body">
                             <div class="text-center mb-4">
                                 <img id="InputIMGCat" src="" alt="Modal_IMG_Cat" class="inputImg mb-3 invisible"/>
-                                <input type='file' name="immagine" onchange="readURL(this, 'InputIMGCat'); $('#InputIMGCat').removeClass('invisible');"/>
+                                <input type='file' name="immagine" onchange="readURL(this, 'InputIMGCat'); $('#InputIMGCat').removeClass('invisible');" required/>
                             </div>
-                            <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
-                            <textarea name="descrizione" class="form-control mb-4" placeholder="Descrizione" required></textarea>
+                            <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                            <textarea style="min-height: 100px;" name="descrizione" class="form-control mb-4" placeholder="Descrizione" required></textarea>
                             <input type="checkbox" name="fresco"/> Fresco
                         </div>
                         <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
@@ -481,7 +388,7 @@
                                     <input type='file' name="immagine" onchange="readURL(this, 'InputIMGConf'); $('#InputIMGConf').removeClass('invisible'); $('#toDeleteConf').addClass('invisible');" required/>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                                    <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
                                     <select class="form-control mb-4" id="categoria" name="categoria" required>
                                         <c:forEach var="cat" items="${categorydao.getConfCategories()}">
                                             <option>${cat.nome}</option>
@@ -490,7 +397,7 @@
                                 </div>
                             </div>
                             <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
-                            <textarea name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                            <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
                             <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
                             <input type="hidden" name="fresco" value="false" required />
                         </div>
@@ -522,7 +429,7 @@
                                     <input type='file' name="immagine" onchange="readURL(this, 'InputIMGFresc'); $('#InputIMGFresc').removeClass('invisible'); $('#toDeleteFresc').addClass('invisible');" required/>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
+                                    <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
                                     <select class="form-control mb-4" id="categoria" name="categoria" required>
                                         <c:forEach var="cat" items="${categorydao.getFreshCategories()}">
                                             <option>${cat.nome}</option>
@@ -531,7 +438,7 @@
                                 </div>
                             </div>
                             <input pattern="[0-9]+(.|,)+[0-9]{1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
-                            <textarea name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                            <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
                             <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
                             <input type="hidden" name="fresco" value="true" required />
                         </div>
@@ -549,46 +456,12 @@
         <script src="assets/js/core/jquery.min.js"></script>
         <script src="assets/js/core/popper.min.js"></script>
         <script src="assets/js/core/bootstrap-material-design.min.js"></script>
-        <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-        <!-- Plugin for the momentJs 
-        <script src="assets/js/plugins/moment.min.js"></script>
-        <!--  Plugin for Sweet Alert 
-        <script src="assets/js/plugins/sweetalert2.js"></script>
-        <!-- Forms Validations Plugin 
-        <script src="assets/js/plugins/jquery.validate.min.js"></script>
-        <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard 
-        <script src="assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-        <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select 
-        <script src="assets/js/plugins/bootstrap-selectpicker.js"></script>
-        <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ 
-        <script src="assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
-        <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  
-        <script src="assets/js/plugins/jquery.dataTables.min.js"></script>
-        <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs 
-        <script src="assets/js/plugins/bootstrap-tagsinput.js"></script>
-        <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput
-        <script src="assets/js/plugins/jasny-bootstrap.min.js"></script>
-        <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar 
-        <script src="assets/js/plugins/fullcalendar.min.js"></script>
-        <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/
-        <script src="assets/js/plugins/jquery-jvectormap.js"></script>
-        <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ 
-        <script src="assets/js/plugins/nouislider.min.js"></script>
-        <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-        <!-- Library for adding dinamically elements 
-        <script src="assets/js/plugins/arrive.min.js"></script>
-        <!--  Google Maps Plugin 
-        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-        <!-- Chartist JS -->
-        <script src="assets/js/plugins/chartist.min.js"></script>
-        <!--  Notifications Plugin   
+        <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>   
         <script src="assets/js/plugins/bootstrap-notify.js"></script>
-        <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+        <script src="assets/js/plugins/chartist.min.js"></script>
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-        <!-- Material Dashboard DEMO methods, don't include it in your project!
-        <script src="assets/demo/demo.js"></script>-->
+        <script src="js/bootstrap-maxlength.js"></script>
         <script>
 
         </script>
@@ -679,6 +552,8 @@
             /* Sidebar */
             $(function () {
                 $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
+                $("#navbar").load("ajax/navbar.jsp?page=<c:out value='${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}' />");
+                $("footer").load("ajax/footer.jsp");
             });
         </script>
         <script>
@@ -716,7 +591,7 @@
                     }
                 });
             }
-            
+
             function openModal(id) {
                 $('body').addClass('modal-open');
                 $("#" + id).addClass('show');
@@ -729,6 +604,58 @@
                 $('.modal').css({display: 'none'});
                 $('.modal-backdrop').remove();
             }
+
+            // Code with description of parameters.
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+
+            $('input[maxlength]').maxlength({
+                alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
+                // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
+                warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.
+                limitReachedClass: "form-text text-muted mt-1", //it's the class the element gets when the limit is reached. Default is "badge badge-danger". Replace with text-danger if you want it to be red.
+                //separator: ' of ', //represents the separator between the number of typed chars and total number of available chars. Default is "/".
+                //preText: 'You have ', //is a string of text that can be outputted in front of the indicator. preText is empty by default.
+                //postText: ' chars remaining.', //is a string outputted after the indicator. postText is empty by default.
+                showMaxLength: true, //showMaxLength: if false, will display just the number of typed characters, e.g. will not display the max length. Default: true.
+                showCharsTyped: true, //if false, will display just the remaining length, e.g. will display remaining lenght instead of number of typed characters. Default: true.
+                placement: 'bottom-right-inside', //is a string, object, or function, to define where to output the counter. Possible string values are: bottom ( default option ), left, top, right, bottom-right, top-right, top-left, bottom-left and centered-right. Are also available : **bottom-right-inside** (like in Google's material design, **top-right-inside**, **top-left-inside** and **bottom-left-inside**. stom placements can be passed as an object, with keys top, right, bottom, left, and position. These are passed to $.fn.css. A custom function may also be passed. This method is invoked with the {$element} Current Input, the {$element} MaxLength Indicator, and the Current Input's Position {bottom height left right top width}.
+
+                //appendToParent: true, // appends the maxlength indicator badge to the parent of the input rather than to the body.
+                //message: an alternative way to provide the message text, i.e. 'You have typed %charsTyped% chars, %charsRemaining% of %charsTotal% remaining'. %charsTyped%, %charsRemaining% and %charsTotal% will be replaced by the actual values. This overrides the options separator, preText, postText and showMaxLength. Alternatively you may supply a function that the current text and max length and returns the string to be displayed. For example, function(currentText, maxLength) { return '' + Math.ceil(currentText.length / 160) + ' SMS Message(s)';}
+                //utf8: if true the input will count using utf8 bytesize/encoding. For example: the '£' character is counted as two characters.
+                //showOnReady: shows the badge as soon as it is added to the page, similar to alwaysShow
+                //twoCharLinebreak: count linebreak as 2 characters to match IE/Chrome textarea validation
+                //customMaxAttribute: String -- allows a custom attribute to display indicator without triggering native maxlength behaviour. Ignored if value greater than a native maxlength attribute. 'overmax' class gets added when exceeded to allow user to implement form validation.
+                //allowOverMax: Will allow the input to be over the customMaxLength. Useful in soft max situations.
+            });
+
+            <c:if test="${response.getHeader('NOTIFICA') ne null}">
+            $.notify({
+                // options
+                message: "${response.getHeader('NOTIFICA')}"
+            }, {
+                // settings
+                element: 'body',
+                type: "warning",
+                allow_dismiss: true,
+                placement: {
+                    from: "top",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                icon_type: 'class',
+                template: '<div class="col-xs-11 col-sm-3 alert alert-{0} alert-with-icon" data-notify="container" role="alert">' +
+                        '<i class="material-icons" data-notify="icon">warning</i>' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<i class="material-icons">close</i>' +
+                        '</button>' +
+                        '<span data-notify="message">{2}</span>' +
+                        '</div>'
+            });
+            </c:if>
         </script>
     </body>
 

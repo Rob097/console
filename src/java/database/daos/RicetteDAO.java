@@ -15,6 +15,9 @@ import java.util.ArrayList;
  * @author della
  */
 public interface RicetteDAO {
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<Ricetta> getAllRecipes() throws DAOException;
     public Ricetta getRecipe(int id) throws DAOException;
     public ArrayList<Ricetta> getRecipeOfProduct(int id_prod) throws DAOException;
@@ -24,8 +27,8 @@ public interface RicetteDAO {
     public ArrayList<String> getOurCreators() throws DAOException;
     public ArrayList<String> getAllCreators() throws DAOException;
     public void removeIng(int id, String ing) throws DAOException;
-    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria) throws DAOException;
-    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria) throws DAOException;
+    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException;
+    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException;
     public void deleteRecipe(int id)  throws DAOException;
     
     //Valutazione

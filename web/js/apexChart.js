@@ -818,6 +818,7 @@ function initRateChart(tipo) {
                 keyRate.push("" + keyCat);
                 valueRate.push(graphDataCat[keyCat]);
             }
+            
             var r = null;
             for (var c = 0; c < valueRate.length; c++) {
                 quart = [];
@@ -860,13 +861,13 @@ function initRateChart(tipo) {
                     quarters: quart
                 };
             }
-
+            
             var l = valueRate.length / 7;
-            var arrotondato = Math.round(l);
+            var arrotondato = Math.ceil(l);            
             for (var i = 0; i < arrotondato - 1; i++) {
                 colors.push('#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#00D9E9', '#FF66C3');
             }
-
+            
             function makeData() {
                 for (var c = 0; c < valueRate.length; c++) {
                     dataYearSeries[c] = {
@@ -977,7 +978,7 @@ function initRateChart(tipo) {
                             name: yearSeries.data[selectedIndex].x,
                             data: yearSeries.data[selectedIndex].quarters
                         })
-                        colors.push(yearSeries.data[selectedIndex].color)
+                        colors.push(yearSeries.data[selectedIndex].color);
                     }
 
                     if (series.length === 0)
@@ -991,7 +992,7 @@ function initRateChart(tipo) {
                         fill: {
                             colors: colors
                         }
-                    })
+                    });
 
                 }
 
@@ -1068,7 +1069,7 @@ function initRateChart(tipo) {
 
                 if (opts.selectedDataPoints[0].length === 1) {
                     if (quarterChartEl.classList.contains("active")) {
-                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate")
+                        updateQuarterChart(chart, 'barQuarter-' + tipo + "-rate");
                     } else {
                         yearChartEl.classList.add("chart-quarter-activated")
                         quarterChartEl.classList.add("active");

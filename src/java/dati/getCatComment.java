@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class getCatComment extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     ConsoleDAO consoledao = null;
 
     @Override

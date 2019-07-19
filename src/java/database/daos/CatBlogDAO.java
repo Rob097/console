@@ -14,6 +14,9 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface CatBlogDAO {
+    public void checkCON() throws DAOException;
+    
+    
     public ArrayList<CatBlog> getAllCatBlog() throws DAOException;
     public int getNumberOfBlog(String cat) throws DAOException;
     public CatBlog getCatById(int id) throws DAOException;

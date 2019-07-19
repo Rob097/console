@@ -3,6 +3,9 @@ package database.jdbc;
 import database.daos.BlogDAO;
 import database.entities.Blog;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +32,24 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     public JDBCBlogDAO(Connection con) throws SQLException {
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {        
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -39,6 +60,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public ArrayList<Blog> getAllBlogs() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog")) {
             ArrayList<Blog> blogs = new ArrayList<>();
 
@@ -54,6 +77,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setViews(rs.getInt("views"));
+                    c.setPubblicato(rs.getBoolean("pubblicato"));
                     blogs.add(c);
                 }
                 //Serve per ordinarlo per vedere prima i più recenti
@@ -83,6 +107,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public Blog getBlogById(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog where id = ?")) {
             stm.setInt(1, id);
             Blog c = new Blog();
@@ -99,6 +125,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setViews(rs.getInt("views"));
+                    c.setPubblicato(rs.getBoolean("pubblicato"));
                     check = true;
                 }
 
@@ -123,6 +150,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public ArrayList<Blog> getMostViewedBlog() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog")) {
             ArrayList<Blog> blogs = new ArrayList<>();
             ArrayList<Blog> viewed = new ArrayList<>();
@@ -139,6 +168,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setViews(rs.getInt("views"));
+                    c.setPubblicato(rs.getBoolean("pubblicato"));
                     blogs.add(c);
                 }
 
@@ -176,6 +206,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public ArrayList<Blog> getBlogByCat(String cat) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog where categoria = ?")) {
             stm.setString(1, cat);
             ArrayList<Blog> cc = new ArrayList<>();
@@ -194,6 +226,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setViews(rs.getInt("views"));
+                    c.setPubblicato(rs.getBoolean("pubblicato"));
                     cc.add(c);
                     check = true;
                 }
@@ -211,15 +244,16 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public ArrayList<String> getAllCreators() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT creatore FROM blog group by creatore")) {
             ArrayList<String> creators = null;
 
             try (ResultSet rs = stm.executeQuery()) {
+                creators = new ArrayList<>();
                 while (rs.next()) {
-                    creators = new ArrayList<>();
                     creators.add(rs.getString("creatore"));
                 }
-
                 return creators;
             }
         } catch (SQLException ex) {
@@ -228,11 +262,13 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
     }
 
     @Override
-    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione) throws DAOException {
+    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, boolean pubblicato) throws DAOException {
+        checkCON();
+        
         if (id == null || titolo == null || testo == null || creator == null || categoria == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE blog SET nome = ?, testo = ?, creatore = ?, categoria = ?, immagine = ?, descrizione = ? WHERE id = ?;"
+                    "UPDATE blog SET nome = ?, testo = ?, creatore = ?, categoria = ?, immagine = ?, descrizione = ?, pubblicato = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setString(1, titolo);
@@ -241,9 +277,11 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     stm.setString(4, categoria);
                     stm.setString(5, immagine);
                     stm.setString(6, descrizione);
-                    stm.setInt(7, Integer.parseInt(id));
+                    stm.setBoolean(7, pubblicato);
+                    stm.setInt(8, Integer.parseInt(id));
 
                     if (stm.executeUpdate() == 1) {
+                        cleanTags();
                     } else {
                         System.out.println("Error updating blog " + id);
                     }
@@ -259,6 +297,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public void deleteBlog(String id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from blog where id = ?"
         )) {
@@ -266,6 +306,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                 stm.setInt(1, Integer.parseInt(id));
 
                 if (stm.executeUpdate() == 1) {
+                    cleanTags();
                 } else {
                     System.out.println("Error deleting blog " + id);
                 }
@@ -279,9 +320,11 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
     }
 
     @Override
-    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione) throws DAOException {
+    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, boolean pubblicato) throws DAOException {
+        checkCON();
+        
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into blog (nome, testo, creatore, categoria, immagine, descrizione) VALUES (?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into blog (nome, testo, creatore, categoria, immagine, descrizione, pubblicato) VALUES (?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, titolo);
                 stm.setString(2, testo);
@@ -289,6 +332,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                 stm.setString(4, categoria);
                 stm.setString(5, "");
                 stm.setString(6, descrizione);
+                stm.setBoolean(7, pubblicato);
 
                 if (stm.executeUpdate() == 1) {
                 } else {
@@ -314,6 +358,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public void addTags(ArrayList<String> tags, int idBlog) throws DAOException {
+        checkCON();
+        
 
         boolean check = false;
         System.out.println(tags.toString());
@@ -392,190 +438,12 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         cleanTags();
 
     }
-
-    /*@Override
-    public void addProdTags(ArrayList<String> prodTags, int idBlog) throws DAOException {
-
-        boolean check = false;
-
-        ArrayList<String> prods = new ArrayList<String>();
-        for (String element : prodTags) {
-
-            // If this element is not present in newList 
-            // then add it 
-            if (!prods.contains(element)) {
-
-                prods.add(element);
-            }
-        }
-        System.out.println("prods: " + prods.toString());
-        ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
-        for (String s : prods) {
-            if (!s.isEmpty()) {
-                check = false;
-                try (PreparedStatement stm = CON.prepareStatement("select id from tags where prodotto = ?")) {
-                    stm.setInt(1, Integer.parseInt(s));
-                    try (ResultSet rs = stm.executeQuery()) {
-                        while (rs.next()) {
-                            check = true;
-                            prodT.add(rs.getInt("id"));
-                        }
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (!check) {
-
-                    try (PreparedStatement stm = CON.prepareStatement("insert into tags (prodotto) value (?)")) {
-                        stm.setInt(1, Integer.parseInt(s));
-                        try {
-                            if (stm.executeUpdate() == 1) {
-                            } else {
-                                throw new DAOException("Impossible to add new tag (addProdTag)");
-                            }
-                        } catch (SQLException ex) {
-                            throw new DAOException(ex);
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try (PreparedStatement stm = CON.prepareStatement("select id from tags where prodotto = ?")) {
-                        stm.setInt(1, Integer.parseInt(s));
-                        try (ResultSet rs = stm.executeQuery()) {
-                            while (rs.next()) {
-                                prodT.add(rs.getInt("id"));
-                            }
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-            }
-
-            System.out.println("prodT: " + prodT.toString());
-            try (PreparedStatement stm = CON.prepareStatement("delete from blog_tags where blog = ?")) {
-                stm.setInt(1, idBlog);
-                try {
-                    stm.execute();
-                } catch (SQLException ex) {
-                    throw new DAOException(ex);
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            for (int q : prodT) {
-                try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?)")) {
-                    stm.setInt(1, idBlog);
-                    stm.setInt(2, q);
-                    try {
-                        if (stm.executeUpdate() == 1) {
-                        } else {
-                            throw new DAOException("Impossible to add tags to blog");
-                        }
-                    } catch (SQLException ex) {
-                        throw new DAOException(ex);
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void addCatTags(ArrayList<String> catTags, int idBlog) throws DAOException {
-        boolean check = false;
-
-        ArrayList<String> prods = new ArrayList<String>();
-        for (String element : catTags) {
-
-            // If this element is not present in newList 
-            // then add it 
-            if (!prods.contains(element)) {
-
-                prods.add(element);
-            }
-        }
-        System.out.println("prods: " + prods.toString());
-        ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
-        for (String s : prods) {
-            if (!s.isEmpty()) {
-                check = false;
-                try (PreparedStatement stm = CON.prepareStatement("select id from tags where categoria = ?")) {
-                    stm.setInt(1, Integer.parseInt(s));
-                    try (ResultSet rs = stm.executeQuery()) {
-                        while (rs.next()) {
-                            check = true;
-                            prodT.add(rs.getInt("id"));
-                        }
-                    }
-                } catch (SQLException ex) {
-                    Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (!check) {
-
-                    try (PreparedStatement stm = CON.prepareStatement("insert into tags (categoria) value (?)")) {
-                        stm.setInt(1, Integer.parseInt(s));
-                        try {
-                            if (stm.executeUpdate() == 1) {
-                            } else {
-                                throw new DAOException("Impossible to add new tag (addCatTags)");
-                            }
-                        } catch (SQLException ex) {
-                            throw new DAOException(ex);
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try (PreparedStatement stm = CON.prepareStatement("select id from tags where categoria = ?")) {
-                        stm.setInt(1, Integer.parseInt(s));
-                        try (ResultSet rs = stm.executeQuery()) {
-                            while (rs.next()) {
-                                prodT.add(rs.getInt("id"));
-                            }
-                        }
-                    } catch (SQLException ex) {
-                        Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-            }
-        }
-        System.out.println("prodT: " + prodT.toString());
-        try (PreparedStatement stm = CON.prepareStatement("delete from blog_tags where blog = ?")) {
-            stm.setInt(1, idBlog);
-            try {
-                stm.execute();
-            } catch (SQLException ex) {
-                throw new DAOException(ex);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        for (int s : prodT) {
-            try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?)")) {
-                stm.setInt(1, idBlog);
-                stm.setInt(2, s);
-                try {
-                    if (stm.executeUpdate() == 1) {
-                    } else {
-                        throw new DAOException("Impossible to add tags to blog");
-                    }
-                } catch (SQLException ex) {
-                    throw new DAOException(ex);
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }*/
+    
+    
     @Override
     public String getTag(int id) throws DAOException {
+        checkCON();
+        
         String query;
         String tag = "";
 
@@ -600,6 +468,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public String getTagName(int id) throws DAOException {
+        checkCON();
+        
         String tag = "";
         try (PreparedStatement stm = CON.prepareStatement("select testo from tags where id = ?")) {
             stm.setInt(1, id);
@@ -619,6 +489,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public ArrayList<Integer> getAllTagsOfBlog(int id_blog) throws DAOException {
+        checkCON();
+        
         ArrayList<Integer> tags = new ArrayList<>();
         ArrayList<Integer> prods = new ArrayList<>();
 
@@ -645,6 +517,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public ArrayList<Integer> getProductTagsOfBlog(int id_blog) throws DAOException {
+        checkCON();
+        
         ArrayList<String> tags = getAllTextTagsOfBlog(id_blog);
         ArrayList<Integer> prodotti = new ArrayList<>();
 
@@ -671,6 +545,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      */
     @Override
     public ArrayList<Integer> getCategoryTagsOfBlog(int id_blog) throws DAOException {
+        checkCON();
+        
         ArrayList<String> tags = getAllTextTagsOfBlog(id_blog);
         ArrayList<Integer> categorie = new ArrayList<>();
 
@@ -694,6 +570,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public ArrayList<String> getAllTextTagsOfBlog(int id_blog) throws DAOException {
+        checkCON();
+        
         ArrayList<String> tags = new ArrayList<>();
         ArrayList<Integer> ids = new ArrayList<>();
 
@@ -732,6 +610,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
     @Override
     public void cleanTags() throws DAOException {
+        checkCON();
+        
         boolean check = false;
         ArrayList<Integer> ids = new ArrayList<>();
 
@@ -761,7 +641,10 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                 try (PreparedStatement stm = CON.prepareStatement("delete from tags where id = ?")) {
                     stm.setInt(1, id);
                     try {
-                        stm.execute();
+                        if (stm.executeUpdate() >= 1) {
+                        } else {
+                            System.out.println("Impossible to delete email");
+                        }
                     } catch (SQLException ex) {
                         throw new DAOException(ex);
                     }
@@ -769,6 +652,70 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            check = false;
         }
+    }
+    
+     /**
+     * Metodo che restituisce il numero di valutazioni per una determinata
+     * articolo.
+     *
+     * @param id Indica l'id della ricetta per cui si vuole conoscere il numero
+     * di valutazioni esistenti
+     * @return Ritorna il valore intero del numero di valutazioni.
+     * @throws DAOException
+     */
+    @Override
+    public int getNumberRate(int id) throws DAOException {
+        checkCON();
+        
+        int val = 0;
+        try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_blog where id_blog = ?")) {
+            stm.setInt(1, id);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    val = rs.getInt("rate05")
+                            + rs.getInt("rate1")
+                            + rs.getInt("rate15")
+                            + rs.getInt("rate2")
+                            + rs.getInt("rate25")
+                            + rs.getInt("rate3")
+                            + rs.getInt("rate35")
+                            + rs.getInt("rate4")
+                            + rs.getInt("rate45")
+                            + rs.getInt("rate5");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return val;
+    }
+
+    /**
+     * Metodo che ritorna la valutazione media di una articolo.
+     *
+     * @param id E' l'id della ricetta che si vuole conoscere la valutazione
+     * @return Ritorna il valore della valutazione per esempio 4.5
+     * @throws DAOException
+     */
+    @Override
+    public double getRate(int id) throws DAOException {
+        checkCON();
+        
+        double val = 0;
+        try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_blog where id_blog = ?")) {
+            stm.setInt(1, id);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    val = rs.getDouble("value");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return val;
     }
 }

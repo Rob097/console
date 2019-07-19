@@ -3,12 +3,17 @@ package database.jdbc;
 import database.daos.CommBlogDAO;
 import database.entities.CommBlog;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *JDBCDAO Per i metodi relativi ai commenti del blog.
@@ -23,8 +28,26 @@ public class JDBCCommBlogDAO extends JDBCDAO implements CommBlogDAO {
      * @param con E' la connessione al DB
      * @throws java.sql.SQLException
      */
-    public JDBCCommBlogDAO(Connection con) throws SQLException {
+    public JDBCCommBlogDAO(Connection con) throws SQLException{
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -37,6 +60,8 @@ public class JDBCCommBlogDAO extends JDBCDAO implements CommBlogDAO {
      */
     @Override
     public ArrayList<CommBlog> getAllCommBlog() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_commenti")) {
             ArrayList<CommBlog> commenti = new ArrayList<>();
 
@@ -65,6 +90,8 @@ public class JDBCCommBlogDAO extends JDBCDAO implements CommBlogDAO {
      */
     @Override
     public ArrayList<CommBlog> getAllCommOfBlog(int id_blog) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_commenti where id_blog = ?")) {
             stm.setInt(1, id_blog);
             ArrayList<CommBlog> commenti = new ArrayList<>();

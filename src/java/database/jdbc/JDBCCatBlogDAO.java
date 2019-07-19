@@ -8,6 +8,9 @@ package database.jdbc;
 import database.daos.CatBlogDAO;
 import database.entities.CatBlog;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,8 +33,26 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      * @param con E' la connessione al DB
      * @throws java.sql.SQLException
      */
-    public JDBCCatBlogDAO(Connection con) throws SQLException {
+    public JDBCCatBlogDAO(Connection con) throws SQLException{
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -42,6 +63,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      */
     @Override
     public ArrayList<CatBlog> getAllCatBlog() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_cat")) {
             ArrayList<CatBlog> categorie = new ArrayList<>();
             boolean check = false;
@@ -74,6 +97,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      */
     @Override
     public int getNumberOfBlog(String cat) throws DAOException {
+        checkCON();
+        
         if (cat == null || cat.contains("'") || cat.contains("\"")) {
             return 0;
         } else {
@@ -103,6 +128,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      */
     @Override
     public CatBlog getCatById(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_cat where id_cat = ?")) {
             stm.setInt(1, id);
             CatBlog c = new CatBlog();
@@ -136,6 +163,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
      */
     @Override
     public CatBlog getCatByName(String nome) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM blog_cat where nome = ?")) {
             stm.setString(1, nome);
             CatBlog c = new CatBlog();
@@ -161,6 +190,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
 
     @Override
     public void deleteCat(String nome) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from blog_cat where nome = ?"
         )) {
@@ -182,6 +213,8 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
 
     @Override
     public void addCat(String nome) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("insert into blog_cat (nome) VALUES (?)")) {
             try {
                 stm.setString(1, nome);

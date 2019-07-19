@@ -39,6 +39,8 @@ import static varie.costanti.ROB_PASS;
  */
 public class orderSent extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     ConsoleDAO consoledao = null;
 
     @Override
@@ -225,7 +227,7 @@ public class orderSent extends HttpServlet {
                 + "                  <td width=\"530\" valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;\"> \n"
                 + "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td align=\"center\" style=\"Margin:0;padding-top:20px;padding-bottom:25px;padding-left:35px;padding-right:35px;\"> <a target=\"_blank\" href=\"https://viewstripo.email/\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:15px;text-decoration:none;color:#ED8E20;\"> <img src=\"https://macelleriadellantonio.it/console/img/logo2.png\" alt=\"ship\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\" title=\"ship\" width=\"150\"> </a> </td> \n"
+                + "                      <td align=\"center\" style=\"Margin:0;padding-top:20px;padding-bottom:25px;padding-left:35px;padding-right:35px;\"> <a target=\"_blank\" href=\"https://viewstripo.email/\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:15px;text-decoration:none;color:#ED8E20;\"> <img src=\"https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400\" alt=\"LogoMacelleria\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\" title=\"ship\" width=\"150\"> </a> </td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
                 + "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:15px;\"> <h2 style=\"Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:30px;font-style:normal;font-weight:bold;color:#333333;\">" + oggetto + "<br></h2></td> \n"
@@ -311,7 +313,7 @@ public class orderSent extends HttpServlet {
                 + "                  <td width=\"530\" valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;\"> \n"
                 + "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
-                + "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:15px;\"> <a target=\"_blank\" href=\"http://macelleriadellantonio.it\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:none;color:#333333;\"> <img src=\"https://macelleriadellantonio.it/console/img/logo2.png\" alt=\"Beretun logo\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\" title=\"Beretun logo\" width=\"37\"> </a> </td> \n"
+                + "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:15px;\"> <a target=\"_blank\" href=\"http://macelleriadellantonio.it\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:none;color:#333333;\"> <img src=\"https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400\" alt=\"LogoMacelleria\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;\" title=\"Beretun logo\" width=\"37\"> </a> </td> \n"
                 + "                     </tr> \n"
                 + "                     <tr style=\"border-collapse:collapse;\"> \n"
                 + "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:5px;\"> <p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#333333;\"><b>Predazzo(TN) 38037<br>Via Cesare Battisti 2<br>0462-501231<br>info@macelleriadellantonio.it</b></p> </td> \n"
@@ -366,8 +368,8 @@ public class orderSent extends HttpServlet {
             consoledao.setOrderStatus(id, 2);
         } catch (MessagingException ex) {
             String testo1 = "Erroe nell'invio dell'email di ordine spedito\n\n";
-            testo += "Ordine: " + id;
-            testo += "\nCliente: " + nome;
+            testo1 += "Ordine: " + id;
+            testo1 += "\nCliente: " + nome;
             //Dati email roberto
             try {
                 String to1 = MAC_MAIL;
@@ -389,7 +391,7 @@ public class orderSent extends HttpServlet {
                 message.setFrom(new InternetAddress(user1));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(to1));
                 message.setSubject("Errore invio email");
-                message.setText(testo);
+                message.setText(testo1);
 
                 // Transport class is used to deliver the message to the recipients 
                 Transport.send(message);

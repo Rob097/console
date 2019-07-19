@@ -6,7 +6,6 @@
 package utente;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +15,7 @@ import static utente.EncryptDecryptString.ATT_NAME;
 import static utente.EncryptDecryptString.encrypt;
 import static varie.costanti.CART_COOKIE_MAX_AGE;
 import static varie.costanti.PASS;
+import static varie.costanti.ROB_PASS;
 import static varie.costanti.USER;
 
 /**
@@ -23,6 +23,8 @@ import static varie.costanti.USER;
  * @author Roberto97
  */
 public class login extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -52,11 +54,11 @@ public class login extends HttpServlet {
         
         if (email.equals(USER) && password.equals(PASS)) {
 
-            request.getSession().setAttribute(encrypt(ATT_NAME), encrypt(PASS));
+            request.getSession().setAttribute(encrypt(ATT_NAME).replace("=",ROB_PASS), encrypt(PASS).replace("=",ROB_PASS));
 
             if (ricordami == true) {
                 
-                Cookie logged = new Cookie(encrypt(ATT_NAME), encrypt(PASS));
+                Cookie logged = new Cookie(encrypt(ATT_NAME).replace("=",ROB_PASS), encrypt(PASS).replace("=",ROB_PASS));
                 logged.setPath(request.getContextPath());
                 logged.setMaxAge(CART_COOKIE_MAX_AGE);
                 response.addCookie(logged);

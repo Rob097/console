@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.MAX_IMG_SIZE;
 import static varie.utili.unaccent;
 import static varie.utili.obtainRootFolderPath;
 
@@ -28,8 +30,10 @@ import static varie.utili.obtainRootFolderPath;
  *
  * @author Roberto97
  */
-@MultipartConfig(maxFileSize = 16177215)
+@MultipartConfig()
 public class addCategory extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     CategoryDAO categorydao = null;
     private final String UPLOAD_DIRECTORY = "/img/catProd/";
@@ -47,7 +51,7 @@ public class addCategory extends HttpServlet {
             Logger.getLogger(addCategory.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -64,23 +68,24 @@ public class addCategory extends HttpServlet {
         String immagine = "";
         Part filePart1 = null;
         boolean fresco = false;
-        
-         try {
+        RequestDispatcher view = request.getRequestDispatcher("prodotti.jsp");
+        String url = "";
+
+        try {
+            if (request.getPart("immagine") != null && request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
+                filePart1 = request.getPart("immagine");
                 if (request.getParameter("nome") != null) {
                     nome = unaccent(request.getParameter("nome"));
                 }
                 if (request.getParameter("descrizione") != null) {
                     descrizione = unaccent(request.getParameter("descrizione"));
                 }
-                if (request.getPart("immagine") != null) {
-                    filePart1 = request.getPart("immagine");
-                }
                 if (request.getParameter("fresco") != null) {
                     fresco = true;
                 }
 
                 int id = categorydao.addCategory(nome, descrizione, fresco);
-                
+
                 //Load dell'immagine
                 if (filePart1 != null) {
                     if (filePart1.getContentType().contains("image/")) {
@@ -88,7 +93,7 @@ public class addCategory extends HttpServlet {
                         if (fresco) {
                             upload_directory = UPLOAD_DIRECTORY + "freschi/";
                         } else {
-                            upload_directory = UPLOAD_DIRECTORY +  "confezionati/";
+                            upload_directory = UPLOAD_DIRECTORY + "confezionati/";
                         }
                         try {
                             String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
@@ -100,7 +105,7 @@ public class addCategory extends HttpServlet {
                         } catch (RuntimeException e) {
                             System.out.println("RuntimeException:");
                             throw e;
-                        } catch (Exception e) {
+                        } catch (IOException e) {
                             System.out.println("Exception:");
                         }
                     } else {
@@ -109,14 +114,22 @@ public class addCategory extends HttpServlet {
                 } else {
                     System.out.println("filePart = null");
                 }
-                
-                categorydao.alterImg(""+id, nome, immagine);
 
-            } catch (DAOException | IOException | RuntimeException | ServletException ex) {
-                Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);
+                categorydao.alterImg("" + id, nome, immagine);
+                url = "prodotti.jsp";
+
+            } else {
+                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
             }
-
-        response.sendRedirect("/console/prodotti.jsp");
+        } catch (DAOException | IOException | RuntimeException | ServletException ex) {
+            Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);
+            response.setHeader("NOTIFICA", "Errore generico");
+        }
+        if (url.equals("")) {
+            view.forward(request, response);
+        } else {
+            response.sendRedirect(url);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -159,6 +172,5 @@ public class addCategory extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 
 }

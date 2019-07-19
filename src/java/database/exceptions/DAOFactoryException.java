@@ -10,6 +10,8 @@ package database.exceptions;
  * @author Roberto97
  */
 public class DAOFactoryException extends Exception{
+
+    private static final long serialVersionUID = 1L;
     public DAOFactoryException() {
         super();
     }

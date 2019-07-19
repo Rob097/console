@@ -11,7 +11,6 @@ import database.daos.RicetteDAO;
 import database.exceptions.DAOFactoryException;
 import database.factories.DAOFactory;
 import database.factories.JDBCDAOFactory;
-import static database.factories.JDBCDAOFactory.DBURL;
 import database.jdbc.JDBCBlogDAO;
 import database.jdbc.JDBCCatBlogDAO;
 import database.jdbc.JDBCCategoryDAO;
@@ -24,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * E' il filtro che analizza i cookie e salva in sessione
- * 
+ *
  * @author Roberto97
  */
 public class cookieFilter implements Filter {
@@ -59,94 +59,12 @@ public class cookieFilter implements Filter {
     private ConsoleDAO consoledao;
     private MenuDAO menudao;
     DAOFactory daoFactory;
+    Connection connection;
 
     /**
      * Costruttore Vuoto
      */
     public cookieFilter() {
-    }
-
-    /**
-     * Inizializza i vari JDBCDAO
-     */
-    private void conInit(FilterConfig filterConfig) throws ServletException, DAOFactoryException, SQLException {
-        daoFactory = (DAOFactory) filterConfig.getServletContext().getAttribute("daoFactory");
-        if (daoFactory == null) {
-            daoFactory = new JDBCDAOFactory(DBURL);
-            System.out.println("\n\nErroe conInit\n");
-            throw new ServletException("Impossible to get dao factory for user storage system");
-        }
-
-        categorydao = new JDBCCategoryDAO(daoFactory.getConnection());
-        productdao = new JDBCProductDAO(daoFactory.getConnection());
-        ricettedao = new JDBCRicetteDAO(daoFactory.getConnection());
-        catblogdao = new JDBCCatBlogDAO(daoFactory.getConnection());
-        blogdao = new JDBCBlogDAO(daoFactory.getConnection());
-        commblogdao = new JDBCCommBlogDAO(daoFactory.getConnection());
-        consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
-        menudao = new JDBCMenuDAO(daoFactory.getConnection());
-    }
-
-    /**
-     * Qui vengono creati diversi attributi di sessione utli da usare in JSTL.
-     * Inoltre vengono processati i cookie e sistemati in attributi di sessione.
-     */
-    private void doBeforeProcessing(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException, DAOFactoryException {
-        /*if (DEBUG) {
-            log("cookieFilter:DoBeforeProcessing");
-        }*/
-
-        if (request instanceof HttpServletRequest) {
-
-            HttpSession session = ((HttpServletRequest) request).getSession();
-            if (session != null) {
-                //Categorie
-                session.setAttribute("categorydao", categorydao);
-                //Prodotti
-                session.setAttribute("productdao", productdao);
-                //Ricette
-                session.setAttribute("ricettedao", ricettedao);
-                //Blog
-                session.setAttribute("catblogdao", catblogdao);
-                session.setAttribute("blogdao", blogdao);
-                session.setAttribute("commblogdao", commblogdao);
-                //Console
-                session.setAttribute("consoledao", consoledao);
-                
-                //Menu
-                session.setAttribute("menudao", menudao);
-                
-                //Cookies
-                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-                String ids;
-                if (cookies != null) {
-                    for (Cookie c : cookies) {
-                        switch (c.getName()) {
-                            case ("preferiti"):
-                                ids = c.getValue();
-                                session.setAttribute("preferiti", ids);
-                                break;
-                            case ("carrello"):
-                                ids = c.getValue();
-                                session.setAttribute("carrello", ids);
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * QEsatta replica di doBeforeProcessing 
-     */
-    private void doAfterProcessing(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException, DAOFactoryException {
-        /*if (DEBUG) {
-            log("cookieFilter:DoAfterProcessing");
-        }*/
-        doBeforeProcessing(request, response);
     }
 
     /**
@@ -163,14 +81,105 @@ public class cookieFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
 
-        /*if (DEBUG) {
-            log("cookieFilter:doFilter()");
-        }*/
+        if (request instanceof HttpServletRequest) {
 
-        try {
-            doBeforeProcessing(request, response);
-        } catch (DAOFactoryException ex) {
-            Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
+            HttpSession session = ((HttpServletRequest) request).getSession();
+
+            try {
+
+                daoFactory = (DAOFactory) request.getServletContext().getAttribute("daoFactory");
+                if (daoFactory == null) {
+                    daoFactory = JDBCDAOFactory.getInstance();
+                    System.out.println("\n\nErroe conInit\n");
+                    throw new ServletException("Impossible to get dao factory for user storage system");
+                }
+                connection = daoFactory.getConnection();
+                if (categorydao == null) {
+                    categorydao = new JDBCCategoryDAO(connection);
+                }
+                if (productdao == null) {
+                    productdao = new JDBCProductDAO(connection);
+                }
+                if (ricettedao == null) {
+                    ricettedao = new JDBCRicetteDAO(connection);
+                }
+                if (catblogdao == null) {
+                    catblogdao = new JDBCCatBlogDAO(connection);
+                }
+                if (blogdao == null) {
+                    blogdao = new JDBCBlogDAO(connection);
+                }
+                if (commblogdao == null) {
+                    commblogdao = new JDBCCommBlogDAO(connection);
+                }
+                if (consoledao == null) {
+                    consoledao = new JDBCConsoleDAO(connection);
+                }
+                if (menudao == null) {
+                    menudao = new JDBCMenuDAO(connection);
+                }
+
+            } catch (DAOFactoryException | SQLException ex) {
+                System.out.println("errore init cookie filter");
+                Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (session != null) {
+                //Console
+                if (session.getAttribute("consoledao") == null || session.getAttribute("consoledao") != consoledao) {
+                    session.setAttribute("consoledao", consoledao);
+                }
+                //Categorie
+                if (session.getAttribute("categorydao") == null || session.getAttribute("categorydao") != categorydao) {
+                    session.setAttribute("categorydao", categorydao);
+                }
+                //Prodotti
+                if (session.getAttribute("productdao") == null || session.getAttribute("productdao") != productdao) {
+                    session.setAttribute("productdao", productdao);
+                }
+                //Ricette
+                if (session.getAttribute("ricettedao") == null || session.getAttribute("ricettedao") != ricettedao) {
+                    session.setAttribute("ricettedao", ricettedao);
+                }
+                //Blog
+                if (session.getAttribute("catblogdao") == null || session.getAttribute("catblogdao") != catblogdao) {
+                    session.setAttribute("catblogdao", catblogdao);
+                }
+                if (session.getAttribute("blogdao") == null || session.getAttribute("blogdao") != blogdao) {
+                    session.setAttribute("blogdao", blogdao);
+                }
+                if (session.getAttribute("commblogdao") == null || session.getAttribute("commblogdao") != commblogdao) {
+                    session.setAttribute("commblogdao", commblogdao);
+                }
+                //Menu
+                if (session.getAttribute("menudao") == null || session.getAttribute("menudao") != menudao) {
+                    session.setAttribute("menudao", menudao);
+                }
+
+                //Cookies
+                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+                String ids;
+                if (cookies != null) {
+                    for (Cookie c : cookies) {
+                        switch (c.getName()) {
+                            case ("preferiti"):
+                                ids = c.getValue();
+                                if (session.getAttribute("preferiti") == null || session.getAttribute("preferiti") != ids) {
+                                    session.setAttribute("preferiti", ids);
+                                }
+                                break;
+                            case ("carrello"):
+                                ids = c.getValue();
+                                if (session.getAttribute("carrello") == null || session.getAttribute("carrello") != ids) {
+                                    session.setAttribute("carrello", ids);
+                                }
+                                break;
+                        }
+                    }
+                }
+            } else {
+                System.out.println("cookiefilter session is null");
+            }
         }
 
         Throwable problem = null;
@@ -188,7 +197,6 @@ public class cookieFilter implements Filter {
         } catch (DAOFactoryException ex) {
             Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-
         // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
         if (problem != null) {
@@ -229,27 +237,7 @@ public class cookieFilter implements Filter {
      */
     @Override
     public void destroy() {
-    }
-
-    /**
-     * Init method for this filter
-     *
-     * @param filterConfig
-     * @throws javax.servlet.ServletException
-     */
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
-        if (filterConfig != null) {
-            try {
-                /*if (DEBUG) {
-                log("CookieFilter:Initializing filter");
-                }*/
-                conInit(filterConfig);
-            } catch (DAOFactoryException | SQLException ex) {
-                Logger.getLogger(cookieFilter.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        Filter.super.destroy();
     }
 
     /**
@@ -294,7 +282,6 @@ public class cookieFilter implements Filter {
             } catch (IOException ex) {
             }
         }
-        ifBadCon(request, response);
     }
 
     /**
@@ -322,70 +309,6 @@ public class cookieFilter implements Filter {
      */
     public void log(String msg) {
         filterConfig.getServletContext().log(msg);
-    }
-
-    /**
-     *  Se ci sono problemi con la connessione allora riesegue le connessione e i cookie
-     * @param request
-     * @param response
-     * @throws DAOFactoryException
-     * @throws java.sql.SQLException
-     */
-    public void ifBadCon(ServletRequest request, ServletResponse response) throws DAOFactoryException, SQLException {
-
-        System.out.println("\n\nBad Con\n");
-
-        daoFactory = new JDBCDAOFactory(DBURL);
-        categorydao = new JDBCCategoryDAO(daoFactory.getConnection());
-        productdao = new JDBCProductDAO(daoFactory.getConnection());
-        ricettedao = new JDBCRicetteDAO(daoFactory.getConnection());
-        catblogdao = new JDBCCatBlogDAO(daoFactory.getConnection());
-        blogdao = new JDBCBlogDAO(daoFactory.getConnection());
-        commblogdao = new JDBCCommBlogDAO(daoFactory.getConnection());
-        consoledao = new JDBCConsoleDAO(daoFactory.getConnection());
-        menudao = new JDBCMenuDAO(daoFactory.getConnection());
-        /*if (DEBUG) {
-            log("cookieFilter:DoBeforeProcessing");
-        }*/
-        if (request instanceof HttpServletRequest) {
-
-            HttpSession session = ((HttpServletRequest) request).getSession();
-            if (session != null) {
-                //Categorie
-                session.setAttribute("categorydao", categorydao);
-                //Prodotti
-                session.setAttribute("productdao", productdao);
-                //Ricette
-                session.setAttribute("ricettedao", ricettedao);
-                //Blog
-                session.setAttribute("catblogdao", catblogdao);
-                session.setAttribute("blogdao", blogdao);
-                session.setAttribute("commblogdao", commblogdao);
-                //Console
-                session.setAttribute("consoledao", consoledao);
-                
-                //Menu
-                session.setAttribute("menudao", menudao);
-                
-                //Cookies
-                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-                String ids;
-                if (cookies != null) {
-                    for (Cookie c : cookies) {
-                        switch (c.getName()) {
-                            case ("preferiti"):
-                                ids = c.getValue();
-                                session.setAttribute("preferiti", ids);
-                                break;
-                            case ("carrello"):
-                                ids = c.getValue();
-                                session.setAttribute("carrello", ids);
-                                break;
-                        }
-                    }
-                }
-            }
-        }
     }
 
 }

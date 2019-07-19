@@ -8,6 +8,9 @@ package database.jdbc;
 import database.daos.CategoryDAO;
 import database.entities.Categoria;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +35,24 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      */
     public JDBCCategoryDAO(Connection con) throws SQLException {
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {        
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -42,6 +63,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      */
     @Override
     public ArrayList<Categoria> getAllCategories() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie")) {
             ArrayList<Categoria> categorie = new ArrayList<>();
 
@@ -71,6 +94,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      */
     @Override
     public ArrayList<Categoria> getFreshCategories() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie where freschi = 1")) {
             ArrayList<Categoria> categorie = new ArrayList<>();
 
@@ -100,6 +125,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      */
     @Override
     public ArrayList<Categoria> getConfCategories() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie where freschi = 0")) {
             ArrayList<Categoria> categorie = new ArrayList<>();
 
@@ -130,6 +157,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      */
     @Override
     public Categoria getByName(String name) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie where nome = ?")) {
             stm.setString(1, name);
             Categoria c = null;
@@ -153,6 +182,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
 
     @Override
     public Categoria getById(String id) throws DAOException {
+        checkCON();
+        
         int id1;
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM categorie where id = ?")) {
             id1 = Integer.parseInt(id);
@@ -178,6 +209,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
 
     @Override
     public void alterImg(String id, String nome, String url) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "UPDATE categorie SET immagine = ?, nome = ? where id = ?"
         )) {
@@ -201,6 +234,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
 
     @Override
     public int addCategory(String nome, String descrizione, boolean fresco) throws DAOException {
+        checkCON();
+        
         int id = 0;
         try (PreparedStatement stm = CON.prepareStatement("insert into categorie (nome, descrizione, freschi, immagine) VALUES (?,?,?,?)")) {
             try {
@@ -233,6 +268,8 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
 
     @Override
     public void deleteCat(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from categorie where id = ?"
         )) {

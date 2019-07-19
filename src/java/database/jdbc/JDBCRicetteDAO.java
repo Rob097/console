@@ -9,6 +9,9 @@ import database.daos.RicetteDAO;
 import database.entities.Commento;
 import database.entities.Ricetta;
 import database.exceptions.DAOException;
+import database.exceptions.DAOFactoryException;
+import database.factories.JDBCDAOFactory;
+import static database.factories.JDBCDAOFactory.DBURL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,8 +37,26 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * @param con E' la connessione al DB
      * @throws java.sql.SQLException
      */
-    public JDBCRicetteDAO(Connection con) throws SQLException {
+    public JDBCRicetteDAO(Connection con) throws SQLException{
         super(con);
+        try {
+            checkCON();
+        } catch (DAOException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkCON() throws DAOException {
+        try {
+            if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
+                this.daoFactory = new JDBCDAOFactory(DBURL);
+                this.CON = daoFactory.getConnection();         
+            }
+        } catch (SQLException | DAOFactoryException ex) {
+            System.out.println("console jdbc checkCON catch");
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -47,6 +68,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Ricetta> getAllRecipes() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM ricette")) {
             ArrayList<Ricetta> ricette = new ArrayList<>();
             String[] ingredienti;
@@ -70,7 +93,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
-                    r.setCategory(rs.getBoolean("categoria"));
+                    r.setCategory(rs.getBoolean("categoria"));                    
+                    r.setApprovata(rs.getBoolean("approvata"));
                     ricette.add(r);
                 }
 
@@ -104,6 +128,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public Ricetta getRecipe(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM ricette where id = ?")) {
             stm.setInt(1, id);
             Ricetta r = null;
@@ -129,7 +155,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
-                    r.setCategory(rs.getBoolean("categoria"));
+                    r.setCategory(rs.getBoolean("categoria"));                    
+                    r.setApprovata(rs.getBoolean("approvata"));
                 }
                 return r;
             }
@@ -151,6 +178,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Ricetta> getRecipeOfProduct(int id_prod) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM ricette where id_prod = ?")) {
             stm.setInt(1, id_prod);
             Ricetta r;
@@ -177,7 +206,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
                     r.setViews(rs.getInt("views"));
-                    r.setCategory(rs.getBoolean("categoria"));
+                    r.setCategory(rs.getBoolean("categoria"));                    
+                    r.setApprovata(rs.getBoolean("approvata"));
                     ricette.add(r);
                 }
                 return ricette;
@@ -196,6 +226,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Commento> getAllComments() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM commenti")) {
             ArrayList<Commento> commenti = new ArrayList<>();
             try (ResultSet rs = stm.executeQuery()) {
@@ -225,6 +257,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Commento> getComments(int id_ricetta) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM commenti where id_ricetta = ?")) {
             stm.setInt(1, id_ricetta);
             ArrayList<Commento> commenti = new ArrayList<>();
@@ -266,6 +300,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Ricetta> getMostViewedRecipes() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM ricette")) {
             ArrayList<Ricetta> ricette = new ArrayList<>();
             ArrayList<Ricetta> viewed = new ArrayList<>();
@@ -291,7 +327,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     c.setData(rs.getTimestamp("data"));
                     c.setDescrizione(rs.getString("descrizione"));
                     c.setViews(rs.getInt("views"));
-                    c.setCategory(rs.getBoolean("categoria"));
+                    c.setCategory(rs.getBoolean("categoria"));                    
+                    c.setApprovata(rs.getBoolean("approvata"));
                     ricette.add(c);
                 }
 
@@ -330,6 +367,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public ArrayList<Ricetta> getByType(String type) throws DAOException {
+        checkCON();
+        
         ArrayList<Ricetta> recipes = getAllRecipes();
         ArrayList<Ricetta> ricette = new ArrayList<>();
 
@@ -365,6 +404,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public int getTypeSize(String type) throws DAOException {
+        checkCON();
+        
         ArrayList<Ricetta> recipes = getByType(type);
         return recipes.size();
     }
@@ -380,6 +421,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public int getNumberRate(int id) throws DAOException {
+        checkCON();
+        
         int val = 0;
         try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_ricetta where id_ricetta = ?")) {
             stm.setInt(1, id);
@@ -413,6 +456,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      */
     @Override
     public double getRate(int id) throws DAOException {
+        checkCON();
+        
         double val = 0;
         try (PreparedStatement stm = CON.prepareStatement("select * from valutazione_ricetta where id_ricetta = ?")) {
             stm.setInt(1, id);
@@ -430,6 +475,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     @Override
     public ArrayList<String> getOurCreators() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT creatore FROM ricette where categoria = 1 group by creatore")) {
             ArrayList<String> creators = null;
 
@@ -448,6 +495,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     
     @Override
     public ArrayList<String> getAllCreators() throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement("SELECT creatore FROM ricette group by creatore")) {
             ArrayList<String> creators = null;
 
@@ -466,6 +515,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     @Override
     public void removeIng(int id, String ing) throws DAOException {
+        checkCON();
+        
         System.out.println("HOLA RECIPE");
         Ricetta idea = getRecipe(id);
         ArrayList<String> ingredienti = idea.getIngredienti();
@@ -502,12 +553,14 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     }
 
     @Override
-    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria) throws DAOException {
+    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException {
+        checkCON();
+        
         if (nome == null || procedimento == null || descrizione == null || immagine == null || difficolta == null || ingredienti == null || creatore == null) {
         } else {
             
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE ricette SET id_prod = ?, nome = ?, ingredienti = ?, procedimento = ?, descrizione = ?, immagine = ?, tempo = ?, difficolta = ?, creatore = ?, categoria = ? WHERE id = ?;"
+                    "UPDATE ricette SET id_prod = ?, nome = ?, ingredienti = ?, procedimento = ?, descrizione = ?, immagine = ?, tempo = ?, difficolta = ?, creatore = ?, categoria = ?, approvata = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setInt(1, id_prod);
@@ -520,7 +573,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     stm.setString(8, difficolta);
                     stm.setString(9, creatore);
                     stm.setBoolean(10, categoria);
-                    stm.setInt(11, id);
+                    stm.setBoolean(11, approvata);
+                    stm.setInt(12, id);
 
                     if (stm.executeUpdate() == 1) {
                     } else {
@@ -538,6 +592,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
 
     @Override
     public void deleteRecipe(int id) throws DAOException {
+        checkCON();
+        
         try (PreparedStatement stm = CON.prepareStatement(
                 "delete from ricette where id = ?"
         )) {
@@ -558,9 +614,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
     }
 
     @Override
-    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria) throws DAOException {
+    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException {
+        checkCON();
+        
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into ricette (nome, procedimento, descrizione, difficolta, ingredienti, creatore, tempo, id_prod, categoria, immagine) VALUES (?,?,?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into ricette (nome, procedimento, descrizione, difficolta, ingredienti, creatore, tempo, id_prod, categoria, immagine, approvata) VALUES (?,?,?,?,?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, nome);
                 stm.setString(2, procedimento);
@@ -572,6 +630,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                 stm.setInt(8, id_prod);
                 stm.setBoolean(9, categoria);
                 stm.setString(10, "");
+                stm.setBoolean(11, approvata);
 
                 if (stm.executeUpdate() == 1) {
                 } else {

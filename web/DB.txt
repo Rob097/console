@@ -112,4 +112,16 @@ SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
 END$$ 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE TRIGGER notifiche_date_trigger
+BEFORE INSERT
+ON notifiche FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
 ################################################################################

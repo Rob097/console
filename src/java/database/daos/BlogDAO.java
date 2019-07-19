@@ -14,15 +14,21 @@ import java.util.ArrayList;
  * @author Roberto97
  */
 public interface BlogDAO {
+    public void checkCON() throws DAOException;    
+    
     public ArrayList<Blog> getAllBlogs() throws DAOException;
     public Blog getBlogById(int id) throws DAOException;
     public ArrayList<Blog> getBlogByCat(String cat) throws DAOException;
     public ArrayList<Blog> getMostViewedBlog() throws DAOException;
     public ArrayList<String> getAllCreators() throws DAOException;
-    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione) throws DAOException;
+    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, boolean pubblicato) throws DAOException;
     public void deleteBlog(String id)  throws DAOException;
-    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione) throws DAOException;
+    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, boolean pubblicato) throws DAOException;
    
+     //Valutazione
+    public int getNumberRate(int id) throws DAOException;
+    public double getRate(int id) throws DAOException;
+    
     /* TAGS */
     public void addTags(ArrayList<String> prodTags, int idBlog) throws DAOException;
     /*public void addProdTags(ArrayList<String> prodTags, int idBlog) throws DAOException;

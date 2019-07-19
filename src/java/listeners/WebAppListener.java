@@ -8,6 +8,9 @@ package listeners;
 import database.exceptions.DAOFactoryException;
 import database.factories.DAOFactory;
 import database.factories.JDBCDAOFactory;
+import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -34,6 +37,8 @@ public class WebAppListener implements ServletContextListener {
             System.out.println("webAppListener init catch");
             Logger.getLogger(getClass().getName()).severe(ex.toString());
             throw new RuntimeException(ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(WebAppListener.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -46,9 +51,25 @@ public class WebAppListener implements ServletContextListener {
         //System.out.println("Log:WebAppListener destroyed");
         //chiude la connessione 
         if (daoFactory != null) {
-            System.out.println("webAppListener destroy != null");
             daoFactory.shutdown();
         }
         daoFactory = null;
+        try {
+            com.mysql.jdbc.AbandonedConnectionCleanupThread.shutdown();
+        } catch (InterruptedException t) {
+        }
+        // This manually deregisters JDBC driver, which prevents Tomcat 7 from complaining about memory leaks
+        Enumeration<java.sql.Driver> drivers = java.sql.DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            java.sql.Driver driver = drivers.nextElement();
+            try {
+                java.sql.DriverManager.deregisterDriver(driver);
+            } catch (SQLException t) {
+            }
+        }
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+        }
     }
 }

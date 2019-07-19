@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class changeOrderStatus extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
+
     ConsoleDAO consoledao = null;
 
     @Override

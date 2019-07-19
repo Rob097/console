@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
+import static varie.costanti.MAX_IMG_SIZE;
 import static varie.costanti.PASS;
 import static varie.utili.obtainRootFolderPath;
 import static varie.utili.unaccent;
@@ -32,8 +34,10 @@ import static varie.utili.unaccent;
  *
  * @author Roberto97
  */
-@MultipartConfig(maxFileSize = 16177215)
+@MultipartConfig()
 public class updateRecipe extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     RicetteDAO ricettedao = null;
     private final String UPLOAD_DIRECTORY = "/img/idee/";
@@ -65,12 +69,14 @@ public class updateRecipe extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        String nome = "", procedimento = "", descrizione = "", immagine = "", difficolta = "", creatore = "";
+        RequestDispatcher view = request.getRequestDispatcher("idee.jsp");
+        String nome = "", procedimento = "", descrizione = "", immagine = "", difficolta = "", creatore = "", url = "";
         int id_prod = 0, tempo = 0, id = 0;
-        boolean categoria = true;
+        boolean categoria = true, approvata = true;
         String catS = "";
         String ingS = "";
         Part filePart1 = null;
+        boolean checkIMG = true;
 
         if (request.getParameter("id") != null) {
             id = Integer.parseInt(request.getParameter("id"));
@@ -100,143 +106,165 @@ public class updateRecipe extends HttpServlet {
                 } catch (DAOException ex) {
                     Logger.getLogger(updateRecipe.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-            }else{
+                url = "idee.jsp";
+            } else {
                 System.out.println("Password sbagliata");
             }
-            response.sendRedirect("/console/idee.jsp");
         } else {
 
             try {
-
-                if (request.getParameter("titolo") != null) {
-                    nome = request.getParameter("titolo");
-                }
-                if (request.getParameter("product") != null) {
-                    id_prod = Integer.parseInt(request.getParameter("product"));
-                }
-
-                if (request.getParameter("autore") != null) {
-                    creatore = request.getParameter("autore");
-                }
-                if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
-                    creatore = request.getParameter("newCreator");
-                }
-
-                if (request.getParameter("timeInput") != null) {
-                    tempo = Integer.parseInt(request.getParameter("timeInput"));
-                }
-                if (request.getParameter("difficultInput") != null) {
-                    difficolta = request.getParameter("difficultInput");
-                }
-                if (request.getParameter("procedimento") != null) {
-                    procedimento = request.getParameter("procedimento");
-                    descrizione = procedimento.replaceAll("[<](/)?[^>]*[>]", "");
-                }
                 if (request.getPart("immagine") != null) {
-                    filePart1 = request.getPart("immagine");
+                    if (request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
+                        filePart1 = request.getPart("immagine");
+                    } else {
+                        checkIMG = false;
+                    }
                 }
-                if (request.getParameter("oldIMG") != null) {
-                    immagine = request.getParameter("oldIMG");
-                }
+                if (checkIMG) {
 
-                if (request.getParameter("categoria") != null) {
-                    if (request.getParameter("categoria").equals("nostre")) {
-                        categoria = true;
+                    if (request.getParameter("titolo") != null) {
+                        nome = request.getParameter("titolo");
                     }
-                    if (request.getParameter("categoria").equals("utenti")) {
-                        categoria = false;
+                    if (request.getParameter("product") != null) {
+                        id_prod = Integer.parseInt(request.getParameter("product"));
                     }
-                    catS = request.getParameter("categoria");
-                }
 
-                ArrayList<String> ingredientiNomi = new ArrayList<>();
-                ArrayList<String> quantitaNomi = new ArrayList<>();
+                    if (request.getParameter("autore") != null) {
+                        creatore = request.getParameter("autore");
+                    }
+                    if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
+                        creatore = request.getParameter("newCreator");
+                    }
 
-                ArrayList<String> ingredienti = new ArrayList<>();
-                ArrayList<String> quantita = new ArrayList<>();
+                    if (request.getParameter("timeInput") != null) {
+                        tempo = Integer.parseInt(request.getParameter("timeInput"));
+                    }
+                    if (request.getParameter("difficultInput") != null) {
+                        difficolta = request.getParameter("difficultInput");
+                    }
+                    if (request.getParameter("procedimento") != null) {
+                        procedimento = request.getParameter("procedimento");
+                        descrizione = procedimento.replaceAll("[<](/)?[^>]*[>]", "");
+                    }
+                    if (request.getParameter("oldIMG") != null) {
+                        immagine = request.getParameter("oldIMG");
+                    }
 
-                Enumeration keys = request.getParameterNames();
-                try {
-                    while (keys.hasMoreElements()) {
-                        String key = (String) keys.nextElement();
-                        if (key.contains("[ingrediente]")) {
-                            ingredientiNomi.add(key);
+                    if (request.getParameter("categoria") != null) {
+                        if (request.getParameter("categoria").equals("nostre")) {
+                            categoria = true;
                         }
-                        if (key.contains("[quantity]")) {
-                            quantitaNomi.add(key);
+                        if (request.getParameter("categoria").equals("utenti")) {
+                            categoria = false;
                         }
+                        catS = request.getParameter("categoria");
                     }
-
-                    for (int k = 0; k < ingredientiNomi.size(); k++) {
-                        if (!request.getParameter(ingredientiNomi.get(k)).equals("")) {
-                            ingredienti.add(request.getParameter(ingredientiNomi.get(k)));
+                    if (request.getParameter("approvata") != null) {
+                        if (request.getParameter("approvata").equals("1")) {
+                            approvata = true;
                         }
-                        if (!request.getParameter(quantitaNomi.get(k)).equals("")) {
-                            quantita.add(request.getParameter(quantitaNomi.get(k)));
-                        }
-                    }
-
-                    for (int k = 0; k < ingredienti.size(); k++) {
-                        ingS += ingredienti.get(k) + " " + quantita.get(k) + "_";
-                    }
-
-                    String old = "";
-                    if (!ingS.equals("")) {
-                        StringBuilder b = new StringBuilder(ingS);
-                        b.replace(ingS.lastIndexOf("_"), ingS.lastIndexOf("_"), "");
-                        old = b.toString();
-                        ingS = "";
-                    }
-
-                    for (String g : ricettedao.getRecipe(id).getIngredienti()) {
-                        if (!g.equals("")) {
-                            ingS += g + "_";
+                        if (request.getParameter("approvata").equals("0")) {
+                            approvata = false;
                         }
                     }
 
-                    if (!old.equals("") && !old.isEmpty()) {
-                        ingS += old;
-                    }
+                    ArrayList<String> ingredientiNomi = new ArrayList<>();
+                    ArrayList<String> quantitaNomi = new ArrayList<>();
 
-                } catch (DAOException e) {
-                    System.out.println("Errore form ingredienti");
-                }
+                    ArrayList<String> ingredienti = new ArrayList<>();
+                    ArrayList<String> quantita = new ArrayList<>();
 
-                //Load dell'immagine
-                if (filePart1 != null) {
-                    if (filePart1.getContentType().contains("image/")) {
-                        String upload_directory = "";
-                        upload_directory = UPLOAD_DIRECTORY + catS + "/";
-                        try {
-                            String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
-                            File directory = new File(listsFolder);
-                            if (!directory.exists()) {
-                                directory.mkdir();
-                                // If you require it to make the entire directory path including parents,
-                                // use directory.mkdirs(); here instead.
+                    Enumeration<String> keys = request.getParameterNames();
+                    try {
+                        while (keys.hasMoreElements()) {
+                            String key = keys.nextElement();
+                            if (key.contains("[ingrediente]")) {
+                                ingredientiNomi.add(key);
                             }
-                            String extension = getImageExtension(filePart1);
-                            String imagineName = "uncompressed" + id + "." + extension;
+                            if (key.contains("[quantity]")) {
+                                quantitaNomi.add(key);
+                            }
+                        }
 
-                            ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
-                            immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
-                        } catch (RuntimeException e) {
-                            System.out.println("RuntimeException:");
-                            throw e;
+                        for (int k = 0; k < ingredientiNomi.size(); k++) {
+                            if (!request.getParameter(ingredientiNomi.get(k)).equals("")) {
+                                ingredienti.add(request.getParameter(ingredientiNomi.get(k)));
+                            }
+                            if (!request.getParameter(quantitaNomi.get(k)).equals("")) {
+                                quantita.add(request.getParameter(quantitaNomi.get(k)));
+                            }
+                        }
+
+                        for (int k = 0; k < ingredienti.size(); k++) {
+                            ingS += ingredienti.get(k) + " " + quantita.get(k) + "_";
+                        }
+
+                        String old = "";
+                        if (!ingS.equals("")) {
+                            StringBuilder b = new StringBuilder(ingS);
+                            b.replace(ingS.lastIndexOf("_"), ingS.lastIndexOf("_"), "");
+                            old = b.toString();
+                            ingS = "";
+                        }
+
+                        for (String g : ricettedao.getRecipe(id).getIngredienti()) {
+                            if (!g.equals("")) {
+                                ingS += g + "_";
+                            }
+                        }
+
+                        if (!old.equals("") && !old.isEmpty()) {
+                            ingS += old;
+                        }
+
+                    } catch (DAOException e) {
+                        System.out.println("Errore form ingredienti");
+                    }
+
+                    //Load dell'immagine
+                    if (filePart1 != null) {
+                        if (filePart1.getContentType().contains("image/")) {
+                            String upload_directory = "";
+                            upload_directory = UPLOAD_DIRECTORY + catS + "/";
+                            try {
+                                String listsFolder = obtainRootFolderPath(upload_directory, getServletContext()).replaceAll(" ", "");
+                                File directory = new File(listsFolder);
+                                if (!directory.exists()) {
+                                    directory.mkdir();
+                                    // If you require it to make the entire directory path including parents,
+                                    // use directory.mkdirs(); here instead.
+                                }
+                                String extension = getImageExtension(filePart1);
+                                String imagineName = "uncompressed" + id + "." + extension;
+
+                                ImageDispatcher.insertCompressedImg(listsFolder, imagineName, filePart1, extension);
+                                immagine = ImageDispatcher.savePathImgInDatabsae(upload_directory, imagineName.replace("uncompressed", ""));
+                            } catch (RuntimeException e) {
+                                System.out.println("RuntimeException:");
+                                throw e;
+                            }
+                        } else {
+                            System.out.println("FilePart not in image/");
                         }
                     } else {
-                        System.out.println("FilePart not in image/");
+                        System.out.println("filePart = null");
                     }
-                } else {
-                    System.out.println("filePart = null");
-                }
 
-                ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria);
+                    ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
+                    url = "idea.jsp?id=" + id;
+                } else {
+                    response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                    view = request.getRequestDispatcher("idea.jsp?id=" + id);
+                }
             } catch (DAOException ex) {
                 Logger.getLogger(updateRecipe.class.getName()).log(Level.SEVERE, null, ex);
+                view = request.getRequestDispatcher("idea.jsp?id=" + id);
             }
-            response.sendRedirect("/console/idea.jsp?id=" + id);
+        }
+        if (url.equals("")) {
+            view.forward(request, response);
+        } else {
+            response.sendRedirect(url);
         }
     }
 
