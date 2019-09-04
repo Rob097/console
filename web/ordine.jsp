@@ -110,23 +110,74 @@
                                                                             </tr>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    ${prodotto.nome}
-                                                                                </td>
-                                                                                <td>
-                                                                                    ${prodotto.descrizione}
-                                                                                </td>
-                                                                                <td>
-                                                                                    ${prodotto.quantita}
-                                                                                </td>
-                                                                                <td>
-                                                                                    € ${prodotto.costo}
-                                                                                </td>
-                                                                            </tr>
+                                                                            <c:choose>
+                                                                                <c:when test="${ordine.varianti ne null && !ordine.varianti.isEmpty() && consoledao.orderContainProdVariant(ordine.id, prodotto.id)}">
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.nome}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.descrizione}
+                                                                                        </td>
+                                                                                        <td>
+
+                                                                                        </td>
+                                                                                        <td>
+
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <c:forEach var="variante" items="${ordine.varianti}">
+                                                                                        <c:set var="vars" value="${variante.getKey()}" />
+                                                                                        <c:set var="quant" value="${variante.getValue()}" />
+                                                                                        <c:if test="${vars.get(0).id_prod eq prodotto.id}">
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <c:forEach var="var" items="${vars}">
+                                                                                                        ${var.variant}: ${var.variantName}
+                                                                                                    </c:forEach>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <c:forEach var="var" items="${vars}">
+                                                                                                        ${quant}
+                                                                                                    </c:forEach>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <c:forEach var="var" items="${vars}">
+                                                                                                        € ${var.supplement + Double.parseDouble(prodotto.costo.replace(",", "."))}
+                                                                                                    </c:forEach>
+                                                                                                </td>                                                                                        
+                                                                                            </tr>
+                                                                                        </c:if>
+                                                                                    </c:forEach>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('${prodotto.immagine}');"></div>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.nome}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.descrizione}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.quantita}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            ${prodotto.costo}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </c:forEach>
@@ -179,7 +230,7 @@
                                             </form>
 
                                             <div class="container comment-form" style="margin-top: 5rem;">
-                                            <c:if test="${ordine.stato eq 'preparazione'}">
+                                            <c:if test="${ordine.stato eq 'preparazione' || ordine.stato eq 'spedito'}">
                                                 <c:choose>
                                                     <c:when test="${ordine.tipo.equals('Ritiro in negozio')}">
                                                         <!--Section description-->
@@ -231,7 +282,7 @@ DOM: 08:00 - 12:30
                                                             <input id="senderButton" type="submit" class="btn primary-btn" value="Invia email">
                                                         </form>
                                                     </c:when>
-                                                    <c:otherwise>
+                                                    <c:when test="${!ordine.tipo.equals('Ritiro in negozio') && ordine.stato eq 'preparazione'}">
                                                         <!--Section description-->
                                                         <form method="POST" class="text-center" action="orderSent" id="sendEmailOrderSent">
                                                             <div class="form-row">
@@ -262,12 +313,12 @@ DOM: 08:00 - 12:30
                                                             <div class="form-row">
                                                                 <div class="col-12 mb-3">
                                                                     <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
-Il tuo ordine "${ordine.id}" è stato spedito con corriere ${ordine.tipo} in data ${LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}
-Per qualsiasi domanda o informazione non esitare a contattarci. 
-Email: info@macelleriadellantonio.it
-Telefono: 0462-501231
-Orario: 
-LUN - SAB: 07:00 - 12:30  /  16:00 - 19:30
+Il tuo ordine "${ordine.id}" è pronto per il ritiro presso il nostro punto vendita a Predazzo in via Cesare Battisti 2.<br>
+Per qualsiasi domanda o informazione non esitare a contattarci. <br>
+Email: info@macelleriadellantonio.it<br>
+Telefono: 0462-501231<br>
+Orario: <br>
+LUN - SAB: 07:00 - 12:30  /  16:00 - 19:30<br>
 DOM: 08:00 - 12:30
                                                                     </textarea>
                                                                     <div class="invalid-feedback">
@@ -287,13 +338,59 @@ DOM: 08:00 - 12:30
                                                             <hr style="border: 3px solid rgb(121, 85, 72); width: 50%; border-radius: 100%;"/>
                                                             <input id="senderButton" type="submit" class="btn primary-btn" value="Invia email">
                                                         </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <!--Section description-->
+                                                        <form method="POST" class="text-center" action="orderDelivered" id="sendEmailOrderSent">
+                                                            <div class="form-row">
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="nome">Nome</label>
+                                                                    <input type="text" class="form-control" name="nome" id="nome" value="${ordine.nome}" required>
+                                                                    <div class="invalid-feedback">
+                                                                        Il campo relativo al nome non è complilato in modo corretto
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="email">Email</label>
+                                                                    <input type="email" class="form-control" name="email" id="email" value="${ordine.email}" required>
+                                                                    <div class="invalid-feedback">
+                                                                        Il campo relativo all'email non è complilato in modo corretto
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-12 mb-3">
+                                                                    <label for="oggetto">Oggetto</label>
+                                                                    <input type="text" class="form-control" name="oggetto" id="oggetto" value="Ordine consegnato" required>
+                                                                    <div class="invalid-feedback">
+                                                                        Il campo relativo all'oggetto non è complilato in modo corretto
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-12 mb-3">
+                                                                    <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
+Grazie per aver avuto fiducia in noi!<br>
+Facci sapere cosa ne pensi dei nostri prodotti valutandoli sul sito o rispondendo a questa email.
+Possiamo migliorare assieme!
+                                                                    </textarea>
+                                                                    <div class="invalid-feedback">
+                                                                        Il campo relativo al messaggio non è complilato in modo corretto
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <input type="hidden" name="id" value="${ordine.id}" />
+                                                            <input type="hidden" name="tipo" value="${ordine.tipo}" />
+                                                            <hr style="border: 3px solid rgb(121, 85, 72); width: 50%; border-radius: 100%;"/>
+                                                            <input id="senderButton" type="submit" class="btn primary-btn" value="Invia email">
+                                                        </form>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </c:if>
                                         </div>   
                                     </c:when>
                                     <c:otherwise>
-                                        <h6 style='font-size: x-large'>L'ordine cercato non esiste</h6>
+                                        <h6 style='font-size: x-large'>L'ordine cercato non esiste o non è stato confermato dall'utente</h6>
                                     </c:otherwise>
                                 </c:choose>
                             </c:otherwise>

@@ -6,6 +6,7 @@
 package database.entities;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Ordine {
     private String indirizzo;
     private String zip;
     private ArrayList<String> prodotti;
+    private LinkedHashMap<ArrayList<Variante>, Integer> varianti;
     private String tipo;
     private double tot;
     private String stato;
@@ -27,7 +29,7 @@ public class Ordine {
     public Ordine() {
     }
 
-    public Ordine(String id, String data, String nome, String email, String citta, String indirizzo, String zip, ArrayList<String> prodotti, String tipo, double tot, String stato) {
+    public Ordine(String id, String data, String nome, String email, String citta, String indirizzo, String zip, ArrayList<String> prodotti, LinkedHashMap<ArrayList<Variante>, Integer> varianti, String tipo, double tot, String stato) {
         this.id = id;
         this.data = data;
         this.nome = nome;
@@ -36,6 +38,7 @@ public class Ordine {
         this.indirizzo = indirizzo;
         this.zip = zip;
         this.prodotti = prodotti;
+        this.varianti = varianti;
         this.tipo = tipo;
         this.tot = tot;
         this.stato = stato;
@@ -103,6 +106,14 @@ public class Ordine {
 
     public void setProdotti(ArrayList<String> prodotti) {
         this.prodotti = prodotti;
+    }
+
+    public LinkedHashMap<ArrayList<Variante>, Integer> getVarianti() {
+        return varianti;
+    }
+
+    public void setVarianti(LinkedHashMap<ArrayList<Variante>, Integer> varianti) {
+        this.varianti = varianti;
     }
 
     public String getTipo() {

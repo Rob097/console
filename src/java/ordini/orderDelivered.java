@@ -10,6 +10,7 @@ import database.exceptions.DAOException;
 import database.factories.DAOFactory;
 import database.jdbc.JDBCConsoleDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -37,7 +38,7 @@ import static varie.costanti.ROB_PASS;
  *
  * @author Roberto97
  */
-public class orderReady extends HttpServlet {
+public class orderDelivered extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,7 +57,7 @@ public class orderReady extends HttpServlet {
             Logger.getLogger(orderSent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -68,7 +69,6 @@ public class orderReady extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         request.setCharacterEncoding("UTF-8");
 
         String nome = "", email = "", oggetto = "", testo = "", id = "", tipo = "";
@@ -239,6 +239,26 @@ public class orderReady extends HttpServlet {
                 + "                 </tr> \n"
                 + "               </table> </td> \n"
                 + "             </tr> \n"
+                + "             <tr style=\"border-collapse:collapse;\"> \n"
+                + "              <td align=\"left\" style=\"Margin:0;padding-left:35px;padding-right:35px;padding-top:40px;padding-bottom:40px;\"> \n"
+                + "               <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
+                + "                 <tr style=\"border-collapse:collapse;\"> \n"
+                + "                  <td width=\"530\" valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;\"> \n"
+                + "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;\"> \n"
+                + "                     <tr style=\"border-collapse:collapse;\"> \n"
+                + "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-top:20px;\"> <h3 style=\"Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#333333;\">Dacci una tua opinione</h3> </td> \n"
+                + "                     </tr> \n"
+                + "                     <tr style=\"border-collapse:collapse;\"> \n"
+                + "                      <td align=\"center\" style=\"Margin:0;padding-left:10px;padding-right:10px;padding-bottom:15px;padding-top:20px;\">"
+                + "                         <span class=\"es-button-border\" style=\"border-style:solid;border-color:transparent;background:#ED8E20 none repeat scroll 0% 0%;border-width:0px;display:inline-block;border-radius:5px;width:auto;\">"
+                + "                             <a href=\"https://macelleriadellantonio.it/bottega.jsp\" class=\"es-button\" target=\"_blank\" style=\"mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:18px;color:#FFFFFF;border-style:solid;border-color:#ED8E20;border-width:15px 30px;display:inline-block;background:#ED8E20 none repeat scroll 0% 0%;border-radius:5px;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;\">Valuta prodotti</a> \n"
+                + "                         </span>"
+                + "                      </td> \n"
+                + "                     </tr> \n"
+                + "                   </table> </td> \n"
+                + "                 </tr> \n"
+                + "               </table> </td> \n"
+                + "             </tr> \n"
                 + "           </table> </td> \n"
                 + "         </tr> \n"
                 + "       </table> \n"
@@ -330,9 +350,9 @@ public class orderReady extends HttpServlet {
 
             // Transport class is used to deliver the message to the recipients 
             Transport.send(message);
-            consoledao.setOrderStatus(id, 2);
+            consoledao.setOrderStatus(id, 3);
         } catch (MessagingException ex) {
-            String testo1 = "Erroe nell'invio dell'email di ordine spedito\n\n";
+            String testo1 = "Erroe nell'invio dell'email di ordine consegnato\n\n";
             testo1 += "Ordine: " + id;
             testo1 += "\nCliente: " + nome;
             //Dati email roberto
@@ -368,7 +388,6 @@ public class orderReady extends HttpServlet {
         }
 
         response.sendRedirect("ordini.jsp");
-        
     }
 
     /**

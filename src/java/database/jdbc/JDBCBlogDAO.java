@@ -280,7 +280,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     stm.setBoolean(7, pubblicato);
                     stm.setInt(8, Integer.parseInt(id));
 
-                    if (stm.executeUpdate() == 1) {
+                    if (stm.executeUpdate() >= 1) {
                         cleanTags();
                     } else {
                         System.out.println("Error updating blog " + id);
@@ -305,7 +305,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
             try {
                 stm.setInt(1, Integer.parseInt(id));
 
-                if (stm.executeUpdate() == 1) {
+                if (stm.executeUpdate() >= 1) {
                     cleanTags();
                 } else {
                     System.out.println("Error deleting blog " + id);
@@ -643,7 +643,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     try {
                         if (stm.executeUpdate() >= 1) {
                         } else {
-                            System.out.println("Impossible to delete email");
+                            System.out.println("Impossible to delete tag");
                         }
                     } catch (SQLException ex) {
                         throw new DAOException(ex);

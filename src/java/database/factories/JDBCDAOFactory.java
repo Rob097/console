@@ -24,7 +24,8 @@ public class JDBCDAOFactory implements DAOFactory {
     public static final String PASSWORD ="Bortoleto1901";
     
     /*DB on Rasp*/
-    public static final String DBURL = "jdbc:mysql://ourlists.ddns.net:3306/DBB?autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+    //public static final String DBURL = "jdbc:mysql://ourlists.ddns.net:3306/DBB?autoReconnect=true&zeroDateTimeBehavior=convertToNull";
+    public static final String DBURL = "jdbc:mysql://192.168.1.33:3306/DBB?autoReconnect=true&zeroDateTimeBehavior=convertToNull";
     public static final String USERNAME = "user";
     public static final String PASSWORD = "the_password";
     

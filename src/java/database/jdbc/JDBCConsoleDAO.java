@@ -10,6 +10,7 @@ import database.daos.ProductDAO;
 import database.entities.Notifica;
 import database.entities.Ordine;
 import database.entities.Prodotto;
+import database.entities.Variante;
 import database.exceptions.DAOException;
 import database.exceptions.DAOFactoryException;
 import database.factories.JDBCDAOFactory;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -78,9 +80,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         Calendar calendar = Calendar.getInstance();
         LocalDate monday = LocalDate.now();
         java.sql.Date ourJavaDateObject = new java.sql.Date(calendar.getTime().getTime());
-        if(ourJavaDateObject.toLocalDate().getDayOfWeek().equals(DayOfWeek.MONDAY)){
+        if (ourJavaDateObject.toLocalDate().getDayOfWeek().equals(DayOfWeek.MONDAY)) {
             monday = ourJavaDateObject.toLocalDate();
-        }else{
+        } else {
             monday = ourJavaDateObject.toLocalDate().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         }
         int views = 0;
@@ -925,6 +927,83 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     @Override
+    public Variante getVariant(int id) throws DAOException {
+        checkCON();
+
+        try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM products_variants where id = ?")) {
+            stm.setInt(1, id);
+            Variante v = null;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    v = new Variante();
+                    v.setId(rs.getInt("id"));
+                    v.setId_prod(rs.getInt("idProd"));
+                    v.setVariant(rs.getString("variant"));
+                    v.setVariantName(rs.getString("variantName"));
+                    v.setSupplement(rs.getDouble("supplement"));
+                }
+                return v;
+            }
+        } catch (SQLException ex) {
+            //throw new DAOException("Impossibile restituire il prodotto. (JDBCProductDAO, getProduct)", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public LinkedHashMap<ArrayList<Variante>, Integer> getVariants(String var) throws DAOException {
+
+        LinkedHashMap<ArrayList<Variante>, Integer> varianti = new LinkedHashMap<>();
+
+        ArrayList<Variante> prodVars;
+        String[] blocchi;
+        String[] vars;
+        String[] ids;
+        int q;
+
+        if (var != null) {
+            blocchi = var.split(":");
+            if (blocchi != null && blocchi.length > 0) {
+                for (String s : blocchi) {
+                    prodVars = new ArrayList<>();
+                    vars = s.split("\\*");
+                    if (vars != null && vars.length > 1) {
+                        ids = vars[0].split("_");
+                        q = Integer.parseInt(vars[1]);
+                        if (ids != null && ids.length > 0) {
+                            for (String f : ids) {
+                                prodVars.add(getVariant(Integer.parseInt(f)));
+                            }
+                        }
+                        varianti.put(prodVars, q);
+                    }
+                }
+            }
+        }
+
+        return varianti;
+    }
+
+    @Override
+    public boolean orderContainProdVariant(String idOrder, int idProd) throws DAOException {
+        LinkedHashMap<ArrayList<Variante>, Integer> varianti = getOrder(idOrder).getVarianti();
+
+        for (Map.Entry<ArrayList<Variante>, Integer> entry : varianti.entrySet()) {
+            ArrayList<Variante> key = entry.getKey();
+            if (key != null) {
+                for (Variante v : key) {
+                    if (v != null && v.getId_prod() == idProd) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public Ordine getLastOfType(String type) throws DAOException {
         checkCON();
         Ordine ordine = null;
@@ -944,6 +1023,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     ordine.setProdotti(new ArrayList<>());
                     String[] prodotti = rs.getString("items").split(";");
                     ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setVarianti(getVariants(rs.getString("varianti")));
                     ordine.setTot(rs.getDouble("totale"));
                     ordine.setStato(rs.getString("stato"));
                 }
@@ -974,6 +1054,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     ordine.setProdotti(new ArrayList<>());
                     String[] prodotti = rs.getString("items").split(";");
                     ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setVarianti(getVariants(rs.getString("varianti")));
                     ordine.setTot(rs.getDouble("totale"));
                     ordine.setStato(rs.getString("stato"));
                 }
@@ -1006,6 +1087,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     ordine.setProdotti(new ArrayList<>());
                     String[] prodotti = rs.getString("items").split(";");
                     ordine.getProdotti().addAll(Arrays.asList(prodotti));
+                    ordine.setVarianti(getVariants(rs.getString("varianti")));
                     ordine.setTot(rs.getDouble("totale"));
                     ordine.setStato(rs.getString("stato"));
                     ordini.add(ordine);
@@ -1188,7 +1270,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     @Override
-    public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+    public String getfreshBoxType(double totale, ArrayList<String> prodotti,
+             HttpServletRequest request) throws DAOException {
         checkCON();
 
         String box = "";
@@ -1205,7 +1288,8 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     @Override
-    public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
+    public String getfreshBoxCost(double totale, ArrayList<String> prodotti,
+             HttpServletRequest request) throws DAOException {
         checkCON();
 
         double tot = 0.0;
@@ -1416,7 +1500,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public void deleteALLNotifiche() throws DAOException {
         checkCON();

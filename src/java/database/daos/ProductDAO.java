@@ -6,8 +6,10 @@
 package database.daos;
 
 import database.entities.Prodotto;
+import database.entities.Variante;
 import database.exceptions.DAOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  *
@@ -29,4 +31,12 @@ public interface ProductDAO{
     public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException;
     public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException;
     public ArrayList<Prodotto> getNullCategoryProducts() throws DAOException;
+    
+    //Varianti
+    public LinkedHashMap<String, ArrayList<Variante>> getProductVariant(int idProd) throws DAOException;
+    public Variante getVariant(int id) throws DAOException;
+    public ArrayList<Variante> getFrstVariantOfProduct(int idProd) throws DAOException;
+    public String getVariantBlock(ArrayList<Variante> blocco) throws DAOException;
+    public void removeVariant(int idProd, String variant) throws DAOException;
+    public void updateVariant(int idProd, ArrayList<String>... args) throws DAOException;
 }

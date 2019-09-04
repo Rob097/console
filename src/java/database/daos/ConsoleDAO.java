@@ -8,8 +8,10 @@ package database.daos;
 import database.entities.Notifica;
 import database.entities.Ordine;
 import database.entities.Prodotto;
+import database.entities.Variante;
 import database.exceptions.DAOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -74,6 +76,9 @@ public interface ConsoleDAO {
     public String getfreshBoxType(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
     public String getfreshBoxCost(double totale, ArrayList<String> prodotti, HttpServletRequest request) throws DAOException;
     public int getNumberByStatusOfType(String stato, String tipo) throws DAOException;
+    public Variante getVariant(int id) throws DAOException;
+    public LinkedHashMap<ArrayList<Variante>, Integer> getVariants(String var) throws DAOException;
+    public boolean orderContainProdVariant(String idOrder, int idProd) throws DAOException;
     
     /* NOTIFICHE */
     public ArrayList<Notifica> getAllNotifiche() throws DAOException;
