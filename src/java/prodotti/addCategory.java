@@ -115,7 +115,7 @@ public class addCategory extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                categorydao.alterImg("" + id, nome, immagine);
+                categorydao.alterImg("" + id, nome, immagine, descrizione);
                 url = "prodotti.jsp";
 
             } else {

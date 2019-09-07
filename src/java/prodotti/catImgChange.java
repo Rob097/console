@@ -98,7 +98,7 @@ public class catImgChange extends HttpServlet {
             }
 
         } else {
-            String id = "", nome = "";
+            String id = "", nome = "", descrizione = "";
             String immagine = request.getParameter("oldImg");
             Part filePart1 = null;
             boolean fresco = false, checkIMG = true;
@@ -116,6 +116,9 @@ public class catImgChange extends HttpServlet {
                 }
                 if (request.getParameter("nome") != null) {
                     nome = unaccent(request.getParameter("nome"));
+                }
+                if (request.getParameter("descrizione") != null) {
+                    descrizione = unaccent(request.getParameter("descrizione"));
                 }
                 if (request.getParameter("fresco") != null) {
                     fresco = request.getParameter("fresco").equals("true");
@@ -150,7 +153,7 @@ public class catImgChange extends HttpServlet {
                         System.out.println("filePart = null");
                     }
 
-                    categorydao.alterImg(id, nome, immagine);
+                    categorydao.alterImg(id, nome, immagine, descrizione);
                 } catch (DAOException ex) {
                     Logger.getLogger(catImgChange.class.getName()).log(Level.SEVERE, null, ex);
                 }

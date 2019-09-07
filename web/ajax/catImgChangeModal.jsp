@@ -26,7 +26,7 @@
             <input type='file' name="immagine" onchange="readURL(this, 'InputIMGUpdateCat');"/> 
 
             <input maxlength="45" type="text" name="nome" value="${categoria.nome}" class="form-control mt-4 mb-4" required/>
-
+            <textarea style="min-height: 100px;" name="descrizione" class="form-control mb-4" required>${categoria.descrizione}</textarea>
             <input type="hidden" name="fresco" value="${categoria.freschi}" required/>
             <input type="hidden" name="oldImg" value="${categoria.immagine}" required/>
             <input type="hidden" name="id" value="${categoria.id}" required>
