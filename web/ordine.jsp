@@ -144,14 +144,10 @@
                                                                                                     </c:forEach>
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    <c:forEach var="var" items="${vars}">
-                                                                                                        ${quant}
-                                                                                                    </c:forEach>
+                                                                                                    ${quant}
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    <c:forEach var="var" items="${vars}">
-                                                                                                        € ${var.supplement + Double.parseDouble(prodotto.costo.replace(",", "."))}
-                                                                                                    </c:forEach>
+                                                                                                    € ${var.supplement + Double.parseDouble(prodotto.costo.replace(",", "."))}
                                                                                                 </td>                                                                                        
                                                                                             </tr>
                                                                                         </c:if>
@@ -232,7 +228,7 @@
                                             <div class="container comment-form" style="margin-top: 5rem;">
                                             <c:if test="${ordine.stato eq 'preparazione' || ordine.stato eq 'spedito'}">
                                                 <c:choose>
-                                                    <c:when test="${ordine.tipo.equals('Ritiro in negozio')}">
+                                                    <c:when test="${ordine.tipo.equals('Ritiro in negozio') && ordine.stato eq 'preparazione'}">
                                                         <!--Section description-->
                                                         <form method="POST" class="text-center" action="orderReady" id="sendEmailOrderSent">
                                                             <div class="form-row">

@@ -63,7 +63,7 @@
                                 <div class="col-md-4">
                                     <div class="card card-profile">
                                         <div class="card-avatar">
-                                            <img src="${idea.immagine}" />
+                                            <img src="${idea.immagine}" alt="${idea.nome}"/>
                                         </div>
                                         <div class="card-body">
                                             <h6 class="card-category text-gray"><i class="fas fa-stream mr-2"></i>
@@ -125,8 +125,7 @@
         <!-- Chartist JS -->
         <script src="assets/js/plugins/chartist.min.js"></script>
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
-        <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-
+        <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>  
         <script>
 
         </script>
@@ -221,6 +220,7 @@
                 $("footer").load("ajax/footer.jsp");
             });
         </script>
+
     </body>
 </html>
 
