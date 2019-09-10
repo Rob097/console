@@ -409,198 +409,198 @@
         </script>
         <script type="text/javascript">
             $(document).ready(function () {
-            $("#editor").editor({
-            height: 500,
-            locale: 'it-it'
-            });
+                $("#editor").editor({
+                    height: 500,
+                    locale: 'it-it'
+                });
             });
         </script>
 
         <script type="text/javascript">
             $(document).ready(function () {
-            $("#editor").editor({
-            height: 400
-            });
-            $('[role="body"]').css("background-color", "white");
+                $("#editor").editor({
+                    height: 400
+                });
+                $('[role="body"]').css("background-color", "white");
             });
             $("#categoria").change(function () {
-            var selected = $(this).children("option:selected").val();
-            if (selected === 'New') {
-            $('#newCategoryDIV').removeClass('invisible');
-            $('#newCategory').prop("type", "text");
-            } else {
-            $('#newCategoryDIV').addClass('invisible');
-            $('#newCategory').prop("type", "hidden");
-            }
+                var selected = $(this).children("option:selected").val();
+                if (selected === 'New') {
+                    $('#newCategoryDIV').removeClass('invisible');
+                    $('#newCategory').prop("type", "text");
+                } else {
+                    $('#newCategoryDIV').addClass('invisible');
+                    $('#newCategory').prop("type", "hidden");
+                }
             });
             $("#autore").change(function () {
-            var selected = $(this).children("option:selected").val();
-            if (selected === 'New') {
-            $('#newCreatorDIV').removeClass('invisible');
-            $('#newCreator').prop("type", "text");
-            } else {
-            $('#newCreatorDIV').addClass('invisible');
-            $('#newCreator').prop("type", "hidden");
-            }
+                var selected = $(this).children("option:selected").val();
+                if (selected === 'New') {
+                    $('#newCreatorDIV').removeClass('invisible');
+                    $('#newCreator').prop("type", "text");
+                } else {
+                    $('#newCreatorDIV').addClass('invisible');
+                    $('#newCreator').prop("type", "hidden");
+                }
             });
             function toggleComments(id) {
-            var type;
-            if ($('#viewComments').html() === 'Visualizza') {
-            type = 1;
-            $.ajax({
-            type: "POST",
-            url: "ajax/toggleBlogComments.jsp",
-            data: {type: type, id: id},
-            cache: false,
-            success: function (response) {
-            $('#commentiBox').html(response);
-            },
-            error: function () {
-            alert("Errore toggle blog comments");
-            }
-            });
-            $('#viewComments').html('Nascondi');
-            } else {
-            type = 2;
-            $('#viewComments').html('Visualizza');
-            $('#commentiBox').html('');
-            }
+                var type;
+                if ($('#viewComments').html() === 'Visualizza') {
+                    type = 1;
+                    $.ajax({
+                        type: "POST",
+                        url: "ajax/toggleBlogComments.jsp",
+                        data: {type: type, id: id},
+                        cache: false,
+                        success: function (response) {
+                            $('#commentiBox').html(response);
+                        },
+                        error: function () {
+                            alert("Errore toggle blog comments");
+                        }
+                    });
+                    $('#viewComments').html('Nascondi');
+                } else {
+                    type = 2;
+                    $('#viewComments').html('Visualizza');
+                    $('#commentiBox').html('');
+                }
 
             }
 
             $('#tags').tagsinput({
-            allowDuplicates: false,
-            itemValue: 'id', // this will be used to set id of tag
-            itemText: 'text', // this will be used to set text of tag
-            freeInput: true
+                allowDuplicates: false,
+                itemValue: 'id', // this will be used to set id of tag
+                itemText: 'text', // this will be used to set text of tag
+                freeInput: true
             });
 
             $(document).ready(function () {
 
-            var mytagsinput = $('#tags');
-            var o = null;
+                var mytagsinput = $('#tags');
+                var o = null;
 
             <c:if test="${param.id ne null && param.id ne '0' && param.id.matches('[0-9]+')}">
                 <c:forEach var="tag" items="${blogdao.getAllTagsOfBlog(param.id)}">
                     <c:set var="tagText" value="${blogdao.getTagName(tag)}" />
-                    if (o === null) {
+                if (o === null) {
                     o = "${tagText}";
-                    } else {
+                } else {
                     o += ";${tagText}";
-                    }
-                    //console.log("o: " + o + " tag: ${tagText}");
-                    //add my tags object
-                    mytagsinput.tagsinput('add', {id: '${tagText}', text: '${tagText}'});
-                    $('#tag').val(o);
+                }
+                //console.log("o: " + o + " tag: ${tagText}");
+                //add my tags object
+                mytagsinput.tagsinput('add', {id: '${tagText}', text: '${tagText}'});
+                $('#tag').val(o);
                 </c:forEach>
             </c:if>
             });
             function addTag(element) {
-            event.preventDefault();
-            var val = element;
-            var mytagsinput = $('#tags');
-            //add my tags object
-            mytagsinput.tagsinput('add', {id: val, text: val});
-            var inp = '';
-            inp = $('#tag').val();
-            if (inp === '') {
-            $('#tag').val(val);
-            } else {
-            inp += ";" + val;
-            $('#tag').val(inp);
-            }
+                event.preventDefault();
+                var val = element;
+                var mytagsinput = $('#tags');
+                //add my tags object
+                mytagsinput.tagsinput('add', {id: val, text: val});
+                var inp = '';
+                inp = $('#tag').val();
+                if (inp === '') {
+                    $('#tag').val(val);
+                } else {
+                    inp += ";" + val;
+                    $('#tag').val(inp);
+                }
             }
 
             $('#tags').on('itemRemoved', function (event) {
-            var t = $('#tag').val().split(";");
-            var n = "";
-            for (var i = 0; i < t.length; i++) {
-            console.log(t[i]);
-            if (t[i] === "" + event.item.id) {
-            } else {
-            if (n === "") {
-            n += t[i];
-            } else {
-            n += ";" + t[i];
-            }
-            }
-            }
+                var t = $('#tag').val().split(";");
+                var n = "";
+                for (var i = 0; i < t.length; i++) {
+                    console.log(t[i]);
+                    if (t[i] === "" + event.item.id) {
+                    } else {
+                        if (n === "") {
+                            n += t[i];
+                        } else {
+                            n += ";" + t[i];
+                        }
+                    }
+                }
 
-            $('#tag').val(n);
+                $('#tag').val(n);
             });
         </script>
         <script>
             $(document).ready(function () {
-            $().ready(function () {
-            $sidebar = $('.sidebar');
-            $sidebar_img_container = $sidebar.find('.sidebar-background');
-            $full_page = $('.full-page');
-            $sidebar_responsive = $('body > .navbar-collapse');
-            window_width = $(window).width();
-            fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
-            $('.switch-sidebar-image input').change(function () {
-            $full_page_background = $('.full-page-background');
-            $input = $(this);
-            if ($input.is(':checked')) {
-            if ($sidebar_img_container.length != 0) {
-            $sidebar_img_container.fadeIn('fast');
-            $sidebar.attr('data-image', '#');
-            }
+                $().ready(function () {
+                    $sidebar = $('.sidebar');
+                    $sidebar_img_container = $sidebar.find('.sidebar-background');
+                    $full_page = $('.full-page');
+                    $sidebar_responsive = $('body > .navbar-collapse');
+                    window_width = $(window).width();
+                    fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+                    $('.switch-sidebar-image input').change(function () {
+                        $full_page_background = $('.full-page-background');
+                        $input = $(this);
+                        if ($input.is(':checked')) {
+                            if ($sidebar_img_container.length != 0) {
+                                $sidebar_img_container.fadeIn('fast');
+                                $sidebar.attr('data-image', '#');
+                            }
 
-            if ($full_page_background.length != 0) {
-            $full_page_background.fadeIn('fast');
-            $full_page.attr('data-image', '#');
-            }
+                            if ($full_page_background.length != 0) {
+                                $full_page_background.fadeIn('fast');
+                                $full_page.attr('data-image', '#');
+                            }
 
-            background_image = true;
-            } else {
-            if ($sidebar_img_container.length != 0) {
-            $sidebar.removeAttr('data-image');
-            $sidebar_img_container.fadeOut('fast');
-            }
+                            background_image = true;
+                        } else {
+                            if ($sidebar_img_container.length != 0) {
+                                $sidebar.removeAttr('data-image');
+                                $sidebar_img_container.fadeOut('fast');
+                            }
 
-            if ($full_page_background.length != 0) {
-            $full_page.removeAttr('data-image', '#');
-            $full_page_background.fadeOut('fast');
-            }
+                            if ($full_page_background.length != 0) {
+                                $full_page.removeAttr('data-image', '#');
+                                $full_page_background.fadeOut('fast');
+                            }
 
-            background_image = false;
-            }
-            });
-            $('.switch-sidebar-mini input').change(function () {
-            $body = $('body');
-            $input = $(this);
-            if (md.misc.sidebar_mini_active == true) {
-            $('body').removeClass('sidebar-mini');
-            md.misc.sidebar_mini_active = false;
-            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-            } else {
+                            background_image = false;
+                        }
+                    });
+                    $('.switch-sidebar-mini input').change(function () {
+                        $body = $('body');
+                        $input = $(this);
+                        if (md.misc.sidebar_mini_active == true) {
+                            $('body').removeClass('sidebar-mini');
+                            md.misc.sidebar_mini_active = false;
+                            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+                        } else {
 
-            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
-            setTimeout(function () {
-            $('body').addClass('sidebar-mini');
-            md.misc.sidebar_mini_active = true;
-            }, 300);
-            }
+                            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+                            setTimeout(function () {
+                                $('body').addClass('sidebar-mini');
+                                md.misc.sidebar_mini_active = true;
+                            }, 300);
+                        }
 
-            // we simulate the window Resize so the charts will get updated in realtime.
-            var simulateWindowResize = setInterval(function () {
-            window.dispatchEvent(new Event('resize'));
-            }, 180);
-            // we stop the simulation of Window Resize after the animations are completed
-            setTimeout(function () {
-            clearInterval(simulateWindowResize);
-            }, 1000);
-            });
-            });
+                        // we simulate the window Resize so the charts will get updated in realtime.
+                        var simulateWindowResize = setInterval(function () {
+                            window.dispatchEvent(new Event('resize'));
+                        }, 180);
+                        // we stop the simulation of Window Resize after the animations are completed
+                        setTimeout(function () {
+                            clearInterval(simulateWindowResize);
+                        }, 1000);
+                    });
+                });
             });
         </script>
         <script>
             /* Sidebar */
             $(function () {
-            $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
-            $("#navbar").load("ajax/navbar.jsp?page=<c:out value='${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}' />");
-            $("footer").load("ajax/footer.jsp");
+                $(".sidebar").load("ajax/sideBar.jsp?page=<c:out value='${pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase()}' />");
+                $("#navbar").load("ajax/navbar.jsp?page=<c:out value='${StringUtils.capitalize(pageContext.request.getRequestURI().replace("/console/", "").replace(".jsp", "").toLowerCase())}' />");
+                $("footer").load("ajax/footer.jsp");
             });
 
 
@@ -608,51 +608,51 @@
             // See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
 
             $('input[maxlength]').maxlength({
-            alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
-            // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
-            warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.
-            limitReachedClass: "form-text text-muted mt-1", //it's the class the element gets when the limit is reached. Default is "badge badge-danger". Replace with text-danger if you want it to be red.
-            //separator: ' of ', //represents the separator between the number of typed chars and total number of available chars. Default is "/".
-            //preText: 'You have ', //is a string of text that can be outputted in front of the indicator. preText is empty by default.
-            //postText: ' chars remaining.', //is a string outputted after the indicator. postText is empty by default.
-            showMaxLength: true, //showMaxLength: if false, will display just the number of typed characters, e.g. will not display the max length. Default: true.
-            showCharsTyped: true, //if false, will display just the remaining length, e.g. will display remaining lenght instead of number of typed characters. Default: true.
-            placement: 'bottom-right-inside', //is a string, object, or function, to define where to output the counter. Possible string values are: bottom ( default option ), left, top, right, bottom-right, top-right, top-left, bottom-left and centered-right. Are also available : **bottom-right-inside** (like in Google's material design, **top-right-inside**, **top-left-inside** and **bottom-left-inside**. stom placements can be passed as an object, with keys top, right, bottom, left, and position. These are passed to $.fn.css. A custom function may also be passed. This method is invoked with the {$element} Current Input, the {$element} MaxLength Indicator, and the Current Input's Position {bottom height left right top width}.
+                alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
+                // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
+                warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.
+                limitReachedClass: "form-text text-muted mt-1", //it's the class the element gets when the limit is reached. Default is "badge badge-danger". Replace with text-danger if you want it to be red.
+                //separator: ' of ', //represents the separator between the number of typed chars and total number of available chars. Default is "/".
+                //preText: 'You have ', //is a string of text that can be outputted in front of the indicator. preText is empty by default.
+                //postText: ' chars remaining.', //is a string outputted after the indicator. postText is empty by default.
+                showMaxLength: true, //showMaxLength: if false, will display just the number of typed characters, e.g. will not display the max length. Default: true.
+                showCharsTyped: true, //if false, will display just the remaining length, e.g. will display remaining lenght instead of number of typed characters. Default: true.
+                placement: 'bottom-right-inside', //is a string, object, or function, to define where to output the counter. Possible string values are: bottom ( default option ), left, top, right, bottom-right, top-right, top-left, bottom-left and centered-right. Are also available : **bottom-right-inside** (like in Google's material design, **top-right-inside**, **top-left-inside** and **bottom-left-inside**. stom placements can be passed as an object, with keys top, right, bottom, left, and position. These are passed to $.fn.css. A custom function may also be passed. This method is invoked with the {$element} Current Input, the {$element} MaxLength Indicator, and the Current Input's Position {bottom height left right top width}.
 
-            //appendToParent: true, // appends the maxlength indicator badge to the parent of the input rather than to the body.
-            //message: an alternative way to provide the message text, i.e. 'You have typed %charsTyped% chars, %charsRemaining% of %charsTotal% remaining'. %charsTyped%, %charsRemaining% and %charsTotal% will be replaced by the actual values. This overrides the options separator, preText, postText and showMaxLength. Alternatively you may supply a function that the current text and max length and returns the string to be displayed. For example, function(currentText, maxLength) { return '' + Math.ceil(currentText.length / 160) + ' SMS Message(s)';}
-            //utf8: true //the input will count using utf8 bytesize/encoding. For example: the '£' character is counted as two characters.
-            //showOnReady: shows the badge as soon as it is added to the page, similar to alwaysShow
-            //twoCharLinebreak: count linebreak as 2 characters to match IE/Chrome textarea validation
-            //customMaxAttribute: String -- allows a custom attribute to display indicator without triggering native maxlength behaviour. Ignored if value greater than a native maxlength attribute. 'overmax' class gets added when exceeded to allow user to implement form validation.
-            //allowOverMax: Will allow the input to be over the customMaxLength. Useful in soft max situations.
+                //appendToParent: true, // appends the maxlength indicator badge to the parent of the input rather than to the body.
+                //message: an alternative way to provide the message text, i.e. 'You have typed %charsTyped% chars, %charsRemaining% of %charsTotal% remaining'. %charsTyped%, %charsRemaining% and %charsTotal% will be replaced by the actual values. This overrides the options separator, preText, postText and showMaxLength. Alternatively you may supply a function that the current text and max length and returns the string to be displayed. For example, function(currentText, maxLength) { return '' + Math.ceil(currentText.length / 160) + ' SMS Message(s)';}
+                //utf8: true //the input will count using utf8 bytesize/encoding. For example: the '£' character is counted as two characters.
+                //showOnReady: shows the badge as soon as it is added to the page, similar to alwaysShow
+                //twoCharLinebreak: count linebreak as 2 characters to match IE/Chrome textarea validation
+                //customMaxAttribute: String -- allows a custom attribute to display indicator without triggering native maxlength behaviour. Ignored if value greater than a native maxlength attribute. 'overmax' class gets added when exceeded to allow user to implement form validation.
+                //allowOverMax: Will allow the input to be over the customMaxLength. Useful in soft max situations.
             });
             <c:if test="${response.getHeader('NOTIFICA') ne null}">
-                $.notify({
+            $.notify({
                 // options
                 message: "${response.getHeader('NOTIFICA')}"
-                }, {
+            }, {
                 // settings
                 element: 'body',
                 type: "warning",
                 allow_dismiss: true,
                 placement: {
-                from: "top",
-                align: "center"
+                    from: "top",
+                    align: "center"
                 },
                 animate: {
-                enter: 'animated fadeInDown',
-                exit: 'animated fadeOutUp'
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
                 },
                 icon_type: 'class',
                 template: '<div class="col-xs-11 col-sm-3 alert alert-{0} alert-with-icon" data-notify="container" role="alert">' +
-                '<i class="material-icons" data-notify="icon">warning</i>' +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                '<i class="material-icons">close</i>' +
-                '</button>' +
-                '<span data-notify="message">{2}</span>' +
-                '</div>'
-                });
+                        '<i class="material-icons" data-notify="icon">warning</i>' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<i class="material-icons">close</i>' +
+                        '</button>' +
+                        '<span data-notify="message">{2}</span>' +
+                        '</div>'
+            });
             </c:if>
         </script>
     </body>

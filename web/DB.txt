@@ -125,3 +125,14 @@ SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
 END$$ 
 DELIMITER ;
 ################################################################################
+
+Get csv for facebook catalog
+
+select id as id, nome as title , descrizione as description, categoria as product_type, CONCAT('http://www.macelleriadellantonio.it/prodotto.jsp?id=',id) as link, CONCAT('http://www.macelleriadellantonio.it/console/',immagine) as image_link, 'new' as 'condition',
+(
+    CASE 
+        WHEN disponibile = 1 THEN 'in stock'
+        ELSE 'out of stock'
+    END
+) AS availability,
+costo as price, '\'L Bortoleto' as brand, (select id from categorie where nome = categoria) as item_group_id, '4628' as google_product_category from prodotto where categoria = 'affumicati'

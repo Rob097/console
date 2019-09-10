@@ -187,7 +187,7 @@ public class updateProd extends HttpServlet {
 
                     for (int k = 0; k < variantiNomi.size(); k++) {
                         if (!request.getParameter(variantiNomi.get(k)).equals("")) {
-                            varianti.add(request.getParameter(variantiNomi.get(k)));
+                            varianti.add(request.getParameter(variantiNomi.get(k)).replaceAll(":", ""));
                         }
                         if (!request.getParameter(scelteNomi.get(k)).equals("")) {
                             scelte.add(request.getParameter(scelteNomi.get(k)));
@@ -199,7 +199,7 @@ public class updateProd extends HttpServlet {
 
                     productdao.alterProd(idProd, nome, descrizione, categoria, immagine, disponibile, costo);
                     productdao.updateVariant(idProd, varianti, scelte, supplement);
-                    url = "prodotti.jsp";
+                    url = "prodotti.jsp#"+categoria;
                 } else {
                     response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
                 }

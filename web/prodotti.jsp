@@ -123,7 +123,7 @@
                                 <div class="card card-plain">
                                     <div class="card-header card-header-warning">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
-                                        <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addConfezionato"><i class="fas fa-plus"></i> Aggiungi prodotto confezionato</a>                                       
+                                        <a style="float: right; cursor: pointer;" onclick="addConfezionato();"><i class="fas fa-plus"></i> Aggiungi prodotto confezionato</a>                                       
                                         <p class="card-category">Prodotti Confezionati</p>
                                     </div>
                                     <div class="card-body">
@@ -193,7 +193,7 @@
                                 <div class="card card-plain">
                                     <div class="card-header card-header-warning">
                                         <h4 class="card-title mt-0"> Prodotti</h4>
-                                        <a style="float: right; cursor: pointer;" data-toggle="modal" data-target="#addFresco"><i class="fas fa-plus"></i> Aggiungi prodotto fresco</a>                                       
+                                        <a style="float: right; cursor: pointer;" onclick="addFresco();"><i class="fas fa-plus"></i> Aggiungi prodotto fresco</a>                                       
                                         <p class="card-category">Prodotti Freschi</p>
                                     </div>
                                     <div class="card-body">
@@ -371,84 +371,12 @@
 
         <!-- Add Confezionato -->
         <div class="modal fade" id="addConfezionato" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content container">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="catImgChangeTitle">Nuovo prodotto confezionato</h5>
-                        <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form method="POST" action="addProduct" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <div style="height: 100%;" id="toDeleteConf"></div>
-                                    <img id="InputIMGConf" src="" alt="Modal_IMG_Conf" class="inputImg mb-3 invisible"/>
-                                    <input type='file' name="immagine" onchange="readURL(this, 'InputIMGConf'); $('#InputIMGConf').removeClass('invisible'); $('#toDeleteConf').addClass('invisible');" required/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
-                                    <select class="form-control mb-4" id="categoria" name="categoria" required>
-                                        <c:forEach var="cat" items="${categorydao.getConfCategories()}">
-                                            <option>${cat.nome}</option>
-                                        </c:forEach>
-                                    </select>                       
-                                </div>
-                            </div>
-                            <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
-                            <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
-                            <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
-                            <input type="hidden" name="fresco" value="false" required />
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
-                            <button id="catImgChangeSubmit" type="submit" class="btn btn-primary">Salva</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            
         </div>
 
         <!-- Add Fresco -->
         <div class="modal fade" id="addFresco" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content container">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="catImgChangeTitle">Nuovo prodotto fresco</h5>
-                        <button type="button" class="close" onclick='closeModal();' aria-label="Close" >
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form method="POST" action="addProduct" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <div style="height: 100%;" id="toDeleteFresc"></div>
-                                    <img id="InputIMGFresc" src="" alt="Modal_IMG_Fresc" class="inputImg mb-3 invisible"/>
-                                    <input type='file' name="immagine" onchange="readURL(this, 'InputIMGFresc'); $('#InputIMGFresc').removeClass('invisible'); $('#toDeleteFresc').addClass('invisible');" required/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
-                                    <select class="form-control mb-4" id="categoria" name="categoria" required>
-                                        <c:forEach var="cat" items="${categorydao.getFreshCategories()}">
-                                            <option>${cat.nome}</option>
-                                        </c:forEach>
-                                    </select>                       
-                                </div>
-                            </div>
-                            <input pattern="[0-9]+(.|,)+[0-9]{1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
-                            <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
-                            <input class="mb-4" type="checkbox" name="disponibile" checked/> Disponibile<br>
-                            <input type="hidden" name="fresco" value="true" required />
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
-                            <button id="catImgChangeSubmit" type="submit" class="btn btn-primary">Salva</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            
         </div>
         <!-- ###########################    FINE MODALI   ###########################-->
 
@@ -588,6 +516,37 @@
                     },
                     error: function () {
                         alert("Errore updateProd");
+                    }
+                });
+            }
+            
+            /* addFresco */
+            function addFresco() {
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/addFresco.jsp",
+                    cache: false,
+                    success: function (response) {
+                        $("#addFresco").html(response);
+                        openModal('addFresco');
+                    },
+                    error: function () {
+                        alert("Errore addFresco");
+                    }
+                });
+            }
+            /* addConfezionato */
+            function addConfezionato() {
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/addConfezionato.jsp",
+                    cache: false,
+                    success: function (response) {
+                        $("#addConfezionato").html(response);
+                        openModal('addConfezionato');
+                    },
+                    error: function () {
+                        alert("Errore addConfezionato");
                     }
                 });
             }

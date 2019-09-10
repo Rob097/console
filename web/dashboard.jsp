@@ -308,6 +308,7 @@
                                 <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://www.servizipos.it/merchant-console-web/">Cassa Rurale</a></span>
                                 <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="#">Google</a></span>
                                 <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://webmail.register.it/?chglng=ita">Email register</a></span>
+                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://business.facebook.com/home/accounts?business_id=2478654128853320">Facebook Business Manager</a></span>
                             </div>
                         </div>
                         <div class="row">

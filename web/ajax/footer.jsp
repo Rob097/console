@@ -10,6 +10,11 @@
     <nav class="float-left">
         <ul>
             <li>
+                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/bottega.jsp">
+                    Bottega Online
+                </a>
+            </li>
+            <li>
                 <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/macelleria.jsp">
                     Macelleria
                 </a>
@@ -18,12 +23,7 @@
                 <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/ristorante.jsp">
                     Ristorante
                 </a>
-            </li>
-            <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/bottega.jsp">
-                    Bottega Online
-                </a>
-            </li>
+            </li>            
             <li>
                 <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/blog.jsp">
                     Blog

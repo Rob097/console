@@ -118,11 +118,12 @@ public class catImgChange extends HttpServlet {
                     nome = unaccent(request.getParameter("nome"));
                 }
                 if (request.getParameter("descrizione") != null) {
-                    descrizione = unaccent(request.getParameter("descrizione"));
+                    descrizione = request.getParameter("descrizione");
                 }
                 if (request.getParameter("fresco") != null) {
                     fresco = request.getParameter("fresco").equals("true");
                 }
+                System.out.println(descrizione);
                 try {
                     //Load dell'immagine
                     if (filePart1 != null) {

@@ -11,6 +11,8 @@ import database.factories.DAOFactory;
 import database.jdbc.JDBCProductDAO;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -104,6 +106,42 @@ public class addProduct extends HttpServlet {
                 }
 
                 int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco);
+
+                ArrayList<String> variantiNomi = new ArrayList<>();
+                ArrayList<String> scelteNomi = new ArrayList<>();
+                ArrayList<String> supplementNomi = new ArrayList<>();
+
+                ArrayList<String> varianti = new ArrayList<>();
+                ArrayList<String> scelte = new ArrayList<>();
+                ArrayList<String> supplement = new ArrayList<>();
+
+                Enumeration<String> keys = request.getParameterNames();
+                while (keys.hasMoreElements()) {
+                    String key = keys.nextElement();
+                    if (key.contains("[variante]")) {
+                        variantiNomi.add(key);
+                    }
+                    if (key.contains("[scelta]")) {
+                        scelteNomi.add(key);
+                    }
+                    if (key.contains("[supplement]")) {
+                        supplementNomi.add(key);
+                    }
+                }
+
+                for (int k = 0; k < variantiNomi.size(); k++) {
+                    if (!request.getParameter(variantiNomi.get(k)).equals("")) {
+                        varianti.add(request.getParameter(variantiNomi.get(k)).replaceAll(":", ""));
+                    }
+                    if (!request.getParameter(scelteNomi.get(k)).equals("")) {
+                        scelte.add(request.getParameter(scelteNomi.get(k)));
+                    }
+                    if (!request.getParameter(supplementNomi.get(k)).equals("")) {
+                        supplement.add(request.getParameter(supplementNomi.get(k)));
+                    }
+                }
+                
+                productdao.updateVariant(id, varianti, scelte, supplement);
 
                 //Load dell'immagine
                 if (filePart1 != null) {

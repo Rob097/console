@@ -619,7 +619,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
             }
 
         } else {
-            System.out.println("error updateVariant paramenters");
+            /* no variants change */
         }
     }
 
