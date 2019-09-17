@@ -31,9 +31,6 @@ public interface BlogDAO {
     
     /* TAGS */
     public void addTags(ArrayList<String> prodTags, int idBlog) throws DAOException;
-    /*public void addProdTags(ArrayList<String> prodTags, int idBlog) throws DAOException;
-    public void addCatTags(ArrayList<String> catTags, int idBlog) throws DAOException;*/
-    public String getTag(int id) throws DAOException;
     public String getTagName(int id) throws DAOException;
     public ArrayList<Integer> getAllTagsOfBlog(int id_blog) throws DAOException;    
     public ArrayList<String> getAllTextTagsOfBlog(int id_blog) throws DAOException;

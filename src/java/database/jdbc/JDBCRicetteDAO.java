@@ -46,8 +46,12 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -473,6 +477,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         return val;
     }
 
+    /**
+     * Metodo che ritorna tutti gli autori dell'azienda
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getOurCreators() throws DAOException {
         checkCON();
@@ -493,6 +502,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
     
+    /**
+     * Metodo che ritorna tutti gli autori in generale
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getAllCreators() throws DAOException {
         checkCON();
@@ -513,6 +527,12 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
 
+    /**
+     * MEtodo per rimuovere un ingrediente dalla ricettta
+     * @param id
+     * @param ing
+     * @throws DAOException
+     */
     @Override
     public void removeIng(int id, String ing) throws DAOException {
         checkCON();
@@ -552,6 +572,22 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
 
+    /**
+     * Metodo per aggiolrnare una ricetta
+     * @param nome
+     * @param procedimento
+     * @param descrizione
+     * @param immagine
+     * @param difficolta
+     * @param ingredienti
+     * @param creatore
+     * @param tempo
+     * @param id
+     * @param id_prod
+     * @param categoria
+     * @param approvata serve per scegliere se è pubblicata oppure no
+     * @throws DAOException
+     */
     @Override
     public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException {
         checkCON();
@@ -590,6 +626,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
 
+    /**
+     * Metodo per eliminare un'idea
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteRecipe(int id) throws DAOException {
         checkCON();
@@ -613,6 +654,21 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
         }
     }
 
+    /**
+     * Metodo per aggiungere al DB una nuova idea
+     * @param nome
+     * @param procedimento
+     * @param descrizione
+     * @param difficolta
+     * @param ingredienti
+     * @param creatore
+     * @param tempo
+     * @param id_prod
+     * @param categoria
+     * @param approvata serve per scegliere se è pubblicata oppure no
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException {
         checkCON();

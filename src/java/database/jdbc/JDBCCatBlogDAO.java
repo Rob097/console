@@ -42,8 +42,12 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -188,6 +192,11 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
         }
     }
 
+    /**
+     * Metodo che elimina una categoria di blog
+     * @param nome
+     * @throws DAOException
+     */
     @Override
     public void deleteCat(String nome) throws DAOException {
         checkCON();
@@ -211,6 +220,11 @@ public class JDBCCatBlogDAO extends JDBCDAO implements CatBlogDAO {
         }
     }
 
+    /**
+     * MEtodo che aggiunge una nuova categoria di blog
+     * @param nome
+     * @throws DAOException
+     */
     @Override
     public void addCat(String nome) throws DAOException {
         checkCON();

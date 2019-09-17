@@ -132,6 +132,7 @@
                                                                                     <c:forEach var="variante" items="${ordine.varianti}">
                                                                                         <c:set var="vars" value="${variante.getKey()}" />
                                                                                         <c:set var="quant" value="${variante.getValue()}" />
+                                                                                        <c:set var="varPrice" value="0" />
                                                                                         <c:if test="${vars.get(0).id_prod eq prodotto.id}">
                                                                                             <tr>
                                                                                                 <td>
@@ -141,13 +142,14 @@
                                                                                                 <td>
                                                                                                     <c:forEach var="var" items="${vars}">
                                                                                                         ${var.variant}: ${var.variantName}
+                                                                                                        <c:set var="varPrice" value="${varPrice + var.supplement}" />
                                                                                                     </c:forEach>
                                                                                                 </td>
                                                                                                 <td>
                                                                                                     ${quant}
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    € ${var.supplement + Double.parseDouble(prodotto.costo.replace(",", "."))}
+                                                                                                    € ${varPrice + Double.parseDouble(prodotto.costo.replace(",", "."))}
                                                                                                 </td>                                                                                        
                                                                                             </tr>
                                                                                         </c:if>
@@ -177,7 +179,7 @@
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </c:forEach>
-                                                                <c:if test="${ordine.tipo.equals('KEATCHEN')}">
+                                                                <c:if test="${ordine.tipo.equals('Refrigerato')}">
                                                                     <tr>
                                                                         <td>
                                                                             <div class="image-liquid image-holder--original col-3 zoom" style="cursor: unset; background-image: url('https://lh3.googleusercontent.com/6QOIaGv5w7KSjKo8XuMGgg_aXFQPbjQUX1TADK7LBCmxvRvNQncQRs-xDhdOz8rxnDg1tHL-zuybheQTO5a-ad3TE1YkXASmHIY7zd1jVhLMzbJE-W1rD_7NwYN-phBCflLlXuRB5Q=w2400');"></div>
@@ -197,9 +199,9 @@
                                                                     <td>
                                                                         <h6 style="font-weight: 900 !important; text-align: center;">TOTALE</h6>
                                                                     </td>
-                                                                    <td colspan='3'>                                                                            
+                                                                    <td colspan='2'>                                                                            
                                                                     </td>
-                                                                    <td style="font-weight: 900 !important;">
+                                                                    <td colspan='2' style="font-weight: 900 !important;">
                                                                         € ${ordine.tot}
                                                                     </td>
                                                                 </tr>

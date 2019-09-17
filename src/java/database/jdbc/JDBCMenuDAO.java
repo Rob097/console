@@ -41,8 +41,12 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -54,6 +58,11 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
 
+    /**
+     * MEtodo che ritorna tutti i menu nel DB
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Menu> getAllMenu() throws DAOException {
         checkCON();
@@ -78,6 +87,12 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
 
+    /**
+     * Metodo che ritorna un menu dall'id
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Menu getMenu(int id) throws DAOException {
         checkCON();
@@ -102,6 +117,14 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
 
+    /**
+     * Metodo per aggiornare un menu
+     * @param id
+     * @param nome
+     * @param copertina
+     * @param immagine
+     * @throws DAOException
+     */
     @Override
     public void updateMenu(int id, String nome, String copertina, String immagine) throws DAOException {
         checkCON();
@@ -131,6 +154,11 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
 
+    /**
+     * Metodo per eliminare un menu
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteMenu(int id) throws DAOException {
         checkCON();
@@ -154,6 +182,13 @@ public class JDBCMenuDAO extends JDBCDAO implements MenuDAO {
         }
     }
 
+    /**
+     * Metodo per aggiungere una nuova sezione al menu
+     * @param nome
+     * @param immagine
+     * @param copertina
+     * @throws DAOException
+     */
     @Override
     public void addMenu(String nome, String immagine, String copertina) throws DAOException {
         checkCON();

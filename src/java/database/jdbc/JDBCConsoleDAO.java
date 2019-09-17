@@ -39,11 +39,16 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import static varie.costanti.MAX_COSTO;
+import static varie.costanti.MAX_PRICE;
 import static varie.costanti.MAX_W_PRICE;
+import static varie.costanti.MED_COSTO;
+import static varie.costanti.MED_PRICE;
 import static varie.costanti.MED_W_PRICE;
 import static varie.costanti.MIN_COSTO;
+import static varie.costanti.MIN_PRICE;
 import static varie.costanti.MIN_W_PRICE;
 
 /**
@@ -52,6 +57,12 @@ import static varie.costanti.MIN_W_PRICE;
  */
 public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
+    /**
+     * Questo è il costruttore e serve fondamentalmente per collegarsi alla
+     * connessione aperta con il DB
+     * @param con
+     * @throws SQLException
+     */
     public JDBCConsoleDAO(Connection con) throws SQLException {
         super(con);
         try {
@@ -61,8 +72,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if (this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)) {
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -74,11 +89,17 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Metodo che ritorna il numero di visualizzazioni complessive del sito
+     * ci sono nella settimana corrente, partendo dal lunedì
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int getWeekViews() throws DAOException {
         checkCON();
         Calendar calendar = Calendar.getInstance();
-        LocalDate monday = LocalDate.now();
+        LocalDate monday;
         java.sql.Date ourJavaDateObject = new java.sql.Date(calendar.getTime().getTime());
         if (ourJavaDateObject.toLocalDate().getDayOfWeek().equals(DayOfWeek.MONDAY)) {
             monday = ourJavaDateObject.toLocalDate();
@@ -99,6 +120,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return views;
     }
 
+    /**
+     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il mese.<br>
+     * Divide le ultime 4 settimane dove l'ultima è la corrente, e ad ogni settimana
+     * associa le rispettive visualizzazioni.
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getMonthViews() throws DAOException {
         checkCON();
@@ -155,6 +183,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     }
 
+    /**
+     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il mese scorso.<br>
+     * Divide le 4 settimane, e ad ogni settimana associa le rispettive visualizzazioni.
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getLastMonthViews() throws DAOException {
         checkCON();
@@ -213,6 +247,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     }
 
+    /**
+     * Compara le visualizioni del mese scorso con quelle di questo mese
+     * e ritorna la differenza sia positiva che negativa
+     * @param lastValue
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Object getViewsChanges(boolean lastValue) throws DAOException {
         checkCON();
@@ -254,6 +295,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * ritorna le visualizzazioni complessive per ogi pagina del sito
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getPagesViews() throws DAOException {
         checkCON();
@@ -272,6 +318,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * ritorna il numero di iscrizioni alla newsletter nelle 4 settimane correnti
+     * o nelle 4 settimane precedenti
+     * @param isLast
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getMonthEmailSub(boolean isLast) throws DAOException {
         checkCON();
@@ -331,6 +384,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return map;
     }
 
+    /**
+     * fa il confronto delle iscrizioni alla nesletter nelle 4 settimane precedenti
+     * e in quelle correnti.
+     * @param lastValue
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int getEmailChanges(boolean lastValue) throws DAOException {
         checkCON();
@@ -361,6 +421,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Ritorna il numero complessivo degli iscritti alla newsletter
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getTotalEmailSub() throws DAOException {
         checkCON();
@@ -381,6 +446,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return totale;
     }
 
+    /**
+     * Ritorna le entrate nelle 4 settimane correnti o passate dividendoli per settimane
+     * e associando ad ogni settimana il rispettivo importo
+     * @param isLast
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getMonthRevenue(boolean isLast) throws DAOException {
         checkCON();
@@ -439,6 +511,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return map;
     }
 
+    /**
+     * Confronta le entrate nelle 4 settimane scorse con quelle correnti e ritorna
+     * la differenza sia positiva che negativa
+     * @param lastValue
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Object getRevenueChanges(boolean lastValue) throws DAOException {
         checkCON();
@@ -479,6 +558,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Ritorna le entrate complessivamente.
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getTotalRevenue() throws DAOException {
         checkCON();
@@ -500,6 +584,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return totale;
     }
 
+    /**
+     * Ritorna la data dell'ultima iscrizione alla neswletter
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getLastEmailSub() throws DAOException {
         checkCON();
@@ -521,6 +610,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return null;
     }
 
+    /**
+     * Ritorna la data dell'ultimo acquisto
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getLastRevenue() throws DAOException {
         checkCON();
@@ -542,6 +636,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return null;
     }
 
+    /**
+     * Ritorna tutti i prodotti che sono stati acquistati almento una volta 
+     * e il numero di volte che seono stati acquistati
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getProductBuy() throws DAOException {
         checkCON();
@@ -569,6 +669,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return map;
     }
 
+    /**
+     * Ritorna le visualizzazioni degli articoli del blog associandoli per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getBlogCatViews() throws DAOException {
         checkCON();
@@ -587,6 +692,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna le visualizzazioni delle idee associandole per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getRecipeCatViews() throws DAOException {
         checkCON();
@@ -611,6 +721,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna le visualizzazioni dei blog di una determinata categoria che sono 
+     * maggiori di 0
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getBlogArtViews(String categoria) throws DAOException {
         checkCON();
@@ -630,6 +747,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna le visualizzazioni delle idee di una determinata categoria che sono 
+     * maggiori di 0
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getRecipeArtViews(boolean categoria) throws DAOException {
         checkCON();
@@ -649,6 +773,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna i commenti degli articoli del blog associandoli per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getBlogCatComments() throws DAOException {
         checkCON();
@@ -667,6 +796,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna i commenti delle idee associandole per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getRecipeCatComments() throws DAOException {
         checkCON();
@@ -691,6 +825,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna i commenti dei blog di una determinata categoria
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getBlogArtComments(String categoria) throws DAOException {
         checkCON();
@@ -710,6 +850,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna i commenti delle idee di una determinata categoria
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Integer> getRecipeArtComments(boolean categoria) throws DAOException {
         checkCON();
@@ -729,6 +875,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione degli articoli del blog associandoli per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getBlogCatRate() throws DAOException {
         checkCON();
@@ -750,6 +901,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione delle idee associandole per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getRecipeCatRate() throws DAOException {
         checkCON();
@@ -777,6 +933,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione dei prodotti associandoli per categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getProductCatRate() throws DAOException {
         checkCON();
@@ -799,6 +960,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione deglia rticoli del blog di una certa categoria
+     * che hanno almeno una valutazione
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getBlogArtRate(String categoria) throws DAOException {
         checkCON();
@@ -821,6 +989,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione delle idee di una certa categoria che hanno almeno
+     * una valutazione
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getRecipeArtRate(boolean categoria) throws DAOException {
         checkCON();
@@ -843,6 +1018,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna la valutazione dei prodotti di una certa categoria che hanno
+     * almeno una valutazione
+     * @param categoria
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Map<String, Double> getProductArtRate(String categoria) throws DAOException {
         checkCON();
@@ -865,6 +1047,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return dati;
     }
 
+    /**
+     * Ritorna tutti i vari tipi di spedizione
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getTypeDelivery() throws DAOException {
         checkCON();
@@ -883,6 +1070,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return tipi;
     }
 
+    /**
+     * Ritorna il numero di ordini per un determinato tipo di spedizione
+     * @param type
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int getNumberOfType(String type) throws DAOException {
         checkCON();
@@ -903,6 +1096,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return number;
     }
 
+    /**
+     * Ritorna l'importo totale di tutti gli ordini di un determinato tipo di spedizione
+     * @param type
+     * @return
+     * @throws DAOException
+     */
     @Override
     public double getTotOfType(String type) throws DAOException {
         checkCON();
@@ -926,6 +1125,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     }
 
+    /**
+     * Ritorna una variante a partire dall'id
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Variante getVariant(int id) throws DAOException {
         checkCON();
@@ -951,6 +1156,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Ritorna tutte le varianti partendo dalla stringa con la concatenzaione degli id
+     * @param var
+     * @return
+     * @throws DAOException
+     */
     @Override
     public LinkedHashMap<ArrayList<Variante>, Integer> getVariants(String var) throws DAOException {
 
@@ -985,6 +1196,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return varianti;
     }
 
+    /**
+     * Controlla se un ordine contiene almeno un prodotto con delle varianti
+     * @param idOrder
+     * @param idProd
+     * @return
+     * @throws DAOException
+     */
     @Override
     public boolean orderContainProdVariant(String idOrder, int idProd) throws DAOException {
         LinkedHashMap<ArrayList<Variante>, Integer> varianti = getOrder(idOrder).getVarianti();
@@ -1003,6 +1221,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return false;
     }
 
+    /**
+     * ritorna l'ultimo ordine fatto con un determinato tipo di spedizione
+     * @param type
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Ordine getLastOfType(String type) throws DAOException {
         checkCON();
@@ -1034,6 +1258,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return ordine;
     }
 
+    /**
+     * Ritorna un determinato ordien partendo dall'id
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Ordine getOrder(String id) throws DAOException {
         checkCON();
@@ -1065,11 +1295,17 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return ordine;
     }
 
+    /**
+     * Ritorna tutti gli ordini fatyti con un determinato tipo di spedizione
+     * @param type
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Ordine> getOrdersOfType(String type) throws DAOException {
         checkCON();
         ArrayList<Ordine> ordini = new ArrayList<>();
-        Ordine ordine = null;
+        Ordine ordine;
 
         try (PreparedStatement stm = CON.prepareStatement("select * from orderSum where delivery = ?")) {
             stm.setString(1, type);
@@ -1097,7 +1333,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        if (ordini != null && !ordini.isEmpty()) {
+        if (!ordini.isEmpty()) {
             try {
                 Collections.sort(ordini, (Ordine z1, Ordine z2) -> {
                     Timestamp t1 = Timestamp.valueOf(z1.getData());
@@ -1118,6 +1354,13 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return ordini;
     }
 
+    /**
+     * Ritorna tutti i prodotti di un determinato ordine
+     * @param prodotti
+     * @param request
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Prodotto> getProdOfOrder(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
         checkCON();
@@ -1137,9 +1380,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                         quantita.add(s[1]);
                     }
                 }
-                int z = 0;
                 for (int i = 0; i < nomi.size(); i++) {
-                    z++;
                     if (productdao.getProductByName(nomi.get(i)) == null) {
                         products.add(new Prodotto());
                     } else {
@@ -1154,12 +1395,17 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                 System.out.println("PRODUCTDAO IS NULL");
                 return null;
             }
-        } catch (Exception s) {
-            s.printStackTrace();
+        } catch (DAOException | NumberFormatException s) {
             return products;
         }
     }
 
+    /**
+     * Metodo per aggiornare lo stato dell'ordine
+     * @param id
+     * @param stato
+     * @throws DAOException
+     */
     @Override
     public void setOrderStatus(String id, int stato) throws DAOException {
         checkCON();
@@ -1200,65 +1446,90 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Metodo che restituisce i costi di spedizione di un ordine
+     * @param prodotti
+     * @param request
+     * @return
+     * @throws DAOException
+     */
     @Override
     public double getOrderDeliveryCost(ArrayList<String> prodotti, HttpServletRequest request) throws DAOException {
         checkCON();
 
         ArrayList<Prodotto> products = getProdOfOrder(prodotti, request);
+        ArrayList<Prodotto> freschi = new ArrayList<>();
+        LinkedHashMap<ArrayList<Variante>, Integer> varianti;
         DecimalFormat df = new DecimalFormat("0.00");
         df.setMaximumFractionDigits(2);
-        double totale = 0.00;
+        double totale = 0.00, varTot;
 
         try {
-            if (prodotti != null) {
+            if (products != null) {
                 for (Prodotto p : products) {
-                    if (!p.isEmpty()) {
-                        totale += (df.parse(p.getCosto()).doubleValue() * p.getQuantita());
+                    if (p != null) {
+                        varianti = getCartProductVariant(request, p.getId());
+
+                        if (varianti != null && !varianti.isEmpty()) {
+                            for (Map.Entry<ArrayList<Variante>, Integer> entry : varianti.entrySet()) {
+                                varTot = 0.00;
+                                ArrayList<Variante> key = entry.getKey();
+                                Integer value = entry.getValue();
+                                for (Variante v : key) {
+                                    varTot += v.getSupplement();
+                                }
+                                totale += (df.parse(p.getCosto()).doubleValue() + varTot) * value;
+                            }
+                        } else {
+                            if (p.getCosto() != null) {
+                                totale += (df.parse(p.getCosto()).doubleValue() * p.getQuantita());
+                            }
+                        }
                     }
                 }
             }
         } catch (ParseException ex) {
             Logger.getLogger(JDBCProductDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String costo = String.format("%.2f", totale);
+        String costo = String.format("%.2f", totale).replace(",", ".");
+
+        if (products != null) {
+            for (Prodotto p : products) {
+                if (p.isFresco()) {
+                    freschi.add(p);
+                }
+            }
+        }
 
         if (costo == null || costo.isEmpty()) {
             return 0.0;
         } else {
             df.setMaximumFractionDigits(2);
-            double costoN = 0.00, tot = 0.00;
+            double costoN = 0.00;
             String spedizione = null;
-            String freshBox;
 
             try {
                 costoN += (df.parse(costo).doubleValue());
-                if (costoN <= MIN_COSTO) {
-                    spedizione = "17.50";
-                } else if (costoN > MIN_COSTO && costoN < MAX_COSTO) {
-                    spedizione = "24.00";
-                } else if (costoN >= MAX_COSTO) {
-                    spedizione = String.format("%.2f", MAX_W_PRICE).replace(",", ".");
-                }
-
-                if (costoN >= MAX_COSTO) {
-                    spedizione = String.format("%.2f", MAX_W_PRICE).replace(",", ".");
-                } else {
-
-                    if (totale > 0 && totale < MIN_COSTO) {
-                        tot = MIN_W_PRICE;
-                    } else if (totale >= MIN_COSTO && totale < MAX_COSTO) {
-                        tot = MED_W_PRICE;
-                    } else if (totale >= MAX_COSTO) {
-                        tot = MAX_W_PRICE;
+                if (freschi.isEmpty()) {
+                    if (costoN <= MIN_COSTO) {
+                        spedizione = "" + MIN_PRICE;
+                    } else if (costoN > MIN_COSTO && costoN <= MED_COSTO) {
+                        spedizione = "" + MED_PRICE;
+                    } else if (costoN > MED_COSTO && costoN < MAX_COSTO) {
+                        spedizione = "" + MAX_PRICE;
+                    } else if (costoN >= MAX_COSTO) {
+                        spedizione = "0.00";
                     }
-                    freshBox = String.format("%.2f", tot);
-                    freshBox = freshBox.replace(",", ".");
-
-                    Double sD = Double.parseDouble(spedizione);
-                    Double fD = Double.parseDouble(freshBox);
-                    Double tD = sD + fD;
-
-                    spedizione = String.format("%.2f", tD);
+                } else {
+                    if (costoN <= MIN_COSTO) {
+                        spedizione = "" + (MIN_PRICE + MIN_W_PRICE);
+                    } else if (costoN > MIN_COSTO && costoN <= MED_COSTO) {
+                        spedizione = "" + (MED_PRICE + MED_W_PRICE);
+                    } else if (costoN > MED_COSTO && costoN < MAX_COSTO) {
+                        spedizione = "" + (MAX_PRICE + MAX_W_PRICE);
+                    } else if (costoN >= MAX_COSTO) {
+                        spedizione = String.format("%.2f", MAX_W_PRICE).replace(",", ".");
+                    }
                 }
 
             } catch (ParseException ex) {
@@ -1269,43 +1540,63 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     }
 
+    /**
+     * MEtodo che indica che tipo di box serve per l'ordine
+     * @param totale
+     * @param prodotti
+     * @param request
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getfreshBoxType(double totale, ArrayList<String> prodotti,
-             HttpServletRequest request) throws DAOException {
+            HttpServletRequest request) throws DAOException {
         checkCON();
 
         String box = "";
         double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
 
-        if (totaleProducts > 0 && totaleProducts < MIN_COSTO) {
+        if (totaleProducts > 0 && totaleProducts <= MIN_COSTO) {
             box = "Box piccolo";
-        } else if (totaleProducts >= MIN_COSTO && totaleProducts < MAX_COSTO) {
+        } else if (totaleProducts > MIN_COSTO && totaleProducts <= MED_COSTO) {
             box = "Box medio";
-        } else if (totaleProducts >= MAX_COSTO) {
+        } else if (totaleProducts > MED_COSTO) {
             box = "Box grande";
         }
         return box;
     }
 
+    /**
+     * Metodo che indica il costo del box da usare per l'ordine
+     * @param totale
+     * @param prodotti
+     * @param request
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getfreshBoxCost(double totale, ArrayList<String> prodotti,
-             HttpServletRequest request) throws DAOException {
+            HttpServletRequest request) throws DAOException {
         checkCON();
 
         double tot = 0.0;
         double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
 
-        if (totaleProducts > 0 && totaleProducts < MIN_COSTO) {
+        if (totaleProducts > 0 && totaleProducts <= MIN_COSTO) {
             tot = MIN_W_PRICE;
-        } else if (totaleProducts >= MIN_COSTO && totaleProducts < MAX_COSTO) {
+        } else if (totaleProducts > MIN_COSTO && totaleProducts <= MAX_COSTO) {
             tot = MED_W_PRICE;
-        } else if (totaleProducts >= MAX_COSTO) {
+        } else if (totaleProducts > MAX_COSTO) {
             tot = MAX_W_PRICE;
         }
         String totS = String.format("%.2f", tot).replace(",", ".");
         return totS;
     }
 
+    /**
+     *
+     * @throws DAOException
+     */
     @Override
     public void copyWeekViews() throws DAOException {
         checkCON();
@@ -1323,13 +1614,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
                     throw new DAOException("impossibile to copy week views");
                 };
             } catch (SQLException ex) {
-                System.out.println("E rror Code: " + ex.getErrorCode());
-                ex.printStackTrace();
+                System.out.println("Error Code: " + ex.getErrorCode());
                 throw new DAOException(ex);
             }
         } catch (SQLException ex) {
             System.out.println("Error Code: " + ex.getErrorCode());
-            ex.printStackTrace();
             Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         try (PreparedStatement stm = CON.prepareStatement("DELETE FROM curr_week_views;")) {
@@ -1347,6 +1636,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Ritorna tutte le email iscritte alla newsletter
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getAllEmail() throws DAOException {
         checkCON();
@@ -1366,6 +1660,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return emailS;
     }
 
+    /**
+     * Elimina una email dalle iscrizioni alla newsletter
+     * @param email
+     * @throws DAOException
+     */
     @Override
     public void annullaIscrizione(String email) throws DAOException {
         checkCON();
@@ -1385,6 +1684,14 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Ritorna il numero di ordini di un determinato tipo di spedizione in un
+     * determinato stato
+     * @param stato
+     * @param tipo
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int getNumberByStatusOfType(String stato, String tipo) throws DAOException {
         checkCON();
@@ -1405,6 +1712,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return num;
     }
 
+    /**
+     * Ritorna tutte le notifiche
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Notifica> getAllNotifiche() throws DAOException {
         checkCON();
@@ -1431,6 +1743,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return notifiche;
     }
 
+    /**
+     * Ritorna una particolare notifica
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Notifica getNotifica(int id) throws DAOException {
         checkCON();
@@ -1456,6 +1774,12 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return notifica;
     }
 
+    /**
+     * Ritorna tutte le notifiche di un determinato tipo
+     * @param testo
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Notifica> getNotificheByType(String testo) throws DAOException {
         checkCON();
@@ -1482,6 +1806,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         return notifiche;
     }
 
+    /**
+     * Elimina un notifica specifica
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteNotifica(int id) throws DAOException {
         checkCON();
@@ -1501,6 +1830,10 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         }
     }
 
+    /**
+     * Elimina tutte le notifiche
+     * @throws DAOException
+     */
     @Override
     public void deleteALLNotifiche() throws DAOException {
         checkCON();
@@ -1517,6 +1850,103 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         } catch (SQLException ex) {
             Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    /**
+     * Ritorna tutte le varianti salvate e aggiunte al carrello
+     * @param request
+     * @return
+     * @throws DAOException
+     */
+    @Override
+    public LinkedHashMap<ArrayList<Variante>, Integer> getCartVariant(HttpServletRequest request) throws DAOException {
+        checkCON();
+
+        ProductDAO productdao = (ProductDAO) request.getSession().getAttribute("productdao");
+        ArrayList<Variante> varianti;
+        LinkedHashMap<ArrayList<Variante>, Integer> variants = new LinkedHashMap<>();;
+        Variante v;
+        Prodotto p;
+        Cookie[] cookies = request.getCookies();
+        String arrayString = null;
+        String[] blocchi = null;
+        String[] VarQuan;
+
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("varianti")) {
+                    arrayString = c.getValue();
+                }
+            }
+        }
+        if (arrayString != null) {
+            blocchi = arrayString.split(":");
+        }
+
+        if (blocchi != null) {
+            for (String blocchi1 : blocchi) {
+                if (blocchi1 != null && !blocchi1.equals("")) {
+                    varianti = new ArrayList<>();
+                    VarQuan = blocchi1.split("\\*");
+                    String vars = VarQuan[0];
+                    int q = 1;
+                    if (VarQuan != null && VarQuan.length == 2) {
+                        q = Integer.parseInt(VarQuan[1]);
+                    }
+                    String[] var = vars.split("_");
+                    for (String s : var) {
+                        if (!s.equals("")) {
+                            v = getVariant(Integer.parseInt(s));
+                            if (v != null) {
+                                p = productdao.getProduct(v.getId_prod());
+                                if (p != null) {
+                                    if (p.isDisponibile()) {
+                                        varianti.add(v);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    variants.put(varianti, q);
+                }
+            }
+        }
+
+        if (!variants.isEmpty()) {
+            return variants;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Ritorna tutte le varianti aggiunte al carrello di un determinato prodotto
+     * @param request
+     * @param idProduct
+     * @return
+     * @throws DAOException
+     */
+    @Override
+    public LinkedHashMap<ArrayList<Variante>, Integer> getCartProductVariant(HttpServletRequest request, int idProduct) throws DAOException {
+        checkCON();
+
+        LinkedHashMap<ArrayList<Variante>, Integer> prodVariant = new LinkedHashMap<>();
+        LinkedHashMap<ArrayList<Variante>, Integer> cartVariant = getCartVariant(request);
+        if (cartVariant != null) {
+            for (Map.Entry<ArrayList<Variante>, Integer> entry : cartVariant.entrySet()) {
+                ArrayList<Variante> key = entry.getKey();
+                Integer value = entry.getValue();
+
+                for (Variante v : key) {
+                    if (v.getId_prod() == idProduct) {
+                        prodVariant.put(key, value);
+                    }
+                }
+
+            }
+        }
+        return prodVariant;
     }
 
 }

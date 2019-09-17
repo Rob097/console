@@ -25,11 +25,16 @@ public class costanti {
     public static String MAC_PASS = "zwvbnhynldgwqugc";
     
     /* Costo box keatchen più la scatola protettiva obbligatoria */
-    public static double MIN_W_PRICE = 4.30+1.80;
-    public static double MED_W_PRICE = 5.40+1.80;
-    public static double MAX_W_PRICE = 6.40+2.50;
-    public static float MIN_COSTO = 100;
-    public static float MAX_COSTO = 250;
+    public static final double MIN_W_PRICE = 4.3+1.75+1.8;
+    public static final double MED_W_PRICE = 5.4+1.75+1*1.8;
+    public static final double MAX_W_PRICE = 6.4+2.5+1*1.8;
+    public static final float MIN_COSTO = 100;
+    public static final float MED_COSTO = 200;
+    public static final float MAX_COSTO = 275;
+    /* Costo spedizioni */
+    public static final double MIN_PRICE = 8.9;
+    public static final double MED_PRICE = 12.9;
+    public static final double MAX_PRICE = 21.9;
     
     public static final long MAX_IMG_SIZE = 2100000;
     

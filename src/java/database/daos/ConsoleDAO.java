@@ -86,4 +86,8 @@ public interface ConsoleDAO {
     public ArrayList<Notifica> getNotificheByType(String testo) throws DAOException;
     public void deleteNotifica(int id) throws DAOException;
     public void deleteALLNotifiche() throws DAOException;
+    
+    /* VARIANTI */
+    public LinkedHashMap<ArrayList<Variante>, Integer> getCartProductVariant(HttpServletRequest request, int idProduct) throws DAOException;
+    public LinkedHashMap<ArrayList<Variante>, Integer> getCartVariant(HttpServletRequest request) throws DAOException;
 }

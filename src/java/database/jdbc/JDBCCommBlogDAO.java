@@ -37,8 +37,12 @@ public class JDBCCommBlogDAO extends JDBCDAO implements CommBlogDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);

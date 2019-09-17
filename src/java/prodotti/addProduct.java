@@ -73,7 +73,7 @@ public class addProduct extends HttpServlet {
 
             String nome = null, descrizione = null, immagine = null, categoria = null;
             double costo = 0.01;
-            Part filePart1 = null;
+            Part filePart1;
             boolean fresco = false, disponibile = true;
 
             if (request.getPart("immagine") != null && request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
@@ -94,7 +94,6 @@ public class addProduct extends HttpServlet {
                         try {
                             costo = Double.parseDouble(request.getParameter("costo").replace(",", "."));
                         } catch (NumberFormatException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -162,7 +161,7 @@ public class addProduct extends HttpServlet {
                         } catch (RuntimeException e) {
                             System.out.println("RuntimeException:");
                             throw e;
-                        } catch (Exception e) {
+                        } catch (IOException e) {
                             System.out.println("Exception:");
                         }
                     } else {

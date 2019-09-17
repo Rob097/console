@@ -39,8 +39,12 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {        
+    public final void checkCON() throws DAOException {        
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -242,6 +246,11 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         }
     }
 
+    /**
+     * MEtodo che ritorna tutti gli autori di articoli del blog
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getAllCreators() throws DAOException {
         checkCON();
@@ -261,6 +270,18 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         }
     }
 
+    /**
+     * Metodo per aggiornare un articolo del blog
+     * @param id
+     * @param titolo
+     * @param testo
+     * @param creator
+     * @param categoria
+     * @param immagine
+     * @param descrizione
+     * @param pubblicato
+     * @throws DAOException
+     */
     @Override
     public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, boolean pubblicato) throws DAOException {
         checkCON();
@@ -295,6 +316,11 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         }
     }
 
+    /**
+     * Metodo per eliminare un articolo del blog
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteBlog(String id) throws DAOException {
         checkCON();
@@ -319,6 +345,17 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         }
     }
 
+    /**
+     * MEtodo per aggiungere un articolo al blog
+     * @param titolo
+     * @param testo
+     * @param creator
+     * @param categoria
+     * @param descrizione
+     * @param pubblicato
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, boolean pubblicato) throws DAOException {
         checkCON();
@@ -356,13 +393,18 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         return id;
     }
 
+    /**
+     * metodo per aggiungere al DB un nuovo tag se non esiste gia
+     * @param tags
+     * @param idBlog
+     * @throws DAOException
+     */
     @Override
     public void addTags(ArrayList<String> tags, int idBlog) throws DAOException {
         checkCON();
         
 
-        boolean check = false;
-        System.out.println(tags.toString());
+        boolean check;
         ArrayList<Integer> prodT = new ArrayList<>(); //id dei tag aggiornati del blog
         for (String s : tags) {
             if (!s.isEmpty()) {
@@ -422,7 +464,6 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
 
         for (int q : prodT) {
             try (PreparedStatement stm = CON.prepareStatement("insert into blog_tags (blog, tag) values (?, ?);")) {
-                System.out.println("idBlog: " + idBlog + "\nidTag: " + q);
                 stm.setInt(1, idBlog);
                 stm.setInt(2, q);
                 try {
@@ -438,34 +479,13 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         cleanTags();
 
     }
-    
-    
-    @Override
-    public String getTag(int id) throws DAOException {
-        checkCON();
-        
-        String query;
-        String tag = "";
 
-        try (PreparedStatement stm = CON.prepareStatement("select testo from tags where id = ?")) {
-            stm.setInt(1, id);
-
-            try (ResultSet rs = stm.executeQuery()) {
-                while (rs.next()) {
-                    try {
-                        tag = rs.getString("testo");
-                    } catch (SQLException e) {
-                        System.out.println(e.getSQLState());
-                    }
-                }
-            }
-
-        } catch (SQLException ex) {
-            throw new DAOException("getTag error", ex);
-        }
-        return tag;
-    }
-
+    /**
+     * Ritorna il testo di un tag
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getTagName(int id) throws DAOException {
         checkCON();
@@ -487,6 +507,12 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         return tag;
     }
 
+    /**
+     * Ritorna tutti i tag di un blog
+     * @param id_blog
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Integer> getAllTagsOfBlog(int id_blog) throws DAOException {
         checkCON();
@@ -515,6 +541,14 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
     /*
     This method return id of tag that contain only product
      */
+
+    /**
+     * Ritorna i prodotti colelgati ad un tag del blog
+     * @param id_blog
+     * @return
+     * @throws DAOException
+     */
+
     @Override
     public ArrayList<Integer> getProductTagsOfBlog(int id_blog) throws DAOException {
         checkCON();
@@ -540,9 +574,15 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         return prodotti;
     }
 
-    /*
-    This method return id of tag that contain only category
+    
+    /**
+     * This method return id of tag that contain only category<br>
+     * Ritorna i prodotti colelgati ad un tag del blog
+     * @param id_blog
+     * @return
+     * @throws DAOException
      */
+
     @Override
     public ArrayList<Integer> getCategoryTagsOfBlog(int id_blog) throws DAOException {
         checkCON();
@@ -568,6 +608,12 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         return categorie;
     }
 
+    /**
+     * Ritorna il testo di tutti i tag del blog
+     * @param id_blog
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<String> getAllTextTagsOfBlog(int id_blog) throws DAOException {
         checkCON();
@@ -608,6 +654,11 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
         return tags;
     }
 
+    /**
+     * Controlla tutti i tag. se un tag non è collegato a nessun blo allora
+     * viene cancellato
+     * @throws DAOException
+     */
     @Override
     public void cleanTags() throws DAOException {
         checkCON();

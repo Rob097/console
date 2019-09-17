@@ -40,8 +40,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     *
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {
+    public final void checkCON() throws DAOException {
         try {
             if (this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)) {
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -182,10 +187,9 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         if (categoryName == null) {
             throw new DAOException("categoryName is a mandatory fields", new NullPointerException("categoryName is null"));
         }
-        if (categoryName.contains("'") || categoryName.contains("\"")) {
-            categoryName.replace("\"", "");
-            categoryName.replace("'", "");
-        }
+
+        categoryName = categoryName.replace("\"", "").replace("'", "");
+
         try (PreparedStatement stm = CON.prepareStatement("SELECT * FROM prodotto where categoria = ?")) {
             stm.setString(1, categoryName);
             ArrayList<Prodotto> prodotti = new ArrayList<>();
@@ -246,6 +250,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * Metodo che ritorna un prodotto partendo dal suo nome
+     *
+     * @param name
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Prodotto getProductByName(String name) throws DAOException {
         checkCON();
@@ -337,6 +348,12 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         return val;
     }
 
+    /**
+     * Metodo per eliminare un prodotto dal DB
+     *
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteProd(int id) throws DAOException {
         checkCON();
@@ -360,6 +377,18 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * Metodo per aggiornare un prodotto
+     *
+     * @param id
+     * @param nome
+     * @param descrizione
+     * @param categoria
+     * @param immagine
+     * @param disponibile
+     * @param costo
+     * @throws DAOException
+     */
     @Override
     public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException {
         checkCON();
@@ -392,6 +421,18 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * MEtodo per aggiungere un nuovo prodotto al DB
+     *
+     * @param nome
+     * @param descrizione
+     * @param categoria
+     * @param costo
+     * @param disponibile
+     * @param fresco
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException {
         checkCON();
@@ -429,6 +470,15 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         return id;
     }
 
+    /**
+     * MEtodo che ritorna tutti i prodotti che hanno la categoria settata a
+     * null. questo succede nei bug o sopratutto se viene eliminata una
+     * categoria, tutti i prodotti legati alla categoria non vengono eliminati
+     * ma gli viene settata la categoria a null.
+     *
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Prodotto> getNullCategoryProducts() throws DAOException {
         checkCON();
@@ -462,6 +512,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         return null;
     }
 
+    /**
+     * Metodo che ritorna tutte le varianti disponibili per un prodotto
+     *
+     * @param idProd
+     * @return
+     * @throws DAOException
+     */
     @Override
     public LinkedHashMap<String, ArrayList<Variante>> getProductVariant(int idProd) throws DAOException {
         checkCON();
@@ -506,6 +563,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * MEtodo che ritorna una variante partendo dall'id
+     *
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Variante getVariant(int id) throws DAOException {
         checkCON();
@@ -531,6 +595,16 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * Metodo che ritorna la prima scelta di ogni variante del prodotto. questo
+     * metodo serve se viene aggiunto il prodotto al carrello dalla bottega
+     * quindi non scegliendo che tipo di variante aggiungere. Si aggiunge quella
+     * di default che è la prima.
+     *
+     * @param idProd
+     * @return
+     * @throws DAOException
+     */
     @Override
     public ArrayList<Variante> getFrstVariantOfProduct(int idProd) throws DAOException {
         checkCON();
@@ -563,6 +637,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * ritorna una stringa concatenzione degli id delle varianti
+     *
+     * @param blocco
+     * @return
+     * @throws DAOException
+     */
     @Override
     public String getVariantBlock(ArrayList<Variante> blocco) throws DAOException {
         String ids = "";
@@ -573,6 +654,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         return ids;
     }
 
+    /**
+     * MEtodo per eliminare una variante con tutte le sue scelte
+     *
+     * @param idProd
+     * @param variant
+     * @throws DAOException
+     */
     @Override
     public void removeVariant(int idProd, String variant) throws DAOException {
         try (PreparedStatement stm = CON.prepareStatement("delete from products_variants where idProd = ? and variant = ?")) {
@@ -593,24 +681,33 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
         }
     }
 
+    /**
+     * Metodo per aggiungere ad un prodotto una variante
+     *
+     * @param idProd
+     * @param variant
+     * @param variantName
+     * @param supplement
+     * @throws DAOException
+     */
     @Override
-    public void updateVariant(int idProd, ArrayList<String>... args) throws DAOException {
-        if (args.length == 3 && args[0] != null && args[1] != null && args[2] != null && !args[0].isEmpty() && !args[1].isEmpty() && !args[2].isEmpty() && args[0].size() == args[1].size() && args[0].size() == args[2].size()) {
+    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement) throws DAOException {
+        if (variant != null && variantName != null && supplement != null && !variant.isEmpty() && !variantName.isEmpty() && !supplement.isEmpty() && variant.size() == variantName.size() && variant.size() == supplement.size()) {
 
-            for (int i = 0; i < args[0].size(); i++) {
+            for (int i = 0; i < variant.size(); i++) {
                 try (PreparedStatement stm = CON.prepareStatement("insert into products_variants (idProd, variant, variantName, supplement) values (?, ?, ?, ?)")) {
                     try {
                         stm.setInt(1, idProd);
-                        stm.setString(2, args[0].get(i));
-                        stm.setString(3, args[1].get(i));
-                        stm.setDouble(4, Double.parseDouble(args[2].get(i).replace(",", ".")));
+                        stm.setString(2, variant.get(i));
+                        stm.setString(3, variantName.get(i));
+                        stm.setDouble(4, Double.parseDouble(supplement.get(i).replace(",", ".")));
 
                         if (stm.executeUpdate() >= 1) {
                         } else {
                             System.out.println("Error update variant of product " + idProd);
                         }
 
-                    } catch (SQLException ex) {
+                    } catch (NumberFormatException | SQLException ex) {
                         throw new DAOException(ex);
                     }
                 } catch (SQLException ex) {

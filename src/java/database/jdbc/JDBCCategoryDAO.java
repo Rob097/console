@@ -42,8 +42,12 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
         }
     }
     
+    /**
+     * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     * @throws DAOException
+     */
     @Override
-    public void checkCON() throws DAOException {        
+    public final void checkCON() throws DAOException {        
         try {
             if(this.CON == null || this.CON.isClosed() || !this.CON.isValid(0)){
                 this.daoFactory = new JDBCDAOFactory(DBURL);
@@ -180,6 +184,12 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
         }
     }
 
+    /**
+     * Ritorna una categoria di prodotti dall'id
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     @Override
     public Categoria getById(String id) throws DAOException {
         checkCON();
@@ -207,6 +217,15 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
         }
     }
 
+    /**
+     * Metodo per aggiornare una categoria di prodotti. il nome è così perchè
+     * inizialmente aggiornava solo l'immagine e non ho più avuto voglia di cambiarlo
+     * @param id
+     * @param nome
+     * @param url
+     * @param descrizione
+     * @throws DAOException
+     */
     @Override
     public void alterImg(String id, String nome, String url, String descrizione) throws DAOException {
         checkCON();
@@ -233,6 +252,14 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
         }
     }
 
+    /**
+     * Metodo per aggiorngere una nuova categoria di prodotti
+     * @param nome
+     * @param descrizione
+     * @param fresco
+     * @return
+     * @throws DAOException
+     */
     @Override
     public int addCategory(String nome, String descrizione, boolean fresco) throws DAOException {
         checkCON();
@@ -267,6 +294,11 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
         return id;
     }
 
+    /**
+     * MEtodo per eliminare una categoria di prodotti
+     * @param id
+     * @throws DAOException
+     */
     @Override
     public void deleteCat(int id) throws DAOException {
         checkCON();

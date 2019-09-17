@@ -38,5 +38,5 @@ public interface ProductDAO{
     public ArrayList<Variante> getFrstVariantOfProduct(int idProd) throws DAOException;
     public String getVariantBlock(ArrayList<Variante> blocco) throws DAOException;
     public void removeVariant(int idProd, String variant) throws DAOException;
-    public void updateVariant(int idProd, ArrayList<String>... args) throws DAOException;
+    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement) throws DAOException;
 }
