@@ -100,35 +100,17 @@
                 </a>
             </li>
             <li class="nav-item <c:if test='${param.page.equals("statistiche")}'> active </c:if>">
-                <a class="nav-link" href="./statistiche.jsp">
-                    <i class="material-icons">bubble_chart</i>
-                    <p>Statistiche</p>
-                </a>
-            </li>
-        <%--<li class="nav-item <c:if test='${param.page.equals("")}'> active </c:if>">
-            <a class="nav-link" href="./map.html">
-                <i class="material-icons">location_ons</i>
-                <p>Maps</p>
+            <a class="nav-link" href="./statistiche.jsp">
+                <i class="material-icons">bubble_chart</i>
+                <p>Statistiche</p>
             </a>
         </li>
-        <li class="nav-item <c:if test='${param.page.equals("")}'> active </c:if>">
-            <a class="nav-link" href="./notifications.html">
-                <i class="material-icons">notifications</i>
-                <p>Notifications</p>
-            </a>
-        </li>
-        <li class="nav-item <c:if test='${param.page.equals("")}'> active </c:if>">
-        <a class="nav-link" href="./rtl.html">
-            <i class="material-icons">language</i>
-            <p>RTL Support</p>
-        </a>
-    </li>--%>
-        <!--<li class="nav-item active-pro ">
-            <a class="nav-link" href="./upgrade.html">
+        <li class="nav-item active-pro" data-toggle="tooltip" title="Il peso delle immagini che carichi non deve superare i 2.4MB di peso. Vai a questo link per comprimerle.">
+            <a class="nav-link" href="https://compressjpeg.com/" target="_blank" style="background-color: #fc960e; color: black; font-weight: bold;">
                 <i class="material-icons">unarchive</i>
-                <p>Upgrade to PRO</p>
+                <p>Comprimi immagini</p>
             </a>
-        </li>-->
+        </li>
     </ul>
 </div>
 <div class="sidebar-background" style="background-image: url(img/ico/sidebar-1.jpg)"></div>

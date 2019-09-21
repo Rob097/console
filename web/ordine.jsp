@@ -311,7 +311,8 @@ DOM: 08:00 - 12:30
                                                             <div class="form-row">
                                                                 <div class="col-12 mb-3">
                                                                     <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
-Il tuo ordine "${ordine.id}" è pronto per il ritiro presso il nostro punto vendita a Predazzo in via Cesare Battisti 2.<br>
+Il tuo ordine <b>"${ordine.id}"</b> è stato spedito in data <b>${ordine.data}</b> presso
+<b>${ordine.indirizzo}, ${ordine.citta}, ${ordine.zip}</b><br>
 Per qualsiasi domanda o informazione non esitare a contattarci. <br>
 Email: info@macelleriadellantonio.it<br>
 Telefono: 0462-501231<br>

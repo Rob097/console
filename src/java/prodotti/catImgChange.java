@@ -160,7 +160,7 @@ public class catImgChange extends HttpServlet {
                 }
                 url = "prodotti.jsp";
             } else {
-                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
             }
         }
         if (url.equals("")) {

@@ -175,7 +175,7 @@ public class addProduct extends HttpServlet {
                 url = "prodotti.jsp#" + categoria;
 
             } else {
-                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
             }
 
         } catch (DAOException ex) {

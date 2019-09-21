@@ -29,6 +29,7 @@ import varie.ImageDispatcher;
 import static varie.ImageDispatcher.getImageExtension;
 import static varie.costanti.MAX_IMG_SIZE;
 import static varie.utili.obtainRootFolderPath;
+import static varie.utili.unaccent;
 
 /**
  *
@@ -81,7 +82,7 @@ public class addBlog extends HttpServlet {
                 filePart1 = request.getPart("immagine");
 
                 if (request.getParameter("titolo") != null) {
-                    titolo = request.getParameter("titolo");
+                    titolo = unaccent(request.getParameter("titolo"));
                 }
                 if (request.getParameter("testo") != null) {
                     testo = request.getParameter("testo");
@@ -149,14 +150,18 @@ public class addBlog extends HttpServlet {
                 }
                 blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione, pubblicato);
 
-                request.setAttribute("tipo", "blog");
-                request.setAttribute("id", "" + id);
-                request.setAttribute("titolo", titolo);
-                request.setAttribute("creatore", creatore);
-                request.setAttribute("immagine", immagine);
-                view = request.getRequestDispatcher("emailSender");
+                if (pubblicato) {
+                    request.setAttribute("tipo", "blog");
+                    request.setAttribute("id", "" + id);
+                    request.setAttribute("titolo", titolo);
+                    request.setAttribute("creatore", creatore);
+                    request.setAttribute("immagine", immagine);
+                    view = request.getRequestDispatcher("emailSender");
+                } else {
+                    view = request.getRequestDispatcher("articoli.jsp");
+                }
             } else {
-                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
                 view = request.getRequestDispatcher("articolo.jsp?id=new");
             }
             view.forward(request, response);

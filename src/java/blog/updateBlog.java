@@ -118,9 +118,13 @@ public class updateBlog extends HttpServlet {
 
                     String titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "", OLDCategory = "";
                     ArrayList<String> tags = new ArrayList<>();
-                    boolean pubblicato = false;
+                    boolean pubblicato = blogdao.getBlogById(Integer.parseInt(id)).isPubblicato();
                     Part filePart1 = null;
                     boolean checkIMG = true;
+                    boolean checkOldPubblicato = false;
+                    if (pubblicato) {
+                        checkOldPubblicato = pubblicato;
+                    }
 
                     if (request.getPart("immagine") != null) {
                         if (request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
@@ -131,7 +135,7 @@ public class updateBlog extends HttpServlet {
                     }
                     if (checkIMG) {
                         if (request.getParameter("titolo") != null) {
-                            titolo = request.getParameter("titolo");
+                            titolo = unaccent(request.getParameter("titolo"));
                         }
                         if (request.getParameter("testo") != null) {
                             testo = request.getParameter("testo");
@@ -206,9 +210,20 @@ public class updateBlog extends HttpServlet {
                         if (catblogdao.getNumberOfBlog(OLDCategory) == 0) {
                             catblogdao.deleteCat(OLDCategory);
                         }
-                        url = "articolo.jsp?id=" + id;
+
+                        if (checkOldPubblicato == false && pubblicato == true) {
+                            request.setAttribute("tipo", "blog");
+                            request.setAttribute("id", "" + id);
+                            request.setAttribute("titolo", titolo);
+                            request.setAttribute("creatore", creatore);
+                            request.setAttribute("immagine", immagine);
+                            view = request.getRequestDispatcher("emailSender");
+                        } else {
+                            url = "articolo.jsp?id=" + id;
+                        }
+
                     } else {
-                        response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                        response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
                         view = request.getRequestDispatcher("articolo.jsp?id=" + id);
                     }
                 } catch (DAOException ex) {
@@ -219,11 +234,11 @@ public class updateBlog extends HttpServlet {
         } else {
             view = request.getRequestDispatcher("articoli.jsp");
         }
-        if(url.equals("")){
+        if (url.equals("")) {
             view.forward(request, response);
-        }else{
+        } else {
             response.sendRedirect(url);
-        }        
+        }
     }
 
     /**

@@ -191,14 +191,18 @@ public class addIdea extends HttpServlet {
 
                 ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
 
-                request.setAttribute("tipo", "idea");
-                request.setAttribute("id", "" + id);
-                request.setAttribute("titolo", nome);
-                request.setAttribute("creatore", creatore);
-                request.setAttribute("immagine", immagine);
-                view = request.getRequestDispatcher("emailSender");
+                if (approvata) {
+                    request.setAttribute("tipo", "idea");
+                    request.setAttribute("id", "" + id);
+                    request.setAttribute("titolo", nome);
+                    request.setAttribute("creatore", creatore);
+                    request.setAttribute("immagine", immagine);
+                    view = request.getRequestDispatcher("emailSender");
+                } else {
+                    view = request.getRequestDispatcher("idee.jsp");
+                }
             } else {
-                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
                 view = request.getRequestDispatcher("idea.jsp?id=new");
             }
         } catch (DAOException ex) {

@@ -110,6 +110,7 @@ public class updateProd extends HttpServlet {
             try {
 
                 if (request.getPart("immagine") != null) {
+                    System.out.println("SIZE: " + request.getPart("immagine").getSize() + "\nMAX: " + MAX_IMG_SIZE);
                     if (request.getPart("immagine").getSize() <= MAX_IMG_SIZE) {
                         filePart1 = request.getPart("immagine");
                     } else {
@@ -201,7 +202,7 @@ public class updateProd extends HttpServlet {
                     productdao.updateVariant(idProd, varianti, scelte, supplement);
                     url = "prodotti.jsp#"+categoria;
                 } else {
-                    response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                    response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
                 }
 
             } catch (DAOException | IOException | RuntimeException | ServletException ex) {

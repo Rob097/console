@@ -1535,6 +1535,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             } catch (ParseException ex) {
                 Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
             return Double.parseDouble(spedizione.replace(",", "."));
         }
 
@@ -1555,7 +1556,6 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
         String box = "";
         double totaleProducts = totale - getOrderDeliveryCost(prodotti, request);
-
         if (totaleProducts > 0 && totaleProducts <= MIN_COSTO) {
             box = "Box piccolo";
         } else if (totaleProducts > MIN_COSTO && totaleProducts <= MED_COSTO) {

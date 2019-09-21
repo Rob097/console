@@ -36,6 +36,6 @@ public class costanti {
     public static final double MED_PRICE = 12.9;
     public static final double MAX_PRICE = 21.9;
     
-    public static final long MAX_IMG_SIZE = 2100000;
+    public static final long MAX_IMG_SIZE = 2500000;
     
 }

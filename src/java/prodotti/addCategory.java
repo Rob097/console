@@ -119,7 +119,7 @@ public class addCategory extends HttpServlet {
                 url = "prodotti.jsp";
 
             } else {
-                response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
             }
         } catch (DAOException | IOException | RuntimeException | ServletException ex) {
             Logger.getLogger(updateProd.class.getName()).log(Level.SEVERE, null, ex);

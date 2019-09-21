@@ -271,16 +271,8 @@
                                         <div class="chart" id="columnChart"></div>
                                     </div>
                                     <div class="card-footer">
-                                        <div class="stats" data-toggle="tooltip" title="Prossimo aggiornamento: ${LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}">
-                                            <i class="material-icons">date_range</i> Fino  
-                                            <c:choose>
-                                                <c:when test="${LocalDate.now().getDayOfWeek().name().equals(DayOfWeek.MONDAY.name())}">
-                                                    ad oggi
-                                                </c:when>
-                                                <c:otherwise>
-                                                    al ${LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}
-                                                </c:otherwise>
-                                            </c:choose>
+                                        <div class="stats">
+                                            <i class="material-icons">date_range</i> In tempo reale
                                         </div>
                                     </div>
                                 </div>
@@ -416,20 +408,39 @@
             });
         </script>
         <script>
-            var initialDate = new Date(2018, 9, 31);
-            var today = new Date();
-            var payTimes = today.getUTCFullYear() - initialDate.getUTCFullYear();
-            if (today.getMonth() > initialDate.getMonth()) {
-                payTimes += 1;
-            }
             var dominioCost = 38.50;
             var hostCost = 79.51;
-            var tot = dominioCost + 0.22 * dominioCost + hostCost;
+            var dataDominio = new Date(2018, 11, 27);
+            var dataHost = new Date(2018, 9, 16);
+            var today = new Date(); today.setMonth(today.getMonth() + 1);
+            var tot = 0;
+            
+            var payTimesDom = today.getUTCFullYear() - dataDominio.getUTCFullYear() + 1;
+            if (today.getMonth() > dataDominio.getMonth()) {
+                tot += (dominioCost + 0.22 * dominioCost) * payTimesDom;
+            } else if (today.getMonth() < dataDominio.getMonth()) {
+                tot += (dominioCost + 0.22 * dominioCost) * (payTimesDom - 1);
+            } else if (today.getMonth() === dataDominio.getMonth()) {
+                if (today.getDate() >= dataDominio.getDate()) {
+                    tot += (dominioCost + 0.22 * dominioCost) * payTimesDom;
+                }
+            }
+            var payTimesHost = today.getUTCFullYear() - dataHost.getUTCFullYear() + 1;
+            if (today.getMonth() > dataHost.getMonth()) {
+                tot += hostCost * payTimesHost;
+            } else if (today.getMonth() < dataHost.getMonth()) {
+                tot += hostCost * (payTimesHost - 1);
+            } else if (today.getMonth() === dataHost.getMonth()) {
+                if (today.getDate() >= dataHost.getDate()) {
+                    tot += hostCost * payTimesHost;
+                }
+            }
+
             tot = tot.toFixed(2);
-            let formatted_initialDate = initialDate.getDate() + "-" + (initialDate.getMonth() + 1) + "-" + initialDate.getFullYear();
+            let formatted_today = today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
 
             $('#valoreUscite').html($('#valoreUscite').html() + tot);
-            $('#usciteDate').html($('#usciteDate').html() + " Dal " + formatted_initialDate);
+            $('#usciteDate').html($('#usciteDate').html() + " Fino al " + formatted_today);
 
         </script>
         <script>

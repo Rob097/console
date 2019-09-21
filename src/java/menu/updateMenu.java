@@ -138,6 +138,10 @@ public class updateMenu extends HttpServlet {
                         checkIMG = false;
                     }
                 }
+                if (request.getPart("immagineMenu") != null && request.getPart("copertinaMenu") != null && request.getPart("copertinaMenu").getSize() + request.getPart("immagineMenu").getSize() > MAX_IMG_SIZE) {
+                    checkIMG = false;
+                }
+                
                 if (checkIMG) {
                     //Load dell'immagine
                     if (immaginePart != null) {
@@ -189,7 +193,7 @@ public class updateMenu extends HttpServlet {
                     menudao.updateMenu(idMenu, nome, copertina, immagine);
                     url = "menu.jsp";
                 } else {
-                    response.setHeader("NOTIFICA", "L'immagine supera i 2MB di peso");
+                    response.setHeader("NOTIFICA", "Le immagini caricate superano i 2.4MB di peso. Puoi caricarne una a scelta più leggera e poi aggiornare il menu. Purchè una singola rimanga inferiore ai 2.4MB.");
                 }
             }
 
