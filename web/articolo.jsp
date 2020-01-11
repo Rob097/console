@@ -16,6 +16,12 @@
 <html lang="en">
 
     <head>
+        
+        <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
+        <meta name="robots" content="noindex">
+        <!-- Per impedire solo a Google di indicizzare la pagina -->
+        <meta name="googlebot" content="noindex">
+        
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -210,7 +216,7 @@
                                         <form method="POST" action="updateBlog"  enctype="multipart/form-data" multiple>
                                             <div class="mt-4">
                                                 <button class="btn btn-outline-info">Aggiorna</button>
-                                                <a class="btn btn-outline-warning" target="_blank" rel="noopener" href="../MacAPP/articolo.jsp?id=${articolo.id}">Visualizza</a>
+                                                <a class="btn btn-outline-warning" target="_blank" rel="noopener" href="/../Bortoleto/articolo/${articolo.id}/${articolo.nome.replace(' ', '-')}">Visualizza</a>
                                             </div>
                                             <input type="hidden" name="id" value="${articolo.id}" />
                                             <input maxlength="45" style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${articolo.nome}" required/>

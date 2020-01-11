@@ -17,6 +17,12 @@
 <html lang="en">
 
     <head>
+        
+        <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
+        <meta name="robots" content="noindex">
+        <!-- Per impedire solo a Google di indicizzare la pagina -->
+        <meta name="googlebot" content="noindex">
+        
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />

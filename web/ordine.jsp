@@ -15,6 +15,12 @@
 <html lang="en">
 
     <head>
+        
+        <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
+        <meta name="robots" content="noindex">
+        <!-- Per impedire solo a Google di indicizzare la pagina -->
+        <meta name="googlebot" content="noindex">
+        
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -261,6 +267,7 @@
                                                             <div class="form-row">
                                                                 <div class="col-12 mb-3">
                                                                     <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
+Ciao ${ordine.nome}!
 Il tuo ordine "${ordine.id}" è pronto per il ritiro presso il nostro punto vendita a Predazzo in via Cesare Battisti 2.<br>
 Per qualsiasi domanda o informazione non esitare a contattarci. <br>
 Email: info@macelleriadellantonio.it<br>
@@ -311,6 +318,7 @@ DOM: 08:00 - 12:30
                                                             <div class="form-row">
                                                                 <div class="col-12 mb-3">
                                                                     <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
+Ciao ${ordine.nome}!
 Il tuo ordine <b>"${ordine.id}"</b> è stato spedito in data <b>${ordine.data}</b> presso
 <b>${ordine.indirizzo}, ${ordine.citta}, ${ordine.zip}</b><br>
 Per qualsiasi domanda o informazione non esitare a contattarci. <br>
@@ -369,7 +377,7 @@ DOM: 08:00 - 12:30
                                                             <div class="form-row">
                                                                 <div class="col-12 mb-3">
                                                                     <textarea class="form-control" rows="5" id="messaggio" name="testo" required>
-Grazie per aver avuto fiducia in noi!<br>
+Grazie ${ordine.nome} per aver avuto fiducia in noi!<br>
 Facci sapere cosa ne pensi dei nostri prodotti valutandoli sul sito o rispondendo a questa email.
 Possiamo migliorare assieme!
                                                                     </textarea>

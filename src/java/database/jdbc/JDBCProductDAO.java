@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -694,17 +696,28 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
     public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement) throws DAOException {
         if (variant != null && variantName != null && supplement != null && !variant.isEmpty() && !variantName.isEmpty() && !supplement.isEmpty() && variant.size() == variantName.size() && variant.size() == supplement.size()) {
 
+            Variante v;
+            ArrayList<Variante> varianti = new ArrayList<>();
+
             for (int i = 0; i < variant.size(); i++) {
+                v = new Variante(0, idProd, variant.get(i), variantName.get(i), Double.parseDouble(supplement.get(i).replace(",", ".")), 1);
+                varianti.add(v);
+            }
+            
+            Collections.sort(varianti, (Variante c1, Variante c2) -> Double.compare(c1.getSupplement(), c2.getSupplement()));
+            
+            for (int i = 0; i < varianti.size(); i++) {
+                v = varianti.get(i);
                 try (PreparedStatement stm = CON.prepareStatement("insert into products_variants (idProd, variant, variantName, supplement) values (?, ?, ?, ?)")) {
                     try {
-                        stm.setInt(1, idProd);
-                        stm.setString(2, variant.get(i));
-                        stm.setString(3, variantName.get(i));
-                        stm.setDouble(4, Double.parseDouble(supplement.get(i).replace(",", ".")));
+                        stm.setInt(1, v.getId_prod());
+                        stm.setString(2, v.getVariant());
+                        stm.setString(3, v.getVariantName());
+                        stm.setDouble(4, v.getSupplement());
 
                         if (stm.executeUpdate() >= 1) {
                         } else {
-                            System.out.println("Error update variant of product " + idProd);
+                            System.out.println("Error update variant of product " + v.getId_prod());
                         }
 
                     } catch (NumberFormatException | SQLException ex) {

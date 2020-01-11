@@ -12,6 +12,12 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
+        <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
+        <meta name="robots" content="noindex">
+        <!-- Per impedire solo a Google di indicizzare la pagina -->
+        <meta name="googlebot" content="noindex">
+        
         <link rel="icon" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400" sizes="16x16" type="image/png" alt="dashboard">
         <title>Console Macelleria Dellantonio</title>
         <meta name="Description" content="Dashboard Macelleria Dellantonio">
