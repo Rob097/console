@@ -6,8 +6,9 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="request" value="<%=request%>"/>
 <%@page import="java.time.format.DateTimeFormatter"%>
-
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 <div class="logo">
     <a href="https://www.macelleriadellantonio.it" target="_blank" rel="noopener" class="simple-text logo-normal">
         'L Bortoleto
@@ -100,11 +101,35 @@
                 </a>
             </li>
             <li class="nav-item <c:if test='${param.page.equals("statistiche")}'> active </c:if>">
-            <a class="nav-link" href="./statistiche.jsp">
-                <i class="material-icons">bubble_chart</i>
-                <p>Statistiche</p>
-            </a>
-        </li>
+                <a class="nav-link" href="./statistiche.jsp">
+                    <i class="material-icons">bubble_chart</i>
+                    <p>Statistiche</p>
+                </a>
+            </li>
+        <c:choose>
+            <c:when test="${(request.getSession().getAttribute('statoSito') eq null) || (request.getSession().getAttribute('statoSito') ne null && request.getSession().getAttribute('statoSito').equals('true'))}">
+                <li class="nav-item active-pro" data-toggle="tooltip" title="Attenzione stai per SPEGNERE il negozio!" style="bottom: 6rem !important; width: 100%">
+                    <!-- Default checked -->
+                    <div id="onOffDiv" class="checkbox" style="width: fit-content; margin: auto auto;">
+                        <label>
+                            <input onchange="setOFF();" data-size="small" type="checkbox" checked data-toggle="toggle" id="onOff" checked>
+                            Spegni il Sito web
+                        </label>
+                    </div>
+                </li>
+            </c:when>
+            <c:otherwise>
+                <li class="nav-item active-pro" data-toggle="tooltip" title="Attenzione stai per ACCENDERE il negozio!" style="bottom: 6rem !important; width: 100%">
+                    <!-- Default checked -->
+                    <div class="checkbox" style="width: fit-content; margin: auto auto;">
+                        <label>
+                            <input onchange="setON();" data-size="small" type="checkbox" data-toggle="toggle" id="onOff">
+                            Accendi il Sito web
+                        </label>
+                    </div>
+                </li>
+            </c:otherwise>
+        </c:choose>
         <li class="nav-item active-pro" data-toggle="tooltip" title="Il peso delle immagini che carichi non deve superare i 2.4MB di peso. Vai a questo link per comprimerle.">
             <a class="nav-link" href="https://compressjpeg.com/" target="_blank" style="background-color: #fc960e; color: black; font-weight: bold;">
                 <i class="material-icons">unarchive</i>
@@ -114,8 +139,67 @@
     </ul>
 </div>
 <div class="sidebar-background" style="background-image: url(img/ico/sidebar-1.jpg)"></div>
-
+<div class="modal fade" id="SpegniSitoCheck" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Spegnimento Sito Web</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler spegnere momentaneamente il sito web. Gli utenti non potranno più utilizzarlo</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                <form action="changeStatus" method="POST">
+                    <input type="hidden" name="stato" value="false" />
+                    <button type="submit" class="btn btn-primary">Spegni sito web</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="AccendiSitoCheck" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Accensione Sito Web</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler riaccendere il sito web. Gli utenti potranno tornare ad utilizzarlo</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                <form action="changeStatus" method="POST">
+                    <input type="hidden" name="stato" value="true" />
+                    <button type="submit" class="btn btn-primary">Accendi sito web</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
+</script>
+<script>
+    function setOFF() {
+        $('#SpegniSitoCheck').modal('toggle');
+        $('#SpegniSitoCheck').on('hidden.bs.modal', function (e) {
+            $('#onOffDiv').html('<label><div class="toggle btn btn-primary btn-sm" data-toggle="toggle" style="width: 82px; height: 29px;"><input onchange="setOFF();" data-size="small" type="checkbox" checked="" data-toggle="toggle" id="onOff"><div class="toggle-group"><label class="btn btn-primary btn-sm toggle-on">On</label><label class="btn btn-default btn-sm active toggle-off">Off</label><span class="toggle-handle btn btn-default btn-sm"></span></div></div>Spegni il Sito web</label>');
+        });
+    }
+    function setON() {
+        $('#AccendiSitoCheck').modal('toggle');
+        $('#AccendiSitoCheck').on('hidden.bs.modal', function (e) {
+            $('#onOffDiv').html('<label><div class="toggle btn btn-sm btn-default off" data-toggle="toggle" style="width: 82px; height: 29px;"><input onchange="setON();" data-size="small" type="checkbox" checked="" data-toggle="toggle" id="onOff"><div class="toggle-group"><label class="btn btn-primary btn-sm toggle-on">On</label><label class="btn btn-default btn-sm active toggle-off">Off</label><span class="toggle-handle btn btn-default btn-sm"></span></div></div>Spegni il Sito web</label>');
+        });
+    }
+
     function deleteALLNotifiche() {
         $.ajax({
             type: "POST",

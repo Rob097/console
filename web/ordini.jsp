@@ -14,12 +14,12 @@
 <html lang="en">
 
     <head>
-        
+
         <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
         <meta name="robots" content="noindex">
         <!-- Per impedire solo a Google di indicizzare la pagina -->
         <meta name="googlebot" content="noindex">
-        
+
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -54,167 +54,174 @@
                 <div class="content">
                     <div class="container-fluid">
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header card-header-danger">
-                                        <h4 class="card-title ">Tipi di spedizione</h4>                                       
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead class=" text-primary">
-                                                <th>
-                                                    Tipo
-                                                </th>
-                                                <th>
-                                                    N° Ordini
-                                                </th>
-                                                <th>
-                                                    TOT
-                                                </th>
-                                                <th>
-                                                    Data ultimo ordine
-                                                </th>
-                                                <th>
-                                                    Totale ultimo ordine
-                                                </th>
-                                                <th>
-                                                    In Preparazione
-                                                </th>
-                                                <th>
-                                                    Spediti
-                                                </th>
-                                                <th>
-                                                    Consegnati
-                                                </th>
-                                                <th>
-                                                    Ritirati
-                                                </th>
-                                                <th>
-                                                    Altro
-                                                </th>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="tipo" items="${consoledao.getTypeDelivery()}">
-                                                        <tr>
-                                                            <td>
-                                                                <a href="#card-${tipo}" style="color: #333333;">${tipo}</a>
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberOfType(tipo)}
-                                                            </td>
-                                                            <td>
-                                                                € ${consoledao.getTotOfType(tipo)}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getLastOfType(tipo).data}
-                                                            </td>
-                                                            <td>
-                                                                € ${consoledao.getLastOfType(tipo).tot}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberByStatusOfType("preparazione", tipo)}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberByStatusOfType("spedito", tipo)}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberByStatusOfType("consegnato", tipo)}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberByStatusOfType("ritirato", tipo)}
-                                                            </td>
-                                                            <td>
-                                                                ${consoledao.getNumberByStatusOfType("altro", tipo)}
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <c:forEach var="tipo" items="${consoledao.getTypeDelivery()}">
-                                <div class="col-md-12">
-                                    <div class="card" id="card-${tipo}">
-                                        <div class="card-header card-header-warning">
-                                            <h4 class="card-title ">Ordini ${tipo}</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead class=" text-primary">
-                                                    <th>
-                                                        ID
-                                                    </th>
-                                                    <th>
-                                                        Data
-                                                    </th>
-                                                    <th>
-                                                        Nome
-                                                    </th>
-                                                    <th>
-                                                        Email
-                                                    </th>
-                                                    <th>
-                                                        Indirizzo
-                                                    </th>
-                                                    <th>
-                                                        Prodotti
-                                                    </th>
-                                                    <th>
-                                                        Tipo Spedizione
-                                                    </th>
-                                                    <th>
-                                                        TOT
-                                                    </th>
-                                                    <th>
-                                                        Stato
-                                                    </th>
-                                                    </thead>
-                                                    <tbody>
-                                                        <c:forEach var="ordine" items="${consoledao.getOrdersOfType(tipo)}">
-                                                            <tr>
-                                                                <td>
-                                                                    <a style="color: black;" href="ordine.jsp?id=${ordine.id}">${ordine.id}</a>
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.data}
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.nome}
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.email}
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.citta}. ${ordine.indirizzo}, ${ordine.zip}
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.toString()}
-                                                                </td>
-                                                                <td>
-                                                                    ${ordine.tipo}
-                                                                </td>
-                                                                <td>
-                                                                    € ${ordine.tot}
-                                                                </td>
-                                                                <td>
-                                                                    ${StringUtils.capitalize(ordine.stato)}
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </tbody>
-                                                </table>
+                        <c:choose>
+                            <c:when test="${!consoledao.getTypeDelivery().isEmpty()}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header card-header-danger">
+                                                <h4 class="card-title ">Tipi di spedizione</h4>                                       
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <thead class=" text-primary">
+                                                        <th>
+                                                            Tipo
+                                                        </th>
+                                                        <th>
+                                                            N° Ordini
+                                                        </th>
+                                                        <th>
+                                                            TOT
+                                                        </th>
+                                                        <th>
+                                                            Data ultimo ordine
+                                                        </th>
+                                                        <th>
+                                                            Totale ultimo ordine
+                                                        </th>
+                                                        <th>
+                                                            In Preparazione
+                                                        </th>
+                                                        <th>
+                                                            Spediti
+                                                        </th>
+                                                        <th>
+                                                            Consegnati
+                                                        </th>
+                                                        <th>
+                                                            Ritirati
+                                                        </th>
+                                                        <th>
+                                                            Altro
+                                                        </th>
+                                                        </thead>
+                                                        <tbody>
+                                                            <c:forEach var="tipo" items="${consoledao.getTypeDelivery()}">
+                                                                <tr>
+                                                                    <td>
+                                                                        <a href="#card-${tipo}" style="color: #333333;">${tipo}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberOfType(tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        € ${consoledao.getTotOfType(tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getLastOfType(tipo).data}
+                                                                    </td>
+                                                                    <td>
+                                                                        € ${consoledao.getLastOfType(tipo).tot}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberByStatusOfType("preparazione", tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberByStatusOfType("spedito", tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberByStatusOfType("consegnato", tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberByStatusOfType("ritirato", tipo)}
+                                                                    </td>
+                                                                    <td>
+                                                                        ${consoledao.getNumberByStatusOfType("altro", tipo)}
+                                                                    </td>
+                                                                </tr>
+                                                            </c:forEach>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <c:forEach var="tipo" items="${consoledao.getTypeDelivery()}">
+                                        <div class="col-md-12">
+                                            <div class="card" id="card-${tipo}">
+                                                <div class="card-header card-header-warning">
+                                                    <h4 class="card-title ">Ordini ${tipo}</h4>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead class=" text-primary">
+                                                            <th>
+                                                                ID
+                                                            </th>
+                                                            <th>
+                                                                Data
+                                                            </th>
+                                                            <th>
+                                                                Nome
+                                                            </th>
+                                                            <th>
+                                                                Email
+                                                            </th>
+                                                            <th>
+                                                                Indirizzo
+                                                            </th>
+                                                            <th>
+                                                                Prodotti
+                                                            </th>
+                                                            <th>
+                                                                Tipo Spedizione
+                                                            </th>
+                                                            <th>
+                                                                TOT
+                                                            </th>
+                                                            <th>
+                                                                Stato
+                                                            </th>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach var="ordine" items="${consoledao.getOrdersOfType(tipo)}">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a style="color: black;" href="ordine.jsp?id=${ordine.id}">${ordine.id}</a>
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.data}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.nome}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.email}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.citta}. ${ordine.indirizzo}, ${ordine.zip}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.toString()}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${ordine.tipo}
+                                                                        </td>
+                                                                        <td>
+                                                                            € ${ordine.tot}
+                                                                        </td>
+                                                                        <td>
+                                                                            ${StringUtils.capitalize(ordine.stato)}
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
                                 </div>
-                            </c:forEach>
-                        </div>
+                            </c:when>
+                            <c:otherwise>
+                                Non ci sono ordini
+                            </c:otherwise>
+                        </c:choose>
 
                     </div>
                 </div>

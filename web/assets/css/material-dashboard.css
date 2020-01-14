@@ -30,6 +30,7 @@
 
 .card {
     font-size: .875rem;
+    z-index: 0;
 }
 
 *,
@@ -5568,7 +5569,7 @@ button.close {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1040;
+    z-index: 1;
     background-color: #000000;
 }
 
@@ -13152,7 +13153,7 @@ fieldset[disabled] .form-group .form-control {
     position: absolute;
     width: 100%;
     padding-top: 10px;
-    z-index: 1029;
+    z-index: 1;
 }
 
 .navbar .navbar-wrapper {

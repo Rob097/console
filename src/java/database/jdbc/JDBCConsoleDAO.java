@@ -60,6 +60,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     /**
      * Questo è il costruttore e serve fondamentalmente per collegarsi alla
      * connessione aperta con il DB
+     *
      * @param con
      * @throws SQLException
      */
@@ -74,6 +75,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Controlla che la connessione con il DB sia aperta, altrimenti la riapre
+     *
      * @throws DAOException
      */
     @Override
@@ -90,8 +92,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Metodo che ritorna il numero di visualizzazioni complessive del sito
-     * ci sono nella settimana corrente, partendo dal lunedì
+     * Metodo che ritorna il numero di visualizzazioni complessive del sito ci
+     * sono nella settimana corrente, partendo dal lunedì
+     *
      * @return
      * @throws DAOException
      */
@@ -121,9 +124,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il mese.<br>
-     * Divide le ultime 4 settimane dove l'ultima è la corrente, e ad ogni settimana
-     * associa le rispettive visualizzazioni.
+     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il
+     * mese.<br>
+     * Divide le ultime 4 settimane dove l'ultima è la corrente, e ad ogni
+     * settimana associa le rispettive visualizzazioni.
+     *
      * @return
      * @throws DAOException
      */
@@ -184,8 +189,11 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il mese scorso.<br>
-     * Divide le 4 settimane, e ad ogni settimana associa le rispettive visualizzazioni.
+     * Metodo che ritorna le visualizzazioni complessive del sito in tutto il
+     * mese scorso.<br>
+     * Divide le 4 settimane, e ad ogni settimana associa le rispettive
+     * visualizzazioni.
+     *
      * @return
      * @throws DAOException
      */
@@ -248,8 +256,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Compara le visualizioni del mese scorso con quelle di questo mese
-     * e ritorna la differenza sia positiva che negativa
+     * Compara le visualizioni del mese scorso con quelle di questo mese e
+     * ritorna la differenza sia positiva che negativa
+     *
      * @param lastValue
      * @return
      * @throws DAOException
@@ -297,6 +306,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * ritorna le visualizzazioni complessive per ogi pagina del sito
+     *
      * @return
      * @throws DAOException
      */
@@ -319,8 +329,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * ritorna il numero di iscrizioni alla newsletter nelle 4 settimane correnti
-     * o nelle 4 settimane precedenti
+     * ritorna il numero di iscrizioni alla newsletter nelle 4 settimane
+     * correnti o nelle 4 settimane precedenti
+     *
      * @param isLast
      * @return
      * @throws DAOException
@@ -385,8 +396,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * fa il confronto delle iscrizioni alla nesletter nelle 4 settimane precedenti
-     * e in quelle correnti.
+     * fa il confronto delle iscrizioni alla nesletter nelle 4 settimane
+     * precedenti e in quelle correnti.
+     *
      * @param lastValue
      * @return
      * @throws DAOException
@@ -423,6 +435,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna il numero complessivo degli iscritti alla newsletter
+     *
      * @return
      * @throws DAOException
      */
@@ -447,8 +460,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna le entrate nelle 4 settimane correnti o passate dividendoli per settimane
-     * e associando ad ogni settimana il rispettivo importo
+     * Ritorna le entrate nelle 4 settimane correnti o passate dividendoli per
+     * settimane e associando ad ogni settimana il rispettivo importo
+     *
      * @param isLast
      * @return
      * @throws DAOException
@@ -512,8 +526,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Confronta le entrate nelle 4 settimane scorse con quelle correnti e ritorna
-     * la differenza sia positiva che negativa
+     * Confronta le entrate nelle 4 settimane scorse con quelle correnti e
+     * ritorna la differenza sia positiva che negativa
+     *
      * @param lastValue
      * @return
      * @throws DAOException
@@ -560,6 +575,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna le entrate complessivamente.
+     *
      * @return
      * @throws DAOException
      */
@@ -586,6 +602,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna la data dell'ultima iscrizione alla neswletter
+     *
      * @return
      * @throws DAOException
      */
@@ -597,7 +614,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         try (PreparedStatement stm = CON.prepareStatement("SELECT MAX(date) as data FROM email_sub")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    data = rs.getTimestamp("data").toLocalDateTime();
+                    if (rs.getTimestamp("data") != null) {
+                        data = rs.getTimestamp("data").toLocalDateTime();
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -612,6 +631,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna la data dell'ultimo acquisto
+     *
      * @return
      * @throws DAOException
      */
@@ -623,7 +643,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
         try (PreparedStatement stm = CON.prepareStatement("SELECT MAX(date) as data FROM orderSum")) {
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    data = rs.getTimestamp("data").toLocalDateTime();
+                    if (rs.getTimestamp("data") != null) {
+                        data = rs.getTimestamp("data").toLocalDateTime();
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -637,8 +659,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna tutti i prodotti che sono stati acquistati almento una volta 
-     * e il numero di volte che seono stati acquistati
+     * Ritorna tutti i prodotti che sono stati acquistati almento una volta e il
+     * numero di volte che seono stati acquistati
+     *
      * @return
      * @throws DAOException
      */
@@ -670,7 +693,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna le visualizzazioni degli articoli del blog associandoli per categoria
+     * Ritorna le visualizzazioni degli articoli del blog associandoli per
+     * categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -694,6 +719,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna le visualizzazioni delle idee associandole per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -722,8 +748,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna le visualizzazioni dei blog di una determinata categoria che sono 
+     * Ritorna le visualizzazioni dei blog di una determinata categoria che sono
      * maggiori di 0
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -748,8 +775,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna le visualizzazioni delle idee di una determinata categoria che sono 
-     * maggiori di 0
+     * Ritorna le visualizzazioni delle idee di una determinata categoria che
+     * sono maggiori di 0
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -775,6 +803,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna i commenti degli articoli del blog associandoli per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -798,6 +827,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna i commenti delle idee associandole per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -827,6 +857,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna i commenti dei blog di una determinata categoria
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -852,6 +883,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna i commenti delle idee di una determinata categoria
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -877,6 +909,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna la valutazione degli articoli del blog associandoli per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -903,6 +936,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna la valutazione delle idee associandole per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -935,6 +969,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna la valutazione dei prodotti associandoli per categoria
+     *
      * @return
      * @throws DAOException
      */
@@ -961,8 +996,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna la valutazione deglia rticoli del blog di una certa categoria
-     * che hanno almeno una valutazione
+     * Ritorna la valutazione deglia rticoli del blog di una certa categoria che
+     * hanno almeno una valutazione
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -992,6 +1028,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     /**
      * Ritorna la valutazione delle idee di una certa categoria che hanno almeno
      * una valutazione
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -1021,6 +1058,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     /**
      * Ritorna la valutazione dei prodotti di una certa categoria che hanno
      * almeno una valutazione
+     *
      * @param categoria
      * @return
      * @throws DAOException
@@ -1049,6 +1087,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutti i vari tipi di spedizione
+     *
      * @return
      * @throws DAOException
      */
@@ -1072,6 +1111,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna il numero di ordini per un determinato tipo di spedizione
+     *
      * @param type
      * @return
      * @throws DAOException
@@ -1097,7 +1137,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna l'importo totale di tutti gli ordini di un determinato tipo di spedizione
+     * Ritorna l'importo totale di tutti gli ordini di un determinato tipo di
+     * spedizione
+     *
      * @param type
      * @return
      * @throws DAOException
@@ -1127,6 +1169,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna una variante a partire dall'id
+     *
      * @param id
      * @return
      * @throws DAOException
@@ -1157,7 +1200,9 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     }
 
     /**
-     * Ritorna tutte le varianti partendo dalla stringa con la concatenzaione degli id
+     * Ritorna tutte le varianti partendo dalla stringa con la concatenzaione
+     * degli id
+     *
      * @param var
      * @return
      * @throws DAOException
@@ -1198,6 +1243,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Controlla se un ordine contiene almeno un prodotto con delle varianti
+     *
      * @param idOrder
      * @param idProd
      * @return
@@ -1223,6 +1269,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * ritorna l'ultimo ordine fatto con un determinato tipo di spedizione
+     *
      * @param type
      * @return
      * @throws DAOException
@@ -1260,6 +1307,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna un determinato ordien partendo dall'id
+     *
      * @param id
      * @return
      * @throws DAOException
@@ -1297,6 +1345,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutti gli ordini fatyti con un determinato tipo di spedizione
+     *
      * @param type
      * @return
      * @throws DAOException
@@ -1356,6 +1405,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutti i prodotti di un determinato ordine
+     *
      * @param prodotti
      * @param request
      * @return
@@ -1402,6 +1452,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Metodo per aggiornare lo stato dell'ordine
+     *
      * @param id
      * @param stato
      * @throws DAOException
@@ -1448,6 +1499,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Metodo che restituisce i costi di spedizione di un ordine
+     *
      * @param prodotti
      * @param request
      * @return
@@ -1535,7 +1587,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             } catch (ParseException ex) {
                 Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             return Double.parseDouble(spedizione.replace(",", "."));
         }
 
@@ -1543,6 +1595,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * MEtodo che indica che tipo di box serve per l'ordine
+     *
      * @param totale
      * @param prodotti
      * @param request
@@ -1568,6 +1621,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Metodo che indica il costo del box da usare per l'ordine
+     *
      * @param totale
      * @param prodotti
      * @param request
@@ -1638,6 +1692,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutte le email iscritte alla newsletter
+     *
      * @return
      * @throws DAOException
      */
@@ -1662,6 +1717,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Elimina una email dalle iscrizioni alla newsletter
+     *
      * @param email
      * @throws DAOException
      */
@@ -1687,6 +1743,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
     /**
      * Ritorna il numero di ordini di un determinato tipo di spedizione in un
      * determinato stato
+     *
      * @param stato
      * @param tipo
      * @return
@@ -1714,6 +1771,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutte le notifiche
+     *
      * @return
      * @throws DAOException
      */
@@ -1745,6 +1803,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna una particolare notifica
+     *
      * @param id
      * @return
      * @throws DAOException
@@ -1776,6 +1835,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutte le notifiche di un determinato tipo
+     *
      * @param testo
      * @return
      * @throws DAOException
@@ -1808,6 +1868,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Elimina un notifica specifica
+     *
      * @param id
      * @throws DAOException
      */
@@ -1832,6 +1893,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Elimina tutte le notifiche
+     *
      * @throws DAOException
      */
     @Override
@@ -1854,6 +1916,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutte le varianti salvate e aggiunte al carrello
+     *
      * @param request
      * @return
      * @throws DAOException
@@ -1922,6 +1985,7 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
 
     /**
      * Ritorna tutte le varianti aggiunte al carrello di un determinato prodotto
+     *
      * @param request
      * @param idProduct
      * @return
@@ -1947,6 +2011,29 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             }
         }
         return prodVariant;
+    }
+
+    @Override
+    public void changeShopStatus(boolean stato) throws DAOException {
+        checkCON();
+
+        try (PreparedStatement stm = CON.prepareStatement(
+                "UPDATE statoSito SET stato = ?"
+        )) {
+            try {
+                stm.setBoolean(1, stato);
+
+                if (stm.executeUpdate() == 1) {
+                } else {
+                    System.out.println("Error updating stato ");
+                }
+
+            } catch (SQLException ex) {
+                throw new DAOException(ex);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

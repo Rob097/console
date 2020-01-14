@@ -10,27 +10,27 @@
     <nav class="float-left">
         <ul>
             <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/bottega.jsp">
+                <a target="_blank" rel="noopener" href="/../Bortoleto/bottega-online/">
                     Bottega Online
                 </a>
             </li>
             <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/macelleria.jsp">
+                <a target="_blank" rel="noopener" href="/../Bortoleto/La-Macelleria">
                     Macelleria
                 </a>
             </li>
             <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/ristorante.jsp">
+                <a target="_blank" rel="noopener" href="/../Bortoleto/Il-Ristorante">
                     Ristorante
                 </a>
             </li>            
             <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/blog.jsp">
+                <a target="_blank" rel="noopener" href="/../Bortoleto/Il-Blog/">
                     Blog
                 </a>
             </li>
             <li>
-                <a target="_blank" rel="noopener" href="https://macelleriadellantonio.it/idee.jsp">
+                <a target="_blank" rel="noopener" href="/../Bortoleto/Idee-in-Cucina/">
                     Idee
                 </a>
             </li>
