@@ -94,7 +94,7 @@ public class ImageDispatcher {
 
     public static void insertCompressedImg(String Directory, String imgName, Part filePart1, String extension) throws FileNotFoundException, IOException, IOException, IOException, IOException, IOException {
         //Creo l'immagine della cartella in modo da avere un file da comprimere
-        if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png")) {
+        if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("JPG")) {
             insertImgIntoDirectory(Directory, imgName, filePart1);
             String CompleteImgName, CompleteImgName1;
 
@@ -166,6 +166,8 @@ public class ImageDispatcher {
                     System.out.println("Nessuna immagine da cancellare2");
                 }
             }
+        }else{
+            System.out.println("formato strano");
         }
     }
 

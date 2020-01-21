@@ -16,12 +16,12 @@
 <html lang="en">
 
     <head>
-        
+
         <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
         <meta name="robots" content="noindex">
         <!-- Per impedire solo a Google di indicizzare la pagina -->
         <meta name="googlebot" content="noindex">
-        
+
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -91,7 +91,7 @@
                     <div class="container-fluid">
                         <a href="articoli.jsp"><i class="fas fa-arrow-left"></i> Torna a tutti gli articoli</a>
                         <c:choose>
-                            <c:when test="${param.id eq 'new'}" >
+                            <c:when test="${param.id eq 'new'}" >                                
                                 <form method="POST" action="addBlog"  enctype="multipart/form-data">
                                     <button class="btn btn-outline-info mt-4">Aggiungi</button>
                                     <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="Titolo" maxlength="45" required/>
@@ -100,8 +100,8 @@
                                     <div class="row">
                                         <div class="col-md-6 mt-5">
 
-                                            <div class=" mb-5">     
-                                                <h3>Tag</h3>
+                                            <div class=" mb-5">
+                                                <h3>Tag<a style="cursor: pointer; vertical-align: middle;" data-toggle="modal" data-target="#customTagsModal"><i data-toggle="tooltip" title="Aggiungi Tag Personalizzati" class="fas fa-plus-circle ml-2"></i></a></h3>
 
                                                 <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
                                                     <option style="color: #ad9966;" disabled="true">Categorie</option>
@@ -283,7 +283,7 @@
                                                     </div>
 
                                                     <div class=" mb-5">     
-                                                        <h3>Tag</h3>
+                                                        <h3>Tag<a style="cursor: pointer; vertical-align: middle;" data-toggle="modal" data-target="#customTagsModal"><i data-toggle="tooltip" title="Aggiungi Tag Personalizzati" class="fas fa-plus-circle ml-2"></i></a></h3>
 
                                                         <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
                                                             <option style="color: #ad9966;" disabled="true">Categorie</option>
@@ -395,6 +395,28 @@
                 </footer>
             </div>
         </div>
+        <div class="modal fade" id="customTagsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tag Personalizzati</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Scrivi i tag e premi invio per ognuno.</p> 
+                        <form onsubmit="addTag($('#freeTag').val()); $('#freeTag').val('');">
+                            <input type="text" value="" id="freeTag"/>
+                        </form>
+                        <p id="ptagadded"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ho finito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!--   Core JS Files   -->
         <script src="assets/js/core/jquery.min.js"></script>
@@ -410,7 +432,7 @@
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/messages/messages.it-it.js" type="text/javascript"></script>
         <script src="js/tagsinput.js"></script>
-        <script src="js/bootstrap-maxlength.js"></script>
+        <script src="js/bootstrap-maxlength-min.js"></script>
         <script>
         </script>
         <script type="text/javascript">
@@ -473,13 +495,18 @@
                 }
 
             }
-
+            
+            var added = 0;
             $('#tags').tagsinput({
+                /*typeahead: {
+                 source: []
+                 },*/
+                freeInput: true,
                 allowDuplicates: false,
                 itemValue: 'id', // this will be used to set id of tag
-                itemText: 'text', // this will be used to set text of tag
-                freeInput: true
+                itemText: 'text' // this will be used to set text of tag                
             });
+            $('#ptagadded').html('Tag Aggiunti: ' + added);
 
             $(document).ready(function () {
 
@@ -501,8 +528,12 @@
                 </c:forEach>
             </c:if>
             });
+            
             function addTag(element) {
                 event.preventDefault();
+                added++;
+                $('#ptagadded').html('Tag Aggiunti: '+added);
+
                 var val = element;
                 var mytagsinput = $('#tags');
                 //add my tags object
@@ -611,7 +642,7 @@
 
 
             // Code with description of parameters.
-            // See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+            // See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
             $('input[maxlength]').maxlength({
                 alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.

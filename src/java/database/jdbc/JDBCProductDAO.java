@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -86,6 +85,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                     prodotti.add(p);
                 }
 
@@ -123,6 +123,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                     prodotti.add(p);
                 }
 
@@ -160,6 +161,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                     prodotti.add(p);
                 }
 
@@ -207,6 +209,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                     prodotti.add(p);
                 }
 
@@ -243,6 +246,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                 }
                 return p;
             }
@@ -278,6 +282,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                 }
                 return p;
             }
@@ -392,13 +397,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * @throws DAOException
      */
     @Override
-    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException {
+    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo, double peso) throws DAOException {
         checkCON();
 
         if (nome == null || descrizione == null || categoria == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE prodotto SET nome = ?, categoria = ?, immagine = ?, descrizione = ?, costo = ?, disponibile = ? WHERE id = ?;"
+                    "UPDATE prodotto SET nome = ?, categoria = ?, immagine = ?, descrizione = ?, costo = ?, disponibile = ?, peso = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setString(1, nome);
@@ -407,7 +412,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     stm.setString(4, descrizione);
                     stm.setDouble(5, costo);
                     stm.setBoolean(6, disponibile);
-                    stm.setInt(7, id);
+                    stm.setDouble(7, peso);
+                    stm.setInt(8, id);
 
                     if (stm.executeUpdate() == 1) {
                     } else {
@@ -436,11 +442,11 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * @throws DAOException
      */
     @Override
-    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException {
+    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco, double peso) throws DAOException {
         checkCON();
 
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco) VALUES (?,?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco, peso) VALUES (?,?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, nome);
                 stm.setString(2, categoria);
@@ -449,6 +455,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                 stm.setDouble(5, costo);
                 stm.setBoolean(6, disponibile);
                 stm.setBoolean(7, fresco);
+                stm.setDouble(8, peso);
 
                 if (stm.executeUpdate() == 1) {
                 } else {
@@ -501,6 +508,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setCosto(rs.getFloat("costo"));
                     p.setDisponibile(rs.getBoolean("disponibile"));
                     p.setFresco(rs.getBoolean("fresco"));
+                    p.setPeso(rs.getDouble("peso"));
                     prodotti.add(p);
                 }
 
@@ -543,6 +551,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     v.setVariant(rs.getString("variant"));
                     v.setVariantName(rs.getString("variantName"));
                     v.setSupplement(rs.getDouble("supplement"));
+                    v.setPesoMaggiore(rs.getDouble("pesoMaggiore"));
 
                     for (Map.Entry<String, ArrayList<Variante>> entry : var.entrySet()) {
                         ArrayList<Variante> value = entry.getValue();
@@ -588,6 +597,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     v.setVariant(rs.getString("variant"));
                     v.setVariantName(rs.getString("variantName"));
                     v.setSupplement(rs.getDouble("supplement"));
+                    v.setPesoMaggiore(rs.getDouble("pesoMaggiore"));
                 }
                 return v;
             }
@@ -624,6 +634,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     v.setVariant(rs.getString("variant"));
                     v.setVariantName(rs.getString("variantName"));
                     v.setSupplement(rs.getDouble("supplement"));
+                    v.setPesoMaggiore(rs.getDouble("pesoMaggiore"));
                     varianti.add(v);
                 }
                 if (varianti == null || varianti.isEmpty()) {
@@ -690,17 +701,18 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * @param variant
      * @param variantName
      * @param supplement
+     * @param peso_variante
      * @throws DAOException
      */
     @Override
-    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement) throws DAOException {
+    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement, ArrayList<String> peso_variante) throws DAOException {
         if (variant != null && variantName != null && supplement != null && !variant.isEmpty() && !variantName.isEmpty() && !supplement.isEmpty() && variant.size() == variantName.size() && variant.size() == supplement.size()) {
 
             Variante v;
             ArrayList<Variante> varianti = new ArrayList<>();
 
             for (int i = 0; i < variant.size(); i++) {
-                v = new Variante(0, idProd, variant.get(i), variantName.get(i), Double.parseDouble(supplement.get(i).replace(",", ".")), 1);
+                v = new Variante(0, idProd, variant.get(i), variantName.get(i), Double.parseDouble(supplement.get(i).replace(",", ".")), 1, Double.parseDouble(peso_variante.get(i).replace(",", ".")));
                 varianti.add(v);
             }
             
@@ -708,12 +720,13 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
             
             for (int i = 0; i < varianti.size(); i++) {
                 v = varianti.get(i);
-                try (PreparedStatement stm = CON.prepareStatement("insert into products_variants (idProd, variant, variantName, supplement) values (?, ?, ?, ?)")) {
+                try (PreparedStatement stm = CON.prepareStatement("insert into products_variants (idProd, variant, variantName, supplement, pesoMaggiore) values (?, ?, ?, ?, ?)")) {
                     try {
                         stm.setInt(1, v.getId_prod());
                         stm.setString(2, v.getVariant());
                         stm.setString(3, v.getVariantName());
                         stm.setDouble(4, v.getSupplement());
+                        stm.setDouble(5, v.getPesoMaggiore());
 
                         if (stm.executeUpdate() >= 1) {
                         } else {

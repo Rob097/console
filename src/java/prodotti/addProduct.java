@@ -72,7 +72,7 @@ public class addProduct extends HttpServlet {
         try {
 
             String nome = null, descrizione = null, immagine = null, categoria = null;
-            double costo = 0.01;
+            double costo = 0.01, peso = 1.0;
             Part filePart1;
             boolean fresco = false, disponibile = true;
 
@@ -97,6 +97,16 @@ public class addProduct extends HttpServlet {
                         }
                     }
                 }
+                if (request.getParameter("peso") != null) {
+                    if (request.getParameter("peso").equals(".") || request.getParameter("peso").equals(",")) {
+                        peso = 1.0;
+                    } else {
+                        try {
+                            peso = Double.parseDouble(request.getParameter("peso").replace(",", "."));
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                }
                 if (request.getParameter("fresco") != null) {
                     fresco = request.getParameter("fresco").equals("true");
                 }
@@ -104,15 +114,17 @@ public class addProduct extends HttpServlet {
                     disponibile = true;
                 }
 
-                int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco);
+                int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco, peso);
 
                 ArrayList<String> variantiNomi = new ArrayList<>();
                 ArrayList<String> scelteNomi = new ArrayList<>();
                 ArrayList<String> supplementNomi = new ArrayList<>();
+                ArrayList<String> pesoNomi = new ArrayList<>();
 
                 ArrayList<String> varianti = new ArrayList<>();
                 ArrayList<String> scelte = new ArrayList<>();
                 ArrayList<String> supplement = new ArrayList<>();
+                ArrayList<String> peso_variante = new ArrayList<>();
 
                 Enumeration<String> keys = request.getParameterNames();
                 while (keys.hasMoreElements()) {
@@ -126,6 +138,9 @@ public class addProduct extends HttpServlet {
                     if (key.contains("[supplement]")) {
                         supplementNomi.add(key);
                     }
+                    if (key.contains("[pesoVariante]")) {
+                        pesoNomi.add(key);
+                    }
                 }
 
                 for (int k = 0; k < variantiNomi.size(); k++) {
@@ -138,9 +153,12 @@ public class addProduct extends HttpServlet {
                     if (!request.getParameter(supplementNomi.get(k)).equals("")) {
                         supplement.add(request.getParameter(supplementNomi.get(k)));
                     }
+                    if (!request.getParameter(pesoNomi.get(k)).equals("")) {
+                        peso_variante.add(request.getParameter(pesoNomi.get(k)));
+                    }
                 }
                 
-                productdao.updateVariant(id, varianti, scelte, supplement);
+                productdao.updateVariant(id, varianti, scelte, supplement, peso_variante);
 
                 //Load dell'immagine
                 if (filePart1 != null) {
@@ -171,7 +189,7 @@ public class addProduct extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo);
+                productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo, peso);
                 url = "prodotti.jsp#" + categoria;
 
             } else {

@@ -33,17 +33,21 @@
                         </select>                       
                     </div>
                 </div>
-                <input pattern="[0-9]+(.|,)+[0-9]{1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
-                <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
+                <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="peso" class="form-control mt-1" placeholder="Peso (kg)" required /><br>
+                <textarea maxlength="160" style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
                 <div class="form-group form-inline" id="dynamic_form_freso">                                        
-                    <div class="form-group col-lg-4 col-md-12 name">
+                    <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="variante" name="variante" placeholder="Variante">
                     </div>
-                    <div class="form-group col-lg-3 col-md-12 name">
+                    <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="scelta" name="scelta" placeholder="Scelte">
                     </div>
-                    <div class="form-group col-lg-3 col-md-12 name">
+                    <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="supplement" name="supplement" placeholder="Supplemento">
+                    </div>
+                    <div class="form-group col-lg-5 col-md-12 name">
+                        <input type="text" class="form-control" id="pesoVariante" name="pesoVariante" placeholder="Peso">
                     </div>
                     <div class="button-group form-group col-lg-2 col-md-12">
                         <a href="javascript:void(0)" class="btn btn-primary" id="plus_fresco" style="padding: .375rem .75rem;">+</a>
@@ -92,9 +96,9 @@
     });
 
     // Code with description of parameters.
-// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
-    $('input[maxlength]').maxlength({
+    $('[maxlength]').maxlength({
         alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
         // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
         warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.

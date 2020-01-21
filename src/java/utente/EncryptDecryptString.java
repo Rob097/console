@@ -5,9 +5,16 @@
  */
 package utente;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Scanner;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import static varie.costanti.PASS;
@@ -44,7 +51,7 @@ public class EncryptDecryptString {
             Base64.Encoder encoder = Base64.getUrlEncoder();
             encryptedText = encoder.encodeToString(cipherText);
 
-        } catch (Exception E) {
+        } catch (UnsupportedEncodingException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException E) {
             System.err.println("Encrypt Exception : " + E.getMessage());
         }
         return encryptedText;
@@ -68,7 +75,7 @@ public class EncryptDecryptString {
             byte[] cipherText = decoder.decode(encryptedText.getBytes("UTF8"));
             decryptedText = new String(cipher.doFinal(cipherText), "UTF8");
 
-        } catch (Exception E) {
+        } catch (UnsupportedEncodingException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException E) {
             System.err.println("decrypt Exception : " + E.getMessage());
         }
         return decryptedText;

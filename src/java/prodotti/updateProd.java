@@ -105,7 +105,7 @@ public class updateProd extends HttpServlet {
             String nome = null, descrizione = null, categoria = null;
             String immagine = null;
             Part filePart1 = null;
-            double costo = 0;
+            double costo = 0, peso = 0;
             boolean fresco = false, disponibile = false, checkIMG = true;
             try {
 
@@ -135,6 +135,9 @@ public class updateProd extends HttpServlet {
                     }
                     if (request.getParameter("disponibile") != null) {
                         disponibile = true;
+                    }
+                    if (request.getParameter("peso") != null) {
+                        peso = Double.parseDouble(request.getParameter("peso").replace(",", "."));
                     }
 
                     //Load dell'immagine
@@ -167,10 +170,12 @@ public class updateProd extends HttpServlet {
                     ArrayList<String> variantiNomi = new ArrayList<>();
                     ArrayList<String> scelteNomi = new ArrayList<>();
                     ArrayList<String> supplementNomi = new ArrayList<>();
+                    ArrayList<String> pesoNomi = new ArrayList<>();
 
                     ArrayList<String> varianti = new ArrayList<>();
                     ArrayList<String> scelte = new ArrayList<>();
                     ArrayList<String> supplement = new ArrayList<>();
+                    ArrayList<String> peso_variante = new ArrayList<>();
 
                     Enumeration<String> keys = request.getParameterNames();
                     while (keys.hasMoreElements()) {
@@ -184,11 +189,14 @@ public class updateProd extends HttpServlet {
                         if (key.contains("[supplement]")) {
                             supplementNomi.add(key);
                         }
+                        if (key.contains("[pesoVariante]")) {
+                            pesoNomi.add(key);
+                        }
                     }
 
                     for (int k = 0; k < variantiNomi.size(); k++) {
                         if (!request.getParameter(variantiNomi.get(k)).equals("")) {
-                            varianti.add(request.getParameter(variantiNomi.get(k)).replaceAll(":", ""));
+                            varianti.add(request.getParameter(variantiNomi.get(k)).replaceAll(":", "").replaceFirst("^\\s*", ""));
                         }
                         if (!request.getParameter(scelteNomi.get(k)).equals("")) {
                             scelte.add(request.getParameter(scelteNomi.get(k)));
@@ -196,11 +204,14 @@ public class updateProd extends HttpServlet {
                         if (!request.getParameter(supplementNomi.get(k)).equals("")) {
                             supplement.add(request.getParameter(supplementNomi.get(k)));
                         }
+                        if (!request.getParameter(pesoNomi.get(k)).equals("")) {
+                            peso_variante.add(request.getParameter(pesoNomi.get(k)));
+                        }
                     }
 
-                    productdao.alterProd(idProd, nome, descrizione, categoria, immagine, disponibile, costo);
-                    productdao.updateVariant(idProd, varianti, scelte, supplement);
-                    url = "prodotti.jsp#"+categoria;
+                    productdao.alterProd(idProd, nome, descrizione, categoria, immagine, disponibile, costo, peso);
+                    productdao.updateVariant(idProd, varianti, scelte, supplement, peso_variante);
+                    url = "prodotti.jsp#" + categoria;
                 } else {
                     response.setHeader("NOTIFICA", "L'immagine supera i 2.4MB di peso");
                 }

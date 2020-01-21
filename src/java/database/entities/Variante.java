@@ -16,17 +16,19 @@ public class Variante {
     private String variantName;
     private double supplement;
     private int quantita;
+    private double pesoMaggiore;
 
     public Variante() {
     }
 
-    public Variante(int id, int id_prod, String variant, String variantName, double supplement, int quantita) {
+    public Variante(int id, int id_prod, String variant, String variantName, double supplement, int quantita, double pesoMaggiore) {
         this.id = id;
         this.id_prod = id_prod;
         this.variant = variant;
         this.variantName = variantName;
         this.supplement = supplement;
         this.quantita = quantita;
+        this.pesoMaggiore = pesoMaggiore;
     }
 
     public int getId() {
@@ -76,6 +78,13 @@ public class Variante {
     public void setQuantita(int quantita) {
         this.quantita = quantita;
     }
-    
+
+    public double getPesoMaggiore() {
+        return pesoMaggiore;
+    }
+
+    public void setPesoMaggiore(double pesoMaggiore) {
+        this.pesoMaggiore = pesoMaggiore;
+    }    
     
 }

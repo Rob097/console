@@ -17,12 +17,12 @@
 <html lang="en">
 
     <head>
-        
+
         <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
         <meta name="robots" content="noindex">
         <!-- Per impedire solo a Google di indicizzare la pagina -->
         <meta name="googlebot" content="noindex">
-        
+
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -300,22 +300,19 @@
                             </div>                            
                         </div>
                         <h5><b>Servizi Esterni</b></h5>
-                        <div class="row">
-                            <div class="col-12">
-                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://clients.javapipe.com/clientarea.php">Hosting</a></span>
-                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://www.servizipos.it/merchant-console-web/">Cassa Rurale</a></span>
-                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="#">Google</a></span>
-                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://webmail.register.it/?chglng=ita">Email register</a></span>
-                                <span><a class="btn btn-outline-dark" target="_blank" rel="noopener" href="https://business.facebook.com/home/accounts?business_id=2478654128853320">Facebook Business Manager</a></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <span><a target="_blank" rel="noopener" href="https://www.facebook.com/macelleriadellantonio/" title="FacebookM" class="btn btn-facebook"><i class="fa fa-facebook fa-fw"></i> Macelleria</a></span>
-                                <span><a target="_blank" rel="noopener" href="https://www.facebook.com/LBortoleto/" title="FacebookR" class="btn btn-facebook"><i class="fa fa-facebook fa-fw"></i> Ristorante</a></span>
-                                <span><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9-3If8AhVwM" title="Youtube" class="btn btn-youtube"><i class="fa fa-youtube fa-fw"></i> Presentazione</a></span>
-                            </div>
-                        </div>
+                        <span style="display: inline-block;"><a class="btn btn-outline-dark" target="_blank" rel="noopener nofollow" href="https://www.servizipos.it/merchant-console-web/">Cassa Rurale</a></span>
+                        <span style="display: inline-block;"><a class="btn btn-outline-dark" target="_blank" rel="noopener nofollow" href="https://webmail.register.it/?chglng=ita">Email register</a></span>
+                        <br>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.facebook.com/macelleriadellantonio/" title="FacebookM" class="btn btn-facebook"><i class="fa fa-facebook fa-fw"></i> Macelleria</a></span>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.facebook.com/LBortoleto/" title="FacebookR" class="btn btn-facebook"><i class="fa fa-facebook fa-fw"></i> Ristorante</a></span>
+                        <br>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.instagram.com/macelleriabortoleto/" title="InstagramM" class="btn" style="background-color: #3F729B;"><i class="fa fa-instagram fa-fw"></i> Macelleria</a></span>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.instagram.com/ristorantebortoleto/" title="InstagramR" class="btn" style="background-color: #3F729B;"><i class="fa fa-instagram fa-fw"></i> Ristorante</a></span>
+                        <br>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.youtube.com/watch?v=9-3If8AhVwM" title="Youtube" class="btn btn-youtube"><i class="fa fa-youtube fa-fw"></i> Presentazione</a></span>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://twitter.com/bortoleto_mac" title="Twitter" class="btn btn-twitter"><i class="fa fa-twitter fa-fw"></i> Twitter Macelleria</a></span>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.linkedin.com/company/macelleria-dellantonio/" title="Youtube" class="btn btn-linkedin" style="background-color: #007BB6;"><i class="fa fa-linkedin fa-fw"></i> Linkedin Macelleria</a></span>
+                        <span style="display: inline-block;"><a target="_blank" rel="noopener nofollow" href="https://www.pinterest.it/macelleriabortoleto/" title="Youtube" class="btn btn-pinterest" style="background-color: #CB2027;"><i class="fa fa-pinterest fa-fw"></i> Pinterest Macelleria</a></span>
                     </div>
                 </div>
                 <footer class="footer">                    
@@ -418,9 +415,10 @@
             var hostCost = 79.51;
             var dataDominio = new Date(2018, 11, 27);
             var dataHost = new Date(2018, 9, 16);
-            var today = new Date(); today.setMonth(today.getMonth() + 1);
+            var today = new Date();
+            today.setMonth(today.getMonth() + 1);
             var tot = 0;
-            
+
             var payTimesDom = today.getUTCFullYear() - dataDominio.getUTCFullYear() + 1;
             if (today.getMonth() > dataDominio.getMonth()) {
                 tot += (dominioCost + 0.22 * dominioCost) * payTimesDom;

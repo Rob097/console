@@ -58,11 +58,13 @@
                         </p>
                     </div>
                 </div>  
-                <label class="mt-3" for="costo">Costo</label>
+                <label class="mt-5" for="costo">Costo</label>
                 <input type="text" name="costo" class="form-control mb-4" value="${prodotto.costo}" required />
+                <label class="mt-1" for="peso">Peso (kg)</label>
+                <input type="text" name="peso" class="form-control mb-4" value="${prodotto.peso}" required />
 
                 <label for="descrizione">Descrizione</label>
-                <textarea style="min-height: 100px;" name="descrizione" class="form-control mb-4" required>${prodotto.descrizione}</textarea>
+                <textarea maxlength="160" style="min-height: 100px;" name="descrizione" class="form-control mb-4" required>${prodotto.descrizione}</textarea>
 
                 <label for="dynamic_form">Varianti</label>
                 <c:if test="${varianti ne null && !varianti.isEmpty()}">
@@ -77,7 +79,7 @@
                                 ${name}:<br>
                                 <ul style="margin-left: 20px;">
                                     <c:forEach items="${array}" var="scelta" >
-                                        <li>${scelta.variantName} (+ € ${scelta.supplement})</li>
+                                        <li>${scelta.variantName} (€ ${scelta.supplement} | ${scelta.pesoMaggiore} kg.)</li>
                                     </c:forEach>
                                 </ul>
                             </p>
@@ -85,14 +87,17 @@
                     </div>
                 </c:if>
                 <div class="form-group form-inline" id="dynamic_form">                                        
-                    <div class="form-group col-lg-4 col-md-12 name">
+                    <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="variante" name="variante" placeholder="Variante">
                     </div>
-                    <div class="form-group col-lg-3 col-md-12 name">
+                    <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="scelta" name="scelta" placeholder="Scelte">
                     </div>
-                    <div class="form-group col-lg-3 col-md-12 name">
-                        <input type="text" class="form-control" id="supplement" name="supplement" placeholder="Supplemento">
+                    <div class="form-group col-lg-5 col-md-12 name">
+                        <input type="text" class="form-control" id="supplement" name="supplement" placeholder="Costo">
+                    </div>
+                    <div class="form-group col-lg-5 col-md-12 name">
+                        <input type="text" class="form-control" id="pesoVariante" name="pesoVariante" placeholder="Peso">
                     </div>
                     <div class="button-group form-group col-lg-2 col-md-12">
                         <a href="javascript:void(0)" class="btn btn-primary" id="plus" style="padding: .375rem .75rem;">+</a>
@@ -174,9 +179,9 @@
                     });
 
                     // Code with description of parameters.
-// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
-                    $('input[maxlength]').maxlength({
+                    $('[maxlength]').maxlength({
                         alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
                         // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
                         warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.

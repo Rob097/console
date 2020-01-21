@@ -19,12 +19,13 @@ public class Prodotto {
     private boolean disponibile;
     private int quantita;
     private boolean fresco;
+    private double peso;
 
     public Prodotto() {
         this.id = 0;
     }
 
-    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco) {
+    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco, double peso) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
@@ -34,7 +35,8 @@ public class Prodotto {
         this.disponibile = disponibile;
         this.quantita = quantita;
         this.fresco = fresco;
-    }    
+        this.peso = peso;
+    }
 
     public int getId() {
         return id;
@@ -107,6 +109,14 @@ public class Prodotto {
     public void setFresco(boolean fresco) {
         this.fresco = fresco;
     }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }    
 
     @Override
     public String toString() {

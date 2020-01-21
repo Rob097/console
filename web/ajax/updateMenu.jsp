@@ -63,7 +63,7 @@
 </div>
 <script>
     // Code with description of parameters.
-// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
     $('input[maxlength]').maxlength({
         alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.

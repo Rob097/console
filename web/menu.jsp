@@ -57,7 +57,7 @@
                         <div class="col-md-12">
                             <div style="text-align: center;">
                                 <span><i class="fas fa-info-circle" data-toggle="tooltip" title="Il peso delle due immagini sommate deve essere inferiore ai 2.4MB. Puoi comprimere le immagini a questo link. In alternativa puoi caricare una immagine sola e la seconda sostituirla con una dal peso minore e poi aggiornare il menu con la seconda immagine corretta."></i></span><br>
-                                <a href="https://compressjpeg.com/" target="_blank" class="btn btn-warning" style="margin: auto auto; color: black; font-weight: 900;">Comprimi immagine</a>
+                                <a rel="nofollow" href="https://compressjpeg.com/" target="_blank" class="btn btn-warning" style="margin: auto auto; color: black; font-weight: 900;">Comprimi immagine</a>
                             </div>
                             <div class="card card-plain">
                                 <div class="card-header card-header-warning">
@@ -160,7 +160,7 @@
         <script src="assets/js/plugins/chartist.min.js"></script>
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-        <script src="js/bootstrap-maxlength.js"></script>
+        <script src="js/bootstrap-maxlength-min.js"></script>
         <script>
 
         </script>
@@ -287,7 +287,7 @@
             });
 
             // Code with description of parameters.
-// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
             $('input[maxlength]').maxlength({
                 alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.

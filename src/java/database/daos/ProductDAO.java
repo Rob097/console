@@ -28,8 +28,8 @@ public interface ProductDAO{
     public int getNumberRate(int id) throws DAOException;
     public double getRate(int id) throws DAOException;
     public void deleteProd(int id) throws DAOException;
-    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo) throws DAOException;
-    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco) throws DAOException;
+    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo, double peso) throws DAOException;
+    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco, double peso) throws DAOException;
     public ArrayList<Prodotto> getNullCategoryProducts() throws DAOException;
     
     //Varianti
@@ -38,5 +38,5 @@ public interface ProductDAO{
     public ArrayList<Variante> getFrstVariantOfProduct(int idProd) throws DAOException;
     public String getVariantBlock(ArrayList<Variante> blocco) throws DAOException;
     public void removeVariant(int idProd, String variant) throws DAOException;
-    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement) throws DAOException;
+    public void updateVariant(int idProd, ArrayList<String> variant, ArrayList<String> variantName, ArrayList<String> supplement, ArrayList<String> peso_variante) throws DAOException;
 }

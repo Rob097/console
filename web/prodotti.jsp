@@ -15,12 +15,12 @@
 <html lang="en">
 
     <head>
-        
+
         <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
         <meta name="robots" content="noindex">
         <!-- Per impedire solo a Google di indicizzare la pagina -->
         <meta name="googlebot" content="noindex">
-        
+
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -38,7 +38,11 @@
         <link href="css/styles.css" rel="stylesheet" />
 
         <style>
-
+            @media (min-width: 576px){
+                .modal-dialog {
+                    max-width: 600px;
+                }
+            }
         </style>
     </head>
 
@@ -377,12 +381,12 @@
 
         <!-- Add Confezionato -->
         <div class="modal fade" id="addConfezionato" tabindex="-1" role="dialog" aria-hidden="true">
-            
+
         </div>
 
         <!-- Add Fresco -->
         <div class="modal fade" id="addFresco" tabindex="-1" role="dialog" aria-hidden="true">
-            
+
         </div>
         <!-- ###########################    FINE MODALI   ###########################-->
 
@@ -395,7 +399,7 @@
         <script src="assets/js/plugins/chartist.min.js"></script>
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-        <script src="js/bootstrap-maxlength.js"></script>
+        <script src="js/bootstrap-maxlength-min.js"></script>
         <script>
 
         </script>
@@ -525,7 +529,7 @@
                     }
                 });
             }
-            
+
             /* addFresco */
             function addFresco() {
                 $.ajax({
@@ -571,7 +575,7 @@
             }
 
             // Code with description of parameters.
-// See full documentation here : https://github.com/mimo84/bootstrap-maxlength/
+// See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
             $('input[maxlength]').maxlength({
                 alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.

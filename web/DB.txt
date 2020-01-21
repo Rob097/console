@@ -54,6 +54,7 @@ drop table if exists notifiche;
 drop table if exists products_variants;
 drop table if exists tags;
 drop table if exists valutazione_blog;
+drop table if exists statoSito;
 SET FOREIGN_KEY_CHECKS = 1;
 
 ################################################################################
