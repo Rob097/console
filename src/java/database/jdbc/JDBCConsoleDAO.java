@@ -2036,5 +2036,26 @@ public class JDBCConsoleDAO extends JDBCDAO implements ConsoleDAO {
             Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    @Override
+    public boolean getShopStatus() throws DAOException {
+        checkCON();
+
+        try (PreparedStatement stm = CON.prepareStatement(
+                "SELECT * from statoSito"
+        )) {
+            
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getBoolean("stato");
+                }
+            }catch(Exception e){
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(JDBCConsoleDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("get stato sito: False");
+        return false;
+    }
 
 }

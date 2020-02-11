@@ -92,4 +92,5 @@ public interface ConsoleDAO {
     public LinkedHashMap<ArrayList<Variante>, Integer> getCartVariant(HttpServletRequest request) throws DAOException;
     
     public void changeShopStatus(boolean stato) throws DAOException;
+    public boolean getShopStatus() throws DAOException;
 }

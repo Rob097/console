@@ -107,7 +107,7 @@
                 </a>
             </li>
         <c:choose>
-            <c:when test="${(request.getSession().getAttribute('statoSito') eq null) || (request.getSession().getAttribute('statoSito') ne null && request.getSession().getAttribute('statoSito').equals('true'))}">
+            <c:when test="${consoledao.getShopStatus() eq true}">
                 <li class="nav-item active-pro" data-toggle="tooltip" title="Attenzione stai per SPEGNERE il negozio!" style="bottom: 6rem !important; width: 100%">
                     <!-- Default checked -->
                     <div id="onOffDiv" class="checkbox" style="width: fit-content; margin: auto auto;">
