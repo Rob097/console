@@ -19,6 +19,7 @@ public class Blog {
     private String nome;
     private String testo;
     private String descrizione;
+    private String meta_descrizione;
     private String immagine;
     private String creatore;
     private Timestamp data;
@@ -28,12 +29,13 @@ public class Blog {
     public Blog() {
     }
 
-    public Blog(int id, String categoria, String nome, String testo, String descrizione, String immagine, String creatore, Timestamp data, int views, boolean pubblicato) {
+    public Blog(int id, String categoria, String nome, String testo, String descrizione, String meta_descrizione, String immagine, String creatore, Timestamp data, int views, boolean pubblicato) {
         this.id = id;
         this.categoria = categoria;
         this.nome = nome;
         this.testo = testo;
         this.descrizione = descrizione;
+        this.meta_descrizione = meta_descrizione;
         this.immagine = immagine;
         this.creatore = creatore;
         this.data = data;
@@ -79,6 +81,14 @@ public class Blog {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public String getMeta_descrizione() {
+        return meta_descrizione;
+    }
+
+    public void setMeta_descrizione(String meta_descrizione) {
+        this.meta_descrizione = meta_descrizione;
     }
 
     public String getImmagine() {

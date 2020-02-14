@@ -70,7 +70,7 @@ public class addIdea extends HttpServlet {
         RequestDispatcher view;
 
         try {
-            String nome = "", procedimento = "", descrizione = "", immagine = "", difficolta = "", creatore = "";
+            String nome = "", procedimento = "", descrizione = "", meta_descrizione = "", immagine = "", difficolta = "", creatore = "";
             int id_prod = 0, tempo = 0, id = 0;
             boolean categoria = true, approvata = true;
             String catS = "";
@@ -98,6 +98,9 @@ public class addIdea extends HttpServlet {
                 }
                 if (request.getParameter("difficultInput") != null) {
                     difficolta = request.getParameter("difficultInput");
+                }
+                if (request.getParameter("meta_descrizione") != null) {
+                    meta_descrizione = request.getParameter("meta_descrizione");
                 }
                 if (request.getParameter("procedimento") != null) {
                     procedimento = request.getParameter("procedimento");
@@ -158,7 +161,7 @@ public class addIdea extends HttpServlet {
                     ingS = b.toString();
                 }
 
-                id = ricettedao.addRecipe(nome, procedimento, descrizione, difficolta, ingS, creatore, tempo, id_prod, categoria, approvata);
+                id = ricettedao.addRecipe(nome, procedimento, descrizione, meta_descrizione, difficolta, ingS, creatore, tempo, id_prod, categoria, approvata);
 
                 //Load dell'immagine
                 if (filePart1 != null) {
@@ -189,7 +192,7 @@ public class addIdea extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
+                ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
 
                 if (approvata) {
                     request.setAttribute("tipo", "idea");

@@ -131,7 +131,7 @@
                                                 </div>
                                                 <%String c = "ATTENZIONE!\nCreando una nuova categoria, il primo articolo inserito risulterà senza immagine.\nConsiglio:\n1) Creare l'articolo \n2)Modificare l'articolo reinserendo l'immagine.";%>
                                                 <c:choose>                                                    
-                                                    <c:when test="${catblogdao.getAllCatBlog() eq null}">
+                                                    <c:when test="${catblogdao.getAllCatBlog() eq null || catblogdao.getAllCatBlog().isEmpty()}">
                                                         <div class="col-md-8">
                                                             <div id="newCategoryDIV" style="text-align: left;">
                                                                 <label for="newCategory">Nuova categoria</label><i class="fas fa-info-circle ml-2" data-toggle="tooltip" title="<%=c%>"></i>
@@ -161,7 +161,7 @@
                                                     </select>
                                                 </div>
                                                 <c:choose>
-                                                    <c:when test="${blogdao.getAllCreators() eq null}">
+                                                    <c:when test="${blogdao.getAllCreators() eq null || blogdao.getAllCreators().isEmpty()}">
                                                         <div class="col-md-8">
                                                             <div id="newCreatorDIV" style="text-align: left;">
                                                                 <label for="newCreator">Nuovo autore</label>
@@ -196,6 +196,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6 text-center mt-5">
+                                            <label for="meta_descrizione">Meta Descrizione</label>
+                                            <textarea maxlength="160" class="form-control mb-5" id="meta_descrizione" name="meta_descrizione"></textarea>
                                             <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
                                             <input type='file' accept="image/x-png, image/jpg, image/jpeg"  name="immagine" onchange="readURL(this, 'InputIMGBlog');"/>
                                         </div>
@@ -366,6 +368,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 text-center mt-5">
+                                                    <label for="meta_descrizione">Meta Descrizione</label>
+                                                    <textarea maxlength="160" class="form-control mb-5" id="meta_descrizione" name="meta_descrizione">${articolo.meta_descrizione}</textarea>
                                                     <img id="InputIMGBlog" src="${articolo.immagine}" alt="${articolo.nome}_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
                                                     <input type='file' name="immagine" onchange="readURL(this, 'InputIMGBlog');" value="${articolo.immagine}"/>
                                                     <input type="hidden" name="oldIMG" value="${articolo.immagine}" required />
@@ -495,7 +499,7 @@
                 }
 
             }
-            
+
             var added = 0;
             $('#tags').tagsinput({
                 /*typeahead: {
@@ -528,11 +532,11 @@
                 </c:forEach>
             </c:if>
             });
-            
+
             function addTag(element) {
                 event.preventDefault();
                 added++;
-                $('#ptagadded').html('Tag Aggiunti: '+added);
+                $('#ptagadded').html('Tag Aggiunti: ' + added);
 
                 var val = element;
                 var mytagsinput = $('#tags');
@@ -644,7 +648,7 @@
             // Code with description of parameters.
             // See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
-            $('input[maxlength]').maxlength({
+            $('[maxlength]').maxlength({
                 alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
                 // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
                 warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.

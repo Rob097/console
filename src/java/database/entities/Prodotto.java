@@ -15,6 +15,7 @@ public class Prodotto {
     private String categoria;
     private String immagine;
     private String descrizione;
+    private String meta_descrizione;
     private String costo;
     private boolean disponibile;
     private int quantita;
@@ -25,12 +26,13 @@ public class Prodotto {
         this.id = 0;
     }
 
-    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String costo, boolean disponibile, int quantita, boolean fresco, double peso) {
+    public Prodotto(int id, String nome, String categoria, String immagine, String descrizione, String meta_descrizione, String costo, boolean disponibile, int quantita, boolean fresco, double peso) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
         this.immagine = immagine;
         this.descrizione = descrizione;
+        this.meta_descrizione = meta_descrizione;
         this.costo = costo;
         this.disponibile = disponibile;
         this.quantita = quantita;
@@ -76,6 +78,14 @@ public class Prodotto {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public String getMeta_descrizione() {
+        return meta_descrizione;
+    }
+
+    public void setMeta_descrizione(String meta_descrizione) {
+        this.meta_descrizione = meta_descrizione;
     }
 
     public String getCosto() {

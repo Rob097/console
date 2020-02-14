@@ -116,7 +116,7 @@ public class updateBlog extends HttpServlet {
 
                 try {
 
-                    String titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "", OLDCategory = "";
+                    String titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", meta_descrizione = "", tag = "", OLDCategory = "";
                     ArrayList<String> tags = new ArrayList<>();
                     boolean pubblicato = blogdao.getBlogById(Integer.parseInt(id)).isPubblicato();
                     Part filePart1 = null;
@@ -139,6 +139,9 @@ public class updateBlog extends HttpServlet {
                         }
                         if (request.getParameter("testo") != null) {
                             testo = request.getParameter("testo");
+                        }
+                        if (request.getParameter("meta_descrizione") != null) {
+                            meta_descrizione = request.getParameter("meta_descrizione");
                         }
                         if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
                             creatore = request.getParameter("newCreator");
@@ -206,7 +209,7 @@ public class updateBlog extends HttpServlet {
                             System.out.println("filePart = null");
                         }
 
-                        blogdao.alterBlog(id, titolo, testo, creatore, categoria, immagine, descrizione, pubblicato);
+                        blogdao.alterBlog(id, titolo, testo, creatore, categoria, immagine, descrizione, meta_descrizione, pubblicato);
                         if (catblogdao.getNumberOfBlog(OLDCategory) == 0) {
                             catblogdao.deleteCat(OLDCategory);
                         }

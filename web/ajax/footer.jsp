@@ -5,6 +5,9 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<jsp:useBean id="now" class="java.util.Date" />
+<fmt:formatDate var="year" value="${now}" pattern="yyyy" />
 
 <div class="container-fluid">
     <nav class="float-left">
@@ -37,6 +40,6 @@
         </ul>
     </nav>
     <div class="copyright float-right">
-        &copy; 2019  Macelleria Dellantonio,  made with <i class="material-icons">favorite</i> by <a href="mailto:dellantonio47@gmail.com">Dellantonio Roberto</a>. All rights reserved
+        &copy; ${year}  Macelleria Dellantonio,  made with <i class="material-icons">favorite</i> by <a href="mailto:dellantonio47@gmail.com">Dellantonio Roberto</a>. All rights reserved
     </div>
 </div>

@@ -21,9 +21,9 @@ public interface BlogDAO {
     public ArrayList<Blog> getBlogByCat(String cat) throws DAOException;
     public ArrayList<Blog> getMostViewedBlog() throws DAOException;
     public ArrayList<String> getAllCreators() throws DAOException;
-    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, boolean pubblicato) throws DAOException;
+    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, String meta_descrizione, boolean pubblicato) throws DAOException;
     public void deleteBlog(String id)  throws DAOException;
-    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, boolean pubblicato) throws DAOException;
+    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, String meta_descrizione, boolean pubblicato) throws DAOException;
    
      //Valutazione
     public int getNumberRate(int id) throws DAOException;

@@ -64,7 +64,9 @@
                 <input type="text" name="peso" class="form-control mb-4" value="${prodotto.peso}" required />
 
                 <label for="descrizione">Descrizione</label>
-                <textarea maxlength="160" style="min-height: 100px;" name="descrizione" class="form-control mb-4" required>${prodotto.descrizione}</textarea>
+                <textarea style="min-height: 100px;" name="descrizione" class="form-control mb-4" required>${prodotto.descrizione}</textarea>
+                <label for="meta_descrizione">Meta Descrizione</label>
+                <textarea maxlength="160" style="min-height: 60px;" name="meta_descrizione" class="form-control mb-4">${prodotto.meta_descrizione}</textarea>
 
                 <label for="dynamic_form">Varianti</label>
                 <c:if test="${varianti ne null && !varianti.isEmpty()}">

@@ -80,6 +80,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -118,6 +119,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -156,6 +158,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -204,6 +207,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -241,6 +245,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -277,6 +282,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));
@@ -390,20 +396,22 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      * @param id
      * @param nome
      * @param descrizione
+     * @param meta_descrizione
      * @param categoria
      * @param immagine
      * @param disponibile
      * @param costo
+     * @param peso
      * @throws DAOException
      */
     @Override
-    public void alterProd(int id, String nome, String descrizione, String categoria, String immagine, boolean disponibile, double costo, double peso) throws DAOException {
+    public void alterProd(int id, String nome, String descrizione, String meta_descrizione, String categoria, String immagine, boolean disponibile, double costo, double peso) throws DAOException {
         checkCON();
 
         if (nome == null || descrizione == null || categoria == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE prodotto SET nome = ?, categoria = ?, immagine = ?, descrizione = ?, costo = ?, disponibile = ?, peso = ? WHERE id = ?;"
+                    "UPDATE prodotto SET nome = ?, categoria = ?, immagine = ?, descrizione = ?, costo = ?, disponibile = ?, peso = ?, meta_descrizione = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setString(1, nome);
@@ -413,7 +421,8 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     stm.setDouble(5, costo);
                     stm.setBoolean(6, disponibile);
                     stm.setDouble(7, peso);
-                    stm.setInt(8, id);
+                    stm.setString(8, meta_descrizione);
+                    stm.setInt(9, id);
 
                     if (stm.executeUpdate() == 1) {
                     } else {
@@ -434,19 +443,21 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
      *
      * @param nome
      * @param descrizione
+     * @param meta_descrizione
      * @param categoria
      * @param costo
      * @param disponibile
      * @param fresco
+     * @param peso
      * @return
      * @throws DAOException
      */
     @Override
-    public int addProd(String nome, String descrizione, String categoria, double costo, boolean disponibile, boolean fresco, double peso) throws DAOException {
+    public int addProd(String nome, String descrizione, String meta_descrizione, String categoria, double costo, boolean disponibile, boolean fresco, double peso) throws DAOException {
         checkCON();
 
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco, peso) VALUES (?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into prodotto (nome, categoria, immagine, descrizione, costo, disponibile, fresco, peso, meta_descrizione) VALUES (?,?,?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, nome);
                 stm.setString(2, categoria);
@@ -456,6 +467,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                 stm.setBoolean(6, disponibile);
                 stm.setBoolean(7, fresco);
                 stm.setDouble(8, peso);
+                stm.setString(9, meta_descrizione);
 
                 if (stm.executeUpdate() == 1) {
                 } else {
@@ -503,6 +515,7 @@ public class JDBCProductDAO extends JDBCDAO implements ProductDAO {
                     p.setId(rs.getInt("id"));
                     p.setNome(rs.getString("nome"));
                     p.setDescrizione(rs.getString("descrizione"));
+                    p.setMeta_descrizione(rs.getString("meta_descrizione"));
                     p.setImmagine(rs.getString("immagine"));
                     p.setCategoria(rs.getString("categoria"));
                     p.setCosto(rs.getFloat("costo"));

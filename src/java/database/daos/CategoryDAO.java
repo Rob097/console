@@ -22,7 +22,7 @@ public interface CategoryDAO {
     public ArrayList<Categoria> getConfCategories() throws DAOException;
     public Categoria getByName(String name) throws DAOException;
     public Categoria getById(String id) throws DAOException;
-    public void alterImg(String id, String nome, String url, String descrizione) throws DAOException;
-    public int addCategory(String nome, String descrizione, boolean fresco) throws DAOException;
+    public void alterImg(String id, String nome, String url, String descrizione, String meta_descrizione) throws DAOException;
+    public int addCategory(String nome, String descrizione, boolean fresco, String meta_descrizione) throws DAOException;
     public void deleteCat(int id) throws DAOException;
 }

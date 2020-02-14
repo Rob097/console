@@ -35,7 +35,8 @@
                 </div>
                 <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="costo" class="form-control mt-5" placeholder="Costo" required /><br>
                 <input pattern="[0-9]+(.|,){0,1}+[0-9]{0,1,2}" type="text" name="peso" class="form-control mt-1" placeholder="Peso (kg)" required /><br>
-                <textarea maxlength="160" style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>
+                <textarea style="min-height: 100px;" name="descrizione" class="form-control" placeholder="Descrizione" required></textarea><br>                
+                <textarea maxlength="160" style="min-height: 60px;" name="meta_descrizione" class="form-control" placeholder="Meta Descrizione"></textarea><br>
                 <div class="form-group form-inline" id="dynamic_form_conf">                                        
                     <div class="form-group col-lg-5 col-md-12 name">
                         <input type="text" class="form-control" id="variante" name="variante" placeholder="Variante">

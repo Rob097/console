@@ -102,7 +102,7 @@ public class updateProd extends HttpServlet {
             }
         } else {
 
-            String nome = null, descrizione = null, categoria = null;
+            String nome = null, descrizione = null, meta_descrizione = null, categoria = null;
             String immagine = null;
             Part filePart1 = null;
             double costo = 0, peso = 0;
@@ -123,6 +123,9 @@ public class updateProd extends HttpServlet {
                     }
                     if (request.getParameter("descrizione") != null) {
                         descrizione = unaccent(request.getParameter("descrizione"));
+                    }
+                    if (request.getParameter("meta_descrizione") != null) {
+                        meta_descrizione = unaccent(request.getParameter("meta_descrizione"));
                     }
                     if (request.getParameter("oldImg") != null) {
                         immagine = request.getParameter("oldImg");
@@ -209,7 +212,7 @@ public class updateProd extends HttpServlet {
                         }
                     }
 
-                    productdao.alterProd(idProd, nome, descrizione, categoria, immagine, disponibile, costo, peso);
+                    productdao.alterProd(idProd, nome, descrizione, meta_descrizione, categoria, immagine, disponibile, costo, peso);
                     productdao.updateVariant(idProd, varianti, scelte, supplement, peso_variante);
                     url = "prodotti.jsp#" + categoria;
                 } else {

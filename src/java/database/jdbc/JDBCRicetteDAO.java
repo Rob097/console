@@ -96,6 +96,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
+                    r.setMeta_descrizione(rs.getString("meta_descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));                    
                     r.setApprovata(rs.getBoolean("approvata"));
@@ -158,6 +159,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
+                    r.setMeta_descrizione(rs.getString("meta_descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));                    
                     r.setApprovata(rs.getBoolean("approvata"));
@@ -209,6 +211,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     r.setCreatore(rs.getString("creatore"));
                     r.setData(rs.getTimestamp("data"));
                     r.setDescrizione(rs.getString("descrizione"));
+                    r.setMeta_descrizione(rs.getString("meta_descrizione"));
                     r.setViews(rs.getInt("views"));
                     r.setCategory(rs.getBoolean("categoria"));                    
                     r.setApprovata(rs.getBoolean("approvata"));
@@ -330,6 +333,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setViews(rs.getInt("views"));
                     c.setCategory(rs.getBoolean("categoria"));                    
                     c.setApprovata(rs.getBoolean("approvata"));
@@ -577,6 +581,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * @param nome
      * @param procedimento
      * @param descrizione
+     * @param meta_descrizione
      * @param immagine
      * @param difficolta
      * @param ingredienti
@@ -589,14 +594,14 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * @throws DAOException
      */
     @Override
-    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException {
+    public void updateRecipe(String nome, String procedimento, String descrizione, String meta_descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException {
         checkCON();
         
-        if (nome == null || procedimento == null || descrizione == null || immagine == null || difficolta == null || ingredienti == null || creatore == null) {
+        if (nome == null || procedimento == null || descrizione == null || meta_descrizione == null || immagine == null || difficolta == null || ingredienti == null || creatore == null) {
         } else {
             
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE ricette SET id_prod = ?, nome = ?, ingredienti = ?, procedimento = ?, descrizione = ?, immagine = ?, tempo = ?, difficolta = ?, creatore = ?, categoria = ?, approvata = ? WHERE id = ?;"
+                    "UPDATE ricette SET id_prod = ?, nome = ?, ingredienti = ?, procedimento = ?, descrizione = ?, immagine = ?, tempo = ?, difficolta = ?, creatore = ?, categoria = ?, approvata = ?, meta_descrizione = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setInt(1, id_prod);
@@ -610,7 +615,8 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                     stm.setString(9, creatore);
                     stm.setBoolean(10, categoria);
                     stm.setBoolean(11, approvata);
-                    stm.setInt(12, id);
+                    stm.setString(12, meta_descrizione);
+                    stm.setInt(13, id);
 
                     if (stm.executeUpdate() == 1) {
                     } else {
@@ -659,6 +665,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * @param nome
      * @param procedimento
      * @param descrizione
+     * @param meta_descrizione
      * @param difficolta
      * @param ingredienti
      * @param creatore
@@ -670,11 +677,11 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
      * @throws DAOException
      */
     @Override
-    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException {
+    public int addRecipe(String nome, String procedimento, String descrizione, String meta_descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException {
         checkCON();
         
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into ricette (nome, procedimento, descrizione, difficolta, ingredienti, creatore, tempo, id_prod, categoria, immagine, approvata) VALUES (?,?,?,?,?,?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into ricette (nome, procedimento, descrizione, difficolta, ingredienti, creatore, tempo, id_prod, categoria, immagine, approvata, meta_descrizione) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, nome);
                 stm.setString(2, procedimento);
@@ -687,6 +694,7 @@ public class JDBCRicetteDAO extends JDBCDAO implements RicetteDAO {
                 stm.setBoolean(9, categoria);
                 stm.setString(10, "");
                 stm.setBoolean(11, approvata);
+                stm.setString(12, meta_descrizione);
 
                 if (stm.executeUpdate() == 1) {
                 } else {

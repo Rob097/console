@@ -50,9 +50,9 @@ public class scheduler implements ServletContextListener {
             delayInHours = delayInDays * 24 + (24 - hour);
         }
 
-        scheduler = Executors.newScheduledThreadPool(1); 
+        scheduler = Executors.newScheduledThreadPool(1);
         //System.out.println("HOUR: " + hour + "TIME: " + delayInHours + "DAY: " + delayInDays);
-        scheduler.scheduleAtFixedRate(new copyWeekViews(sce), delayInHours, 7*24, TimeUnit.HOURS);
+        scheduler.scheduleAtFixedRate(new copyWeekViews(sce), delayInHours, 7 * 24, TimeUnit.HOURS);
         //scheduler.scheduleAtFixedRate(new copyWeekViews(sce), 0, 5, TimeUnit.MINUTES);
     }
 

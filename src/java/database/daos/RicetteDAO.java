@@ -27,8 +27,8 @@ public interface RicetteDAO {
     public ArrayList<String> getOurCreators() throws DAOException;
     public ArrayList<String> getAllCreators() throws DAOException;
     public void removeIng(int id, String ing) throws DAOException;
-    public void updateRecipe(String nome, String procedimento, String descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException;
-    public int addRecipe(String nome, String procedimento, String descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException;
+    public void updateRecipe(String nome, String procedimento, String descrizione, String meta_descrizione, String immagine, String difficolta, String ingredienti, String creatore, int tempo, int id, int id_prod, boolean categoria, boolean approvata) throws DAOException;
+    public int addRecipe(String nome, String procedimento, String descrizione, String meta_descrizione, String difficolta, String ingredienti, String creatore, int tempo, int id_prod, boolean categoria, boolean approvata) throws DAOException;
     public void deleteRecipe(int id)  throws DAOException;
     
     //Valutazione

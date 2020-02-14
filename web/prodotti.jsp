@@ -369,7 +369,10 @@
                                 <input type='file' name="immagine" onchange="readURL(this, 'InputIMGCat'); $('#InputIMGCat').removeClass('invisible');" required/>
                             </div>
                             <input maxlength="45" type="text" name="nome" class="form-control mb-4" placeholder="Nome" required/>
-                            <textarea style="min-height: 100px;" name="descrizione" class="form-control mb-4" placeholder="Descrizione" required></textarea>
+                            <label for="descrizione">Descrizione</label>
+                            <textarea style="min-height: 130px !important;" id="descrizione" name="descrizione" class="form-control mb-4" required></textarea>
+                            <label for="meta_descrizione">Meta Descrizione</label>
+                            <textarea maxlength="160" style="min-height: 100px;" id="meta_descrizione" name="meta_descrizione" class="form-control mb-4" placeholder="Meta Descrizione"></textarea>
                             <input type="checkbox" name="fresco"/> Fresco
                         </div>
                         <button type="button" class="btn btn-secondary" onclick='closeModal();'>Annulla</button>
@@ -577,7 +580,7 @@
             // Code with description of parameters.
 // See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
 
-            $('input[maxlength]').maxlength({
+            $('[maxlength]').maxlength({
                 alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
                 // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
                 warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.

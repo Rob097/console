@@ -71,7 +71,7 @@ public class updateRecipe extends HttpServlet {
         try {
             request.setCharacterEncoding("UTF-8");
             RequestDispatcher view = request.getRequestDispatcher("idee.jsp");
-            String nome = "", procedimento = "", descrizione = "", immagine = "", difficolta = "", creatore = "", url = "";
+            String nome = "", procedimento = "", descrizione = "", meta_descrizione = "", immagine = "", difficolta = "", creatore = "", url = "";
             int id_prod = 0, tempo = 0, id = 0;
             boolean categoria = true, approvata = true;
             String catS = "";
@@ -149,6 +149,9 @@ public class updateRecipe extends HttpServlet {
                         }
                         if (request.getParameter("difficultInput") != null) {
                             difficolta = request.getParameter("difficultInput");
+                        }
+                        if (request.getParameter("meta_descrizione") != null) {
+                            meta_descrizione = request.getParameter("meta_descrizione");
                         }
                         if (request.getParameter("procedimento") != null) {
                             procedimento = request.getParameter("procedimento");
@@ -258,7 +261,7 @@ public class updateRecipe extends HttpServlet {
                             System.out.println("filePart = null");
                         }
 
-                        ricettedao.updateRecipe(nome, procedimento, descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
+                        ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
 
                         if (checkOldPubblicato == false && approvata == true) {
                             request.setAttribute("tipo", "idea");

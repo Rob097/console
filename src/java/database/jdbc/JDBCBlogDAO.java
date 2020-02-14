@@ -77,6 +77,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setNome(rs.getString("nome"));
                     c.setTesto(rs.getString("testo"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
@@ -125,6 +126,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setNome(rs.getString("nome"));
                     c.setTesto(rs.getString("testo"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
@@ -168,6 +170,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setNome(rs.getString("nome"));
                     c.setTesto(rs.getString("testo"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
@@ -226,6 +229,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     c.setNome(rs.getString("nome"));
                     c.setTesto(rs.getString("testo"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setCreatore(rs.getString("creatore"));
                     c.setData(rs.getTimestamp("data"));
@@ -279,17 +283,18 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      * @param categoria
      * @param immagine
      * @param descrizione
+     * @param meta_descrizione
      * @param pubblicato
      * @throws DAOException
      */
     @Override
-    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, boolean pubblicato) throws DAOException {
+    public void alterBlog(String id, String titolo, String testo, String creator, String categoria, String immagine, String descrizione, String meta_descrizione, boolean pubblicato) throws DAOException {
         checkCON();
         
         if (id == null || titolo == null || testo == null || creator == null || categoria == null || immagine == null) {
         } else {
             try (PreparedStatement stm = CON.prepareStatement(
-                    "UPDATE blog SET nome = ?, testo = ?, creatore = ?, categoria = ?, immagine = ?, descrizione = ?, pubblicato = ? WHERE id = ?;"
+                    "UPDATE blog SET nome = ?, testo = ?, creatore = ?, categoria = ?, immagine = ?, descrizione = ?, pubblicato = ?, meta_descrizione = ? WHERE id = ?;"
             )) {
                 try {
                     stm.setString(1, titolo);
@@ -299,7 +304,8 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                     stm.setString(5, immagine);
                     stm.setString(6, descrizione);
                     stm.setBoolean(7, pubblicato);
-                    stm.setInt(8, Integer.parseInt(id));
+                    stm.setString(8, meta_descrizione);
+                    stm.setInt(9, Integer.parseInt(id));
 
                     if (stm.executeUpdate() >= 1) {
                         cleanTags();
@@ -352,16 +358,17 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
      * @param creator
      * @param categoria
      * @param descrizione
+     * @param meta_descrizione
      * @param pubblicato
      * @return
      * @throws DAOException
      */
     @Override
-    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, boolean pubblicato) throws DAOException {
+    public int addBlog(String titolo, String testo, String creator, String categoria, String descrizione, String meta_descrizione, boolean pubblicato) throws DAOException {
         checkCON();
         
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into blog (nome, testo, creatore, categoria, immagine, descrizione, pubblicato) VALUES (?,?,?,?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into blog (nome, testo, creatore, categoria, immagine, descrizione, pubblicato, meta_descrizione) VALUES (?,?,?,?,?,?,?,?)")) {
             try {
                 stm.setString(1, titolo);
                 stm.setString(2, testo);
@@ -370,6 +377,7 @@ public class JDBCBlogDAO extends JDBCDAO implements BlogDAO {
                 stm.setString(5, "");
                 stm.setString(6, descrizione);
                 stm.setBoolean(7, pubblicato);
+                stm.setString(8, meta_descrizione);
 
                 if (stm.executeUpdate() == 1) {
                 } else {

@@ -19,6 +19,7 @@ public class Ricetta {
     private ArrayList<String> ingredienti;
     private String procedimento;
     private String descrizione;
+    private String meta_descrizione;
     private String immagine;
     private int tempo;
     private String difficolta;
@@ -31,13 +32,14 @@ public class Ricetta {
     public Ricetta() {
     }
 
-    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category, boolean approvata) {
+    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String meta_descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category, boolean approvata) {
         this.id = id;
         this.id_prod = id_prod;
         this.nome = nome;
         this.ingredienti = ingredienti;
         this.procedimento = procedimento;
         this.descrizione = descrizione;
+        this.meta_descrizione = meta_descrizione;
         this.immagine = immagine;
         this.tempo = tempo;
         this.difficolta = difficolta;
@@ -94,6 +96,14 @@ public class Ricetta {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public String getMeta_descrizione() {
+        return meta_descrizione;
+    }
+
+    public void setMeta_descrizione(String meta_descrizione) {
+        this.meta_descrizione = meta_descrizione;
     }
 
     public String getImmagine() {

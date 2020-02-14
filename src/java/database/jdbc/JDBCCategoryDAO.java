@@ -78,6 +78,7 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
                     c.setId(rs.getInt("id"));
                     c.setNome(rs.getString("nome"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setFreschi(rs.getBoolean("freschi"));
                     categorie.add(c);
@@ -109,6 +110,7 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
                     c.setId(rs.getInt("id"));
                     c.setNome(rs.getString("nome"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setFreschi(rs.getBoolean("freschi"));
                     categorie.add(c);
@@ -140,6 +142,7 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
                     c.setId(rs.getInt("id"));
                     c.setNome(rs.getString("nome"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setFreschi(rs.getBoolean("freschi"));
                     categorie.add(c);
@@ -173,6 +176,7 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
                     c.setId(rs.getInt("id"));
                     c.setNome(rs.getString("nome"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setFreschi(rs.getBoolean("freschi"));
                 }
@@ -206,6 +210,7 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
                     c.setId(rs.getInt("id"));
                     c.setNome(rs.getString("nome"));
                     c.setDescrizione(rs.getString("descrizione"));
+                    c.setMeta_descrizione(rs.getString("meta_descrizione"));
                     c.setImmagine(rs.getString("immagine"));
                     c.setFreschi(rs.getBoolean("freschi"));
                 }
@@ -218,26 +223,28 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
     }
 
     /**
-     * Metodo per aggiornare una categoria di prodotti. il nome è così perchè
-     * inizialmente aggiornava solo l'immagine e non ho più avuto voglia di cambiarlo
+     * Metodo per aggiornare una categoria di prodotti.il nome è così perchè
+ inizialmente aggiornava solo l'immagine e non ho più avuto voglia di cambiarlo
      * @param id
      * @param nome
      * @param url
      * @param descrizione
+     * @param meta_descrizione
      * @throws DAOException
      */
     @Override
-    public void alterImg(String id, String nome, String url, String descrizione) throws DAOException {
+    public void alterImg(String id, String nome, String url, String descrizione, String meta_descrizione) throws DAOException {
         checkCON();
         
         try (PreparedStatement stm = CON.prepareStatement(
-                "UPDATE categorie SET immagine = ?, nome = ?, descrizione = ? where id = ?"
+                "UPDATE categorie SET immagine = ?, nome = ?, descrizione = ?, meta_descrizione = ? where id = ?"
         )) {
             try {
                 stm.setString(1, url);
                 stm.setString(2, nome);
                 stm.setString(3, descrizione);
-                stm.setString(4, id);
+                stm.setString(4, meta_descrizione);
+                stm.setString(5, id);
 
                 if (stm.executeUpdate() == 1) {
                 } else {
@@ -261,16 +268,17 @@ public class JDBCCategoryDAO extends JDBCDAO implements CategoryDAO {
      * @throws DAOException
      */
     @Override
-    public int addCategory(String nome, String descrizione, boolean fresco) throws DAOException {
+    public int addCategory(String nome, String descrizione, boolean fresco, String meta_descrizione) throws DAOException {
         checkCON();
         
         int id = 0;
-        try (PreparedStatement stm = CON.prepareStatement("insert into categorie (nome, descrizione, freschi, immagine) VALUES (?,?,?,?)")) {
+        try (PreparedStatement stm = CON.prepareStatement("insert into categorie (nome, descrizione, freschi, immagine, meta_descrizione) VALUES (?,?,?,?,?)")) {
             try {
                 stm.setString(1, nome);
                 stm.setString(2, descrizione);
                 stm.setBoolean(3, fresco);
                 stm.setString(4, "");
+                stm.setString(5, meta_descrizione);
 
                 if (stm.executeUpdate() == 1) {
                 } else {

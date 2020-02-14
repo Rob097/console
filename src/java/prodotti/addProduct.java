@@ -71,7 +71,7 @@ public class addProduct extends HttpServlet {
         String url = "";
         try {
 
-            String nome = null, descrizione = null, immagine = null, categoria = null;
+            String nome = null, descrizione = null, meta_descrizione = null, immagine = null, categoria = null;
             double costo = 0.01, peso = 1.0;
             Part filePart1;
             boolean fresco = false, disponibile = true;
@@ -86,6 +86,9 @@ public class addProduct extends HttpServlet {
                 }
                 if (request.getParameter("descrizione") != null) {
                     descrizione = unaccent(request.getParameter("descrizione"));
+                }
+                if (request.getParameter("meta_descrizione") != null) {
+                    meta_descrizione = unaccent(request.getParameter("meta_descrizione"));
                 }
                 if (request.getParameter("costo") != null) {
                     if (request.getParameter("costo").equals(".") || request.getParameter("costo").equals(",")) {
@@ -114,7 +117,7 @@ public class addProduct extends HttpServlet {
                     disponibile = true;
                 }
 
-                int id = productdao.addProd(nome, descrizione, categoria, costo, disponibile, fresco, peso);
+                int id = productdao.addProd(nome, descrizione, meta_descrizione, categoria, costo, disponibile, fresco, peso);
 
                 ArrayList<String> variantiNomi = new ArrayList<>();
                 ArrayList<String> scelteNomi = new ArrayList<>();
@@ -189,7 +192,7 @@ public class addProduct extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                productdao.alterProd(id, nome, descrizione, categoria, immagine, disponibile, costo, peso);
+                productdao.alterProd(id, nome, descrizione, meta_descrizione, categoria, immagine, disponibile, costo, peso);
                 url = "prodotti.jsp#" + categoria;
 
             } else {

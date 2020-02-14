@@ -64,7 +64,7 @@ public class addCategory extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String nome = null, descrizione = null;
+        String nome = null, descrizione = null, meta_descrizione = null;
         String immagine = "";
         Part filePart1 = null;
         boolean fresco = false;
@@ -83,8 +83,11 @@ public class addCategory extends HttpServlet {
                 if (request.getParameter("fresco") != null) {
                     fresco = true;
                 }
+                if (request.getParameter("meta_descrizione") != null) {
+                    meta_descrizione = unaccent(request.getParameter("meta_descrizione"));
+                }
 
-                int id = categorydao.addCategory(nome, descrizione, fresco);
+                int id = categorydao.addCategory(nome, descrizione, fresco, meta_descrizione);
 
                 //Load dell'immagine
                 if (filePart1 != null) {
@@ -115,7 +118,7 @@ public class addCategory extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                categorydao.alterImg("" + id, nome, immagine, descrizione);
+                categorydao.alterImg("" + id, nome, immagine, descrizione, meta_descrizione);
                 url = "prodotti.jsp";
 
             } else {

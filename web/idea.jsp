@@ -16,12 +16,12 @@
 <html lang="en">
 
     <head>
-        
+
         <!-- Per impedire alla maggior parte dei motori di ricerca di indicizzare la pagina -->
         <meta name="robots" content="noindex">
         <!-- Per impedire solo a Google di indicizzare la pagina -->
         <meta name="googlebot" content="noindex">
-        
+
         <meta charset="utf-8" />
         <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/1nJwqw8n93uSSVkiOcuosGxA84pLvNAH5WDakvcRHohk2ccrL0SmxBlHB87WOxZXcWkD2ToK0YmNzspklIqHjZI8XQcVFfiDhpawN03k_rwm2pARMbFxIFSQiI3fvlC529-UVTMNbg=w2400">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -83,7 +83,7 @@
                             <c:when test="${param.id eq 'new'}" >
                                 <form method="POST" action="addIdea"  enctype="multipart/form-data">
                                     <button class="btn btn-outline-info mt-4">Aggiungi</button>
-                                    <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="Titolo" required/>
+                                    <input maxlength="45" style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="Titolo" required/>
 
                                     <h4>Cosa usare</h4>
                                     <div class="form-group form-inline" id="dynamic_form">                                        
@@ -207,6 +207,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 text-center mt-5">
+                                            <label for="meta_descrizione">Meta Descrizione</label>
+                                            <textarea maxlength="160" class="form-control mb-5" id="meta_descrizione" name="meta_descrizione"></textarea>
                                             <img id="InputIMGBlog" src="img/ico/add.svg" alt="add_Modal_IMG" class="mb-3" style="width: 100%; border-radius: 5%; max-width: 500px;"/>
                                             <input type='file' name="immagine" onchange="readURL(this, 'InputIMGBlog');" required/>
                                         </div>
@@ -230,7 +232,7 @@
                                                 <a class="btn btn-outline-warning" target="_blank" rel="noopener" href="/../Bortoleto/idea/${idea.id}/${idea.nome.replace(' ', '-')}">Visualizza</a>
                                             </div>
                                             <input type="hidden" name="id" value="${idea.id}" />
-                                            <input style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${idea.nome}" required/>
+                                            <input maxlength="45" style="font-size: 3.3125rem; line-height: 1.15em; height: 80px;" class="form-control mb-4" type="text" name="titolo" value="${idea.nome}" required/>
 
                                             <h4>Cosa usare</h4>
                                             <div id="acutalIngredients">
@@ -454,6 +456,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 text-center mt-5">
+                                                    <label for="meta_descrizione">Meta Descrizione</label>
+                                                    <textarea maxlength="160" class="form-control mb-5" id="meta_descrizione" name="meta_descrizione">${idea.meta_descrizione}</textarea>
                                                     <img id="InputIMGRecipe" src="${idea.immagine}" alt="${idea.nome}_Modal_IMG" class="mb-3" style="border-radius: 5%; max-width: 500px; max-height: 500px;"/>
                                                     <input type='file' name="immagine" onchange="readURL(this, 'InputIMGRecipe');"/>
                                                     <input type="hidden" name="oldIMG" value="${idea.immagine}" required />
@@ -494,6 +498,7 @@
         <script src="assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <script src="js/bootstrap-maxlength-min.js"></script>
         <script>
 
         </script>
@@ -714,6 +719,29 @@
                         '</div>'
             });
             </c:if>
+            // Code with description of parameters.
+            // See full documentation here : https://github.com/mimo84/bootstrap-maxlength-min/
+
+            $('[maxlength]').maxlength({
+                alwaysShow: true, //if true the threshold will be ignored and the remaining length indication will be always showing up while typing or on focus on the input. Default: false.
+                // threshold: 10, //Ignored if alwaysShow is true. This is a number indicating how many chars are left to start displaying the indications. Default: 10
+                warningClass: "form-text text-muted mt-1", //it's the class of the element with the indicator. By default is the bootstrap "badge badge-success" but can be changed to anything you'd like.
+                limitReachedClass: "form-text text-muted mt-1", //it's the class the element gets when the limit is reached. Default is "badge badge-danger". Replace with text-danger if you want it to be red.
+                //separator: ' of ', //represents the separator between the number of typed chars and total number of available chars. Default is "/".
+                //preText: 'You have ', //is a string of text that can be outputted in front of the indicator. preText is empty by default.
+                //postText: ' chars remaining.', //is a string outputted after the indicator. postText is empty by default.
+                showMaxLength: true, //showMaxLength: if false, will display just the number of typed characters, e.g. will not display the max length. Default: true.
+                showCharsTyped: true, //if false, will display just the remaining length, e.g. will display remaining lenght instead of number of typed characters. Default: true.
+                placement: 'bottom-right-inside', //is a string, object, or function, to define where to output the counter. Possible string values are: bottom ( default option ), left, top, right, bottom-right, top-right, top-left, bottom-left and centered-right. Are also available : **bottom-right-inside** (like in Google's material design, **top-right-inside**, **top-left-inside** and **bottom-left-inside**. stom placements can be passed as an object, with keys top, right, bottom, left, and position. These are passed to $.fn.css. A custom function may also be passed. This method is invoked with the {$element} Current Input, the {$element} MaxLength Indicator, and the Current Input's Position {bottom height left right top width}.
+
+                //appendToParent: true, // appends the maxlength indicator badge to the parent of the input rather than to the body.
+                //message: an alternative way to provide the message text, i.e. 'You have typed %charsTyped% chars, %charsRemaining% of %charsTotal% remaining'. %charsTyped%, %charsRemaining% and %charsTotal% will be replaced by the actual values. This overrides the options separator, preText, postText and showMaxLength. Alternatively you may supply a function that the current text and max length and returns the string to be displayed. For example, function(currentText, maxLength) { return '' + Math.ceil(currentText.length / 160) + ' SMS Message(s)';}
+                //utf8: true //the input will count using utf8 bytesize/encoding. For example: the '£' character is counted as two characters.
+                //showOnReady: shows the badge as soon as it is added to the page, similar to alwaysShow
+                //twoCharLinebreak: count linebreak as 2 characters to match IE/Chrome textarea validation
+                //customMaxAttribute: String -- allows a custom attribute to display indicator without triggering native maxlength behaviour. Ignored if value greater than a native maxlength attribute. 'overmax' class gets added when exceeded to allow user to implement form validation.
+                //allowOverMax: Will allow the input to be over the customMaxLength. Useful in soft max situations.
+            });
         </script>
     </body>
 </html>

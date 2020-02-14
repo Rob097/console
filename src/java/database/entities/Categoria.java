@@ -14,18 +14,20 @@ public class Categoria {
     private String nome;
     private String immagine;
     private String descrizione;
+    private String meta_descrizione;
     private boolean freschi;
 
     public Categoria() {
-    }
+    }   
 
-    public Categoria(int id, String nome, String immagine, String descrizione, boolean freschi) {
+    public Categoria(int id, String nome, String immagine, String descrizione, String meta_descrizione, boolean freschi) {
         this.id = id;
         this.nome = nome;
         this.immagine = immagine;
         this.descrizione = descrizione;
+        this.meta_descrizione = meta_descrizione;
         this.freschi = freschi;
-    }    
+    }
 
     public int getId() {
         return id;
@@ -57,6 +59,14 @@ public class Categoria {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public String getMeta_descrizione() {
+        return meta_descrizione;
+    }
+
+    public void setMeta_descrizione(String meta_descrizione) {
+        this.meta_descrizione = meta_descrizione;
     }
 
     public boolean isFreschi() {

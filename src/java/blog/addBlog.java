@@ -74,7 +74,7 @@ public class addBlog extends HttpServlet {
         try {
             request.setCharacterEncoding("UTF-8");
 
-            String categoria = "", titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", tag = "";
+            String categoria = "", titolo = "", testo = "", creatore = "", immagine = "", descrizione = "", meta_descrizione = "", tag = "";
             ArrayList<String> tags = new ArrayList<>();
             boolean pubblicato = false;
             Part filePart1 = null;
@@ -86,6 +86,9 @@ public class addBlog extends HttpServlet {
                 }
                 if (request.getParameter("testo") != null) {
                     testo = request.getParameter("testo");
+                }
+                if (request.getParameter("meta_descrizione") != null) {
+                    meta_descrizione = request.getParameter("meta_descrizione");
                 }
                 if (request.getParameter("tag") != null) {
                     tag = request.getParameter("tag");
@@ -116,7 +119,7 @@ public class addBlog extends HttpServlet {
 
                 descrizione = testo.replaceAll("[<](/)?[^>]*[>]", "");
 
-                int id = blogdao.addBlog(titolo, testo, creatore, categoria, descrizione, pubblicato);
+                int id = blogdao.addBlog(titolo, testo, creatore, categoria, descrizione, meta_descrizione, pubblicato);
 
                 tags.addAll(Arrays.asList(tag.split(";")));
                 blogdao.addTags(tags, id);
@@ -148,7 +151,7 @@ public class addBlog extends HttpServlet {
                 } else {
                     System.out.println("filePart = null");
                 }
-                blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione, pubblicato);
+                blogdao.alterBlog("" + id, titolo, testo, creatore, categoria, immagine, descrizione, meta_descrizione, pubblicato);
 
                 if (pubblicato) {
                     request.setAttribute("tipo", "blog");
