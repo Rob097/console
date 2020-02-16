@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,8 +71,9 @@ public class addIdea extends HttpServlet {
         RequestDispatcher view;
 
         try {
-            String nome = "", procedimento = "", descrizione = "", meta_descrizione = "", immagine = "", difficolta = "", creatore = "";
-            int id_prod = 0, tempo = 0, id = 0;
+            String nome = "", procedimento = "", descrizione = "", meta_descrizione = "", immagine = "", difficolta = "", creatore = "", tag = "";
+            ArrayList<Integer> tags = new ArrayList<>();
+            int tempo = 0, id = 0;
             boolean categoria = true, approvata = true;
             String catS = "";
             String ingS = "";
@@ -82,17 +84,15 @@ public class addIdea extends HttpServlet {
                 if (request.getParameter("titolo") != null) {
                     nome = request.getParameter("titolo");
                 }
-                if (request.getParameter("product") != null) {
-                    id_prod = Integer.parseInt(request.getParameter("product"));
-                }
-
                 if (request.getParameter("autore") != null) {
                     creatore = request.getParameter("autore");
                 }
                 if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
                     creatore = request.getParameter("newCreator");
                 }
-
+                if (request.getParameter("tag") != null) {
+                    tag = request.getParameter("tag");
+                }
                 if (request.getParameter("timeInput") != null) {
                     tempo = Integer.parseInt(request.getParameter("timeInput"));
                 }
@@ -161,7 +161,16 @@ public class addIdea extends HttpServlet {
                     ingS = b.toString();
                 }
 
-                id = ricettedao.addRecipe(nome, procedimento, descrizione, meta_descrizione, difficolta, ingS, creatore, tempo, id_prod, categoria, approvata);
+                id = ricettedao.addRecipe(nome, procedimento, descrizione, meta_descrizione, difficolta, ingS, creatore, tempo, categoria, approvata);
+
+                ArrayList<Integer> prodotti_idea = new ArrayList<>();
+                for (String s : Arrays.asList(tag.split(";"))) {
+                    try {
+                        prodotti_idea.add(Integer.parseInt(s));
+                    } catch (NumberFormatException e) {
+                    }
+                }
+                ricettedao.addProdottoIdea(prodotti_idea, id);
 
                 //Load dell'immagine
                 if (filePart1 != null) {
@@ -192,7 +201,7 @@ public class addIdea extends HttpServlet {
                     System.out.println("filePart = null");
                 }
 
-                ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
+                ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, categoria, approvata);
 
                 if (approvata) {
                     request.setAttribute("tipo", "idea");

@@ -36,6 +36,7 @@
         <!-- CSS Files -->
         <link href="assets/css/material-dashboard.css?v=2.1.1" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/tagsinput.css" rel="stylesheet" />
         <!-- include summernote css/js -->
         <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css">
 
@@ -103,38 +104,6 @@
 
                                     <div class="row">
                                         <div class="col-md-6 mt-5">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label for="categoria">Categoria</label>
-                                                    <select style="width: auto;" class="form-control mb-4" name="categoria" id="categoria" required>
-                                                        <option value="nostre" 
-                                                                <c:if test="${ide.categoria eq true}">
-                                                                    selected
-                                                                </c:if>
-                                                                >
-                                                            Nostra
-                                                        </option>
-                                                        <option value="utenti" 
-                                                                <c:if test="${ide.categoria eq false}">
-                                                                    selected
-                                                                </c:if>
-                                                                >
-                                                            Utenti
-                                                        </option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <label for="categoria">Prodotto assiociato</label>
-                                                    <select style="width: auto;" class="form-control mb-4" name="product" id="productPicker" required>
-                                                        <option value="0" selected>Nessun prodotto</option>
-                                                        <c:forEach var="prod" items="${productdao.getAllProducts()}">
-                                                            <option value="${prod.id}">${prod.nome}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
-                                            </div>
-
                                             <div class="row mt-2">
                                                 <div class="col-md-4">
                                                     <label for="creatore">Autore</label>
@@ -163,6 +132,40 @@
                                                         </div>
                                                     </c:otherwise>
                                                 </c:choose>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label for="categoria">Categoria</label>
+                                                    <select style="width: auto;" class="form-control mb-4" name="categoria" id="categoria" required>
+                                                        <option value="nostre" 
+                                                                <c:if test="${ide.categoria eq true}">
+                                                                    selected
+                                                                </c:if>
+                                                                >
+                                                            Nostra
+                                                        </option>
+                                                        <option value="utenti" 
+                                                                <c:if test="${ide.categoria eq false}">
+                                                                    selected
+                                                                </c:if>
+                                                                >
+                                                            Utenti
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="categoria">Prodotti assiociato</label>
+                                                    <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
+                                                        <c:forEach var="prod" items="${productdao.getAllProducts()}">
+                                                            <option value="${prod.id}">${prod.nome}</option>
+                                                        </c:forEach>
+                                                    </select>
+
+                                                    <select data-role="tagsinput" name="tags" id="tags" multiple>
+                                                    </select>
+                                                    <input type="hidden" name="tag" id="tag" value="" />
+                                                </div>
                                             </div>
                                             <div style="width: fit-content;">
                                                 <label for="timeInput">Tempo (minuti)</label>
@@ -334,44 +337,6 @@
                                                         </fieldset><br>                                
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label for="categoria">Categoria</label>
-                                                            <select style="width: auto;" class="form-control mb-4" name="categoria" id="categoria" required>
-                                                                <option value="nostre" 
-                                                                        <c:if test="${idea.category eq true}">
-                                                                            selected
-                                                                        </c:if>
-                                                                        >
-                                                                    Nostra
-                                                                </option>
-                                                                <option value="utenti" 
-                                                                        <c:if test="${idea.category eq false}">
-                                                                            selected
-                                                                        </c:if>
-                                                                        >
-                                                                    Utenti
-                                                                </option>
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <label for="categoria">Prodotto assiociato</label>
-                                                            <select style="width: auto;" class="form-control mb-4" name="product" id="productPicker" required>
-                                                                <option value="0">Nessun prodotto</option>
-                                                                <c:forEach var="prod" items="${productdao.getAllProducts()}">
-                                                                    <option value="${prod.id}" 
-                                                                            <c:if test="${prod.id eq idea.id_prod}">
-                                                                                selected
-                                                                            </c:if>
-                                                                            >
-                                                                        ${prod.nome}
-                                                                    </option>
-                                                                </c:forEach>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
                                                     <div class="row mt-2">
                                                         <div class="col-md-4">
                                                             <label for="creatore">Autore</label>
@@ -395,7 +360,40 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label for="categoria">Categoria</label>
+                                                            <select style="width: auto;" class="form-control mb-4" name="categoria" id="categoria" required>
+                                                                <option value="nostre" 
+                                                                        <c:if test="${idea.category eq true}">
+                                                                            selected
+                                                                        </c:if>
+                                                                        >
+                                                                    Nostra
+                                                                </option>
+                                                                <option value="utenti" 
+                                                                        <c:if test="${idea.category eq false}">
+                                                                            selected
+                                                                        </c:if>
+                                                                        >
+                                                                    Utenti
+                                                                </option>
+                                                            </select>
+                                                        </div>
 
+                                                        <div class="col-md-6">
+                                                            <label for="categoria">Prodotti assiociato</label>
+                                                            <select class="form-control mb-4" name="selectTag" id="selectProdTag" onchange="addTag(this.value);">
+                                                                <c:forEach var="prod" items="${productdao.getAllProducts()}">
+                                                                    <option value="${prod.id}">${prod.nome}</option>
+                                                                </c:forEach>
+                                                            </select>
+
+                                                            <select data-role="tagsinput" name="tags" id="tags" multiple>
+                                                            </select>
+                                                            <input type="hidden" name="tag" id="tag" value="" />
+                                                        </div>
+                                                    </div>
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <label for="views">Visualizzazioni</label>
@@ -499,6 +497,7 @@
         <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
         <script src="js/bootstrap-maxlength-min.js"></script>
+        <script src="js/tagsinput.js"></script>
         <script>
 
         </script>
@@ -571,6 +570,72 @@
                     }
                 });
             }
+            var added = 0;
+            $('#tags').tagsinput({
+                /*typeahead: {
+                 source: []
+                 },*/
+                freeInput: true,
+                allowDuplicates: false,
+                itemValue: 'id', // this will be used to set id of tag
+                itemText: 'text' // this will be used to set text of tag                
+            });
+            $('#ptagadded').html('Tag Aggiunti: ' + added);
+
+            $(document).ready(function () {
+
+                var mytagsinput = $('#tags');
+                var o = null;
+
+            <c:if test="${param.id ne null && param.id ne '0' && param.id.matches('[0-9]+')}">
+                <c:forEach var="tag" items="${ricettedao.getAllProdsOfIdea(param.id)}">
+                    <c:set var="tagText" value="${productdao.getProduct(tag).nome}" />
+                if (o === null) {
+                    o = "${tag}";
+                } else {
+                    o += ";${tag}";
+                }
+                mytagsinput.tagsinput('add', {id: '${tag}', text: '${tagText}'});
+                $('#tag').val(o);
+                </c:forEach>
+            </c:if>
+            });
+
+            function addTag(element) {
+                event.preventDefault();
+                added++;
+                $('#ptagadded').html('Tag Aggiunti: ' + added);
+
+                var val = element;
+                var mytagsinput = $('#tags');
+                //add my tags object
+                mytagsinput.tagsinput('add', {id: val, text: val});
+                var inp = '';
+                inp = $('#tag').val();
+                if (inp === '') {
+                    $('#tag').val(val);
+                } else {
+                    inp += ";" + val;
+                    $('#tag').val(inp);
+                }
+            }
+
+            $('#tags').on('itemRemoved', function (event) {
+                var t = $('#tag').val().split(";");
+                var n = "";
+                for (var i = 0; i < t.length; i++) {
+                    
+                    if (t[i] === "" + event.item.id) {
+                    } else {
+                        if (n === "") {
+                            n += t[i];
+                        } else {
+                            n += ";" + t[i];
+                        }
+                    }
+                }
+                $('#tag').val(n);
+            });
         </script>
         <script>
             $(document).ready(function () {

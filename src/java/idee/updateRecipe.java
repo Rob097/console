@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,7 +73,7 @@ public class updateRecipe extends HttpServlet {
             request.setCharacterEncoding("UTF-8");
             RequestDispatcher view = request.getRequestDispatcher("idee.jsp");
             String nome = "", procedimento = "", descrizione = "", meta_descrizione = "", immagine = "", difficolta = "", creatore = "", url = "";
-            int id_prod = 0, tempo = 0, id = 0;
+            int tempo = 0, id = 0;
             boolean categoria = true, approvata = true;
             String catS = "";
             String ingS = "";
@@ -113,7 +114,8 @@ public class updateRecipe extends HttpServlet {
                     System.out.println("Password sbagliata");
                 }
             } else {
-
+                String tag = "";
+                ArrayList<String> tags = new ArrayList<>();
                 try {
 
                     boolean checkOldPubblicato = false;
@@ -133,17 +135,15 @@ public class updateRecipe extends HttpServlet {
                         if (request.getParameter("titolo") != null) {
                             nome = request.getParameter("titolo");
                         }
-                        if (request.getParameter("product") != null) {
-                            id_prod = Integer.parseInt(request.getParameter("product"));
-                        }
-
                         if (request.getParameter("autore") != null) {
                             creatore = request.getParameter("autore");
                         }
                         if (request.getParameter("newCreator") != null && !request.getParameter("newCreator").isEmpty()) {
                             creatore = request.getParameter("newCreator");
                         }
-
+                        if (request.getParameter("tag") != null) {
+                            tag = request.getParameter("tag");
+                        }
                         if (request.getParameter("timeInput") != null) {
                             tempo = Integer.parseInt(request.getParameter("timeInput"));
                         }
@@ -232,6 +232,15 @@ public class updateRecipe extends HttpServlet {
                             System.out.println("Errore form ingredienti");
                         }
 
+                        ArrayList<Integer> prodotti_idea = new ArrayList<>();
+                        for (String s : Arrays.asList(tag.split(";"))) {
+                            try {
+                                prodotti_idea.add(Integer.parseInt(s));
+                            } catch (NumberFormatException e) {
+                            }
+                        }
+                        ricettedao.addProdottoIdea(prodotti_idea, id);
+
                         //Load dell'immagine
                         if (filePart1 != null) {
                             if (filePart1.getContentType().contains("image/")) {
@@ -261,7 +270,7 @@ public class updateRecipe extends HttpServlet {
                             System.out.println("filePart = null");
                         }
 
-                        ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, id_prod, categoria, approvata);
+                        ricettedao.updateRecipe(nome, procedimento, descrizione, meta_descrizione, immagine, difficolta, ingS, creatore, tempo, id, categoria, approvata);
 
                         if (checkOldPubblicato == false && approvata == true) {
                             request.setAttribute("tipo", "idea");

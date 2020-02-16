@@ -14,7 +14,6 @@ import java.util.ArrayList;
  */
 public class Ricetta {
     private int id;
-    private int id_prod;
     private String nome;
     private ArrayList<String> ingredienti;
     private String procedimento;
@@ -32,9 +31,8 @@ public class Ricetta {
     public Ricetta() {
     }
 
-    public Ricetta(int id, int id_prod, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String meta_descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category, boolean approvata) {
+    public Ricetta(int id, String nome, ArrayList<String> ingredienti, String procedimento, String descrizione, String meta_descrizione, String immagine, int tempo, String difficolta, String creatore, Timestamp data, int views, boolean category, boolean approvata) {
         this.id = id;
-        this.id_prod = id_prod;
         this.nome = nome;
         this.ingredienti = ingredienti;
         this.procedimento = procedimento;
@@ -56,14 +54,6 @@ public class Ricetta {
 
     public void setId(int id) {
         this.id = id;
-    }    
-
-    public int getId_prod() {
-        return id_prod;
-    }
-
-    public void setId_prod(int id_prod) {
-        this.id_prod = id_prod;
     }
 
     public String getNome() {

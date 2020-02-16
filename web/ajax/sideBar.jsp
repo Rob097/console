@@ -131,7 +131,7 @@
             </c:otherwise>
         </c:choose>
         <li class="nav-item active-pro" data-toggle="tooltip" title="Il peso delle immagini che carichi non deve superare i 2.4MB di peso. Vai a questo link per comprimerle.">
-            <a class="nav-link" rel="nofollow" href="https://compressjpeg.com/" target="_blank" style="background-color: #fc960e; color: black; font-weight: bold;">
+            <a class="nav-link" rel="nofollow noopener" href="https://picresize.com/" target="_blank" style="background-color: #fc960e; color: black; font-weight: bold;">
                 <i class="material-icons">unarchive</i>
                 <p>Comprimi immagini</p>
             </a>
