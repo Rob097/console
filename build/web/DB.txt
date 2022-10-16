@@ -1,0 +1,166 @@
+FILE DI SPIEGAZIONE DI ALCUNI CODICI PRESENTI NEL DB
+
+SET GLOBAL event_scheduler = ON;
+
+################################################################################
+
+EVENTO PER INSERIRE ALL'INTERNO DI 'weeks_views' UN NUOVO RECORD CON DATA LA DATA
+DEL LUNEDì E COME VALORE LA SOMMA DI TUTTE LE VIEWS DELLE VARIE PAGINE FATTE IN
+QUELLA SETTIMANA PRESE DA 'curr_week_views'. DOPODICHé TUTTE I VALORI IN 
+'curr_week_views' VENGONO eliminati PER RICOMINCIARE LA SETTIMANA
+
+
+DELIMITER $$    
+CREATE EVENT copy_week_views
+ON SCHEDULE
+  EVERY 1 WEEK
+STARTS CURRENT_DATE + INTERVAL 2 DAY do
+BEGIN
+
+    INSERT INTO `weeks_views`(pagina, week, views) 
+
+    SELECT pagina, CURRENT_DATE - INTERVAL 7 DAY AS date, SUM(`views`) AS views FROM curr_week_views group by pagina;
+
+    DELETE FROM `curr_week_views`;
+    
+END $$
+DELIMITER ;
+
+################################################################################
+
+SET FOREIGN_KEY_CHECKS=0;
+
+################################################################################
+
+Delete all tables
+
+SET FOREIGN_KEY_CHECKS = 0;
+drop table if exists blog_cat;
+drop table if exists blog;
+drop table if exists weeks_views;
+drop table if exists valutazione_ricetta;
+drop table if exists valutazione_prod;
+drop table if exists ricette;
+drop table if exists prodotto;
+drop table if exists orderSum;
+drop table if exists email_sub;
+drop table if exists curr_week_views;
+drop table if exists commenti;
+drop table if exists categorie;
+drop table if exists blog_commenti;
+drop table if exists blog_tags;
+drop table if exists menu;
+drop table if exists notifiche;
+drop table if exists products_variants;
+drop table if exists tags;
+drop table if exists valutazione_blog;
+drop table if exists statoSito;
+SET FOREIGN_KEY_CHECKS = 1;
+
+################################################################################
+
+
+TRIGGER PER AUMENTARE I DEFAULT TIMESTAMP DI DUE ORE SUL SERVER DELL'HOST
+
+DELIMITER $$
+
+CREATE TRIGGER blog_date_trigger
+BEFORE INSERT
+ON blog FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER blog_commenti_date_trigger
+BEFORE INSERT
+ON blog_commenti FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER commenti_date_trigger
+BEFORE INSERT
+ON commenti FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER email_sub_date_trigger
+BEFORE INSERT
+ON email_sub FOR EACH ROW
+
+BEGIN
+
+SET NEW.date = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER orderSumdate_trigger
+BEFORE INSERT
+ON orderSum FOR EACH ROW
+
+BEGIN
+
+SET NEW.date = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER ricette_date_trigger
+BEFORE INSERT
+ON ricette FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER notifiche_date_trigger
+BEFORE INSERT
+ON notifiche FOR EACH ROW
+
+BEGIN
+
+SET NEW.data = CURRENT_TIMESTAMP + INTERVAL 2 HOUR;
+
+END$$ 
+DELIMITER ;
+################################################################################
+
+Get csv for facebook catalog
+
+select id as id, nome as title , descrizione as description, categoria as product_type, CONCAT('http://www.macelleriadellantonio.it/prodotto.jsp?id=',id) as link, CONCAT('http://www.macelleriadellantonio.it/console/',immagine) as image_link, 'new' as 'condition',
+(
+    CASE 
+        WHEN disponibile = 1 THEN 'in stock'
+        ELSE 'out of stock'
+    END
+) AS availability,
+costo as price, '\'L Bortoleto' as brand, (select id from categorie where nome = categoria) as item_group_id, '4628' as google_product_category from prodotto where categoria = 'affumicati'

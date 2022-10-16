@@ -1,0 +1,34 @@
+Allora:
+
+Se il prodotto non ha varianti:
+dalla console aggiungi un prodotto. Assegni un costo e un peso relativi al prodotto. 
+
+
+Se il prodotto ha più varianti:
+dalla console aggiungi un prodotto.
+Il prezzo del prodotto deve essere uguale alla versione base. Il peso del prodotto deve essere uguale alla versione base.
+Ogni variante avrà un costo e un peso rispettivo di quella variante.
+Nel caso di combinazioni di varianti: 
+-> Solo una variante tra la combinazione può manipolare il peso della combinazione.
+-> Non ci possono essere più di una variante che altera il peso.
+-> Ci può essere più di una variante che altera il prezzo se e solo se tutte le varianti alterano il prezzo indipendentemente dalle altre scelte.
+Il peso complessivo viene calcolato sommando i pesi di tutte le varianti di ogni combinazione moltiplicato per la quantità della combinazione aggiunta al carrello.
+Il prezzo complessivo viene calcolato sommando i prezzi di tutte le varianti di ogni combinazione moltiplicato per la quantità della combinazione aggiunta al carrello
+Il prezzo e il peso del prodotto vengono usati solo per i tag facebook e google e per la visualizzazione ma per il calcolo di costo e spedizione non vengono usati
+
+Al momento dell'acquisto la spedizione viene calcolata sul peso complessivo e il subtotale sul prezzo complessivo. Il totale sommando questi due valori
+
+
+File e metodi:
+
+/BORTOLETO
+ProductDAO / getTotalOfCart & getTotalWeightOfCart & checkWeight
+PagamentoDAO / getSpeseSpedizione
+Costanti
+Prodotto per la visualizzazione
+Carrello per la visualizzazione
+CarrelloModalContent per la visualizzazione
+CartCarreloPage per la visualizzazione
+
+/CONSOLE
+Auguri
